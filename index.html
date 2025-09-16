@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard DRE - Macaw Camboinhas 2025</title>
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <img src="macaw.png" alt="Macaw Logo" id="logo">
+        <div id="header-text">
+            <h1>Análise de Performance DRE</h1>
+            <p>Unidade: Camboinhas 2025</p>
+        </div>
+    </header>
+
+    <section id="global-filter-container">
+        <label for="month-filter">Visualizar Mês:</label>
+        <select id="month-filter">
+            </select>
+    </section>
+
+    <section class="kpi-section-title">
+        <h2>Visão Geral</h2>
+        <span id="kpi-subtitle" class="chart-subtitle">(Ano Completo)</span>
+    </section>
+    <section id="kpis-container">
+        <div class="kpi-card">
+            <h3 class="kpi-label">Receita Bruta</h3>
+            <p class="kpi-value" id="kpi-receita">R$ 0,00</p>
+            <span class="kpi-fonte">Fonte: (=) RECEITA BRUTA</span>
+        </div>
+        <div class="kpi-card">
+            <h3 class="kpi-label">Despesas (SG&A)</h3>
+            <p class="kpi-value" id="kpi-despesas">R$ 0,00</p>
+            <span class="kpi-fonte">Fonte: SG&A TOTAL</span>
+        </div>
+        <div class="kpi-card kpi-highlight">
+            <h3 class="kpi-label">CMV (%)</h3>
+            <p class="kpi-value" id="kpi-cmv-percent">0,0%</p>
+            <span class="kpi-fonte">Fonte: % CMV / RECEITA BRUTA</span>
+        </div>
+        <div class="kpi-card kpi-highlight">
+            <h3 class="kpi-label">CMV Perfeito (%)</h3>
+            <p class="kpi-value" id="kpi-cmv-perfeito-percent">0,0%</p>
+            <span class="kpi-fonte">Fonte: CMV Perfeito / Receita (Calc.)</span>
+        </div>
+        <div class="kpi-card kpi-highlight">
+            <h3 class="kpi-label">Margem Líquida</h3>
+            <p class="kpi-value" id="kpi-margem">0,0%</p>
+            <span class="kpi-fonte">Fonte: % RESULTADO / RECEITA BRUTA</span>
+        </div>
+    </section>
+
+    <section id="comparison-panel" class="chart-box">
+        <h3>Comparativo Detalhado entre Meses</h3>
+        <div id="comparison-controls">
+             <div class="control-group">
+                <label for="month-a">Comparar Mês:</label>
+                <select id="month-a"></select>
+            </div>
+            <div class="control-group">
+                <label for="month-b">Com o Mês:</label>
+                <select id="month-b"></select>
+            </div>
+        </div>
+        <div id="comparison-results">
+            </div>
+    </section>
+
+
+    <section id="charts-container">
+        
+        <div class="chart-box full-width">
+            <h3>Evolução: Receita de Couvert vs. Despesa com Músico</h3>
+            <span id="couvert-subtitle" class="chart-subtitle">(Ano Completo)</span>
+            <canvas id="couvertMusicoChart"></canvas>
+        </div>
+        
+        <div class="chart-box half-width">
+            <h3>Composição das Despesas</h3>
+            <span id="despesas-subtitle" class="chart-subtitle">(Ano Completo)</span>
+            <canvas id="despesasChart"></canvas>
+        </div>
+        
+        <div class="chart-box half-width">
+            <h3>Detalhamento das Receitas</h3>
+            <span id="receitas-subtitle" class="chart-subtitle">(Ano Completo)</span>
+            <canvas id="receitasChart"></canvas>
+        </div>
+
+    </section>
+
+    <script src="app.js"></script>
+</body>
+</html>
