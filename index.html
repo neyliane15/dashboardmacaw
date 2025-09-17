@@ -38,7 +38,7 @@
         <div class="kpi-card">
             <h3 class="kpi-label">Despesas (SG&A)</h3>
             <p class="kpi-value" id="kpi-despesas">R$ 0,00</p>
-            <span class="kpi-fonte">Fonte: SG&A TOTAL</span>
+            <span class="kpi-fonte">Fonte: Soma das 6 Categorias</span>
         </div>
         <div class="kpi-card kpi-highlight">
             <h3 class="kpi-label">CMV (%)</h3>
@@ -76,6 +76,12 @@
 
     <section id="charts-container">
         
+        <div class="chart-box full-width">
+            <h3>Evolução de Estoque & Compras (Base DRE)</h3>
+            <span id="estoque-subtitle" class="chart-subtitle">(Valores mensais)</span>
+            <canvas id="estoqueChart"></canvas>
+        </div>
+
         <div class="chart-box full-width">
             <h3>Evolução: Receita de Couvert vs. Despesa com Músico</h3>
             <span id="couvert-subtitle" class="chart-subtitle">(Ano Completo)</span>
