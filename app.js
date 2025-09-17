@@ -4,7 +4,7 @@ const formatPercent = (value) => value.toLocaleString('pt-BR', { style: 'percent
 const formatPercentSimple = (value) => value.toLocaleString('pt-BR', { style: 'percent', minimumFractionDigits: 1 });
 
 
-// --- DADOS REAIS DO DASHBOARD (ERRO DE ARRAY CORRIGIDO) ---
+// --- DADOS REAIS DO DASHBOARD (ERROS CORRIGIDOS e DADOS DE ESTOQUE REAIS) ---
 const dashboardData = {
     "kpiResumoAnual": {
         "indicadores": {
@@ -14,10 +14,11 @@ const dashboardData = {
                 "mensal": [ 1245563.68, 978202.5, 928199.03, 552994.64, 735177.543, 551652.58, 631554.61, 683514.02, 0.0, 0.0, 0.0, 0.0 ],
                 "format": "currency"
             },
+            // KPI DE DESPESAS CORRIGIDO (Soma manual dos 6 componentes)
             "despesasTotais": {
                 "label": "Despesas (SG&A)",
-                "total": 4643559.95533108,
-                "mensal": [ 858224.4534, 683493.0217, 654056.2629, 484385.0156, 609846.5661, 511999.4176, 519631.8969, 213150.2155, 108773.1056, 0.0, 0.0, 0.0 ],
+                "total": 2338852.913, 
+                "mensal": [ 855998.06 , 681904.51,	654056.26, 484059.89, 609976.57, 511399.42, 520543.96, 559968.71, 127666.79, 0.0, 0.0, 0.0 ],   
                 "format": "currency"
             },
             "cmvPercent": {
@@ -44,17 +45,17 @@ const dashboardData = {
         "meses": [ "JANEIRO", "FEVEREIRO", "MARÇO", "ABRIL", "MAIO", "JUNHO", "JULHO", "AGOSTO", "SETEMBRO", "OUTUBRO", "NOVEMBRO", "DEZEMBRO" ],
         "series": [
             { "nome": "Receita de Couvert", "data": [ 7880.0, 8190.0, 8110.0, 4630.0, 9340.0, 5870.0, 4760.0, 6930.0, 0.0, 0.0, 0.0, 0.0 ] },
-            { "nome": "Despesa com Músico", "data": [ 22100.0, 21500.0, 12950.0, 14000.0, 17400.0, 18100.0, 17292.54, 0.0, 0.0, 0.0, 0.0, 0.0 ] }
+            { "nome": "Despesa com Músico", "data": [ 22100.0, 21500.0, 12950.0, 14000.0, 17400.0, 18100.0, 17292.54, 10800.0, 0.0, 0.0, 0.0, 0.0 ] }
         ]
     },
     "composicaoDespesas": {
         "data": [
-            { "categoria": "Operacionais", "valorTotal": 333180.7307, "valoresMensais": [ 61906.44, 51861.29, 48215.28, 33675.87, 57343.84, 35319.63, 35571.62, 9286.76, 0.0, 0.0, 0.0, 0.0 ] },
-            { "categoria": "Pessoal", "valorTotal": 1121807.1583, "valoresMensais": [ 197609.9567, 186720.8217, 188600.6217, 136800.09, 146863.4983, 132521.4817, 126927.7883, 5762.9, 0.0, 0.0, 0.0, 0.0 ] },
-            { "categoria": "Administrativas", "valorTotal": 349355.72, "valoresMensais": [ 56714.54, 54221.79, 49821.97, 49348.46, 52443.72, 41965.01, 43102.53, 1737.7, 0.0, 0.0, 0.0, 0.0 ] },
-            { "categoria": "Terceiros", "valorTotal": 416750.3841, "valoresMensais": [ 79004.5472, 65226.1, 57055.4612, 40717.7856, 51489.1017, 44764.1032, 51152.7244, 27340.5608, 0.0, 0.0, 0.0, 0.0 ] },
-            { "categoria": "Marketing", "valorTotal": 19656.99, "valoresMensais": [ 5202.37, 4981.53, 5573.09, 0.0, 2300.0, 0.0, 1600.0, 0.0, 0.0, 0.0, 0.0, 0.0 ] },
-            { "categoria": "Financeiras", "valorTotal": 98101.93, "valoresMensais": [ 27256.83, 14423.98, 16908.99, 9508.13, 7773.97, 10320.9, 11909.13, 0.0, 0.0, 0.0, 0.0, 0.0 ] }
+            { "categoria": "Operacionais", "valorTotal": 333180.7307, "valoresMensais": [ 61906.44, 51861.29, 48215.28, 33675.87, 57343.84, 35319.63, 35571.62, 47079.17, 0.0, 0.0, 0.0, 0.0 ] },
+            { "categoria": "Pessoal", "valorTotal": 1121807.1583, "valoresMensais": [ 197609.9567, 186720.8217, 188600.6217, 136800.09, 146863.4983, 132521.4817, 126927.7883, 125655.14, 0.0, 0.0, 0.0, 0.0 ] },
+            { "categoria": "Administrativas", "valorTotal": 349355.72, "valoresMensais": [ 56714.54, 54221.79, 49821.97, 49348.46, 52443.72, 41965.01, 43102.53, 53332.22, 0.0, 0.0, 0.0, 0.0 ] },
+            { "categoria": "Terceiros", "valorTotal": 416750.3841, "valoresMensais": [ 79004.5472, 65226.1, 57055.4612, 40717.7856, 51489.1017, 44764.1032, 51152.7244, 55917.97, 0.0, 0.0, 0.0, 0.0 ] },
+            { "categoria": "Marketing", "valorTotal": 19656.99, "valoresMensais": [ 5202.37, 4981.53, 5573.09, 0.0, 2300.0, 0.0, 1600.0, 232.0, 0.0, 0.0, 0.0, 0.0 ] },
+            { "categoria": "Financeiras", "valorTotal": 98101.93, "valoresMensais": [ 27256.83, 14423.98, 16908.99, 9508.13, 7773.97, 10320.9, 11909.13, 13037.95, 0.0, 0.0, 0.0, 0.0 ] }
         ]
     },
     "composicaoReceita": {
@@ -65,6 +66,24 @@ const dashboardData = {
             { "fonte": "PIX", "valorTotal": 427431.97, "valoresMensais": [ 66883.61, 60903.33, 51142.8, 48991.28, 56152.42, 35833.56, 53307.54, 54217.43, 0.0, 0.0, 0.0, 0.0 ] },
             { "fonte": "COUVER", "valorTotal": 55710.0, "valoresMensais": [ 7880.0, 8190.0, 8110.0, 4630.0, 9340.0, 5870.0, 4760.0, 6930.0, 0.0, 0.0, 0.0, 0.0 ] }
         ]
+    },
+    // DADOS DE ESTOQUE ATUALIZADOS COM OS VALORES REAIS DA PLANILHA
+    "estoqueData": {
+        "meses": [ "JANEIRO", "FEVEREIRO", "MARÇO", "ABRIL", "MAIO", "JUNHO", "JULHO", "AGOSTO", "SETEMBRO", "OUTUBRO", "NOVEMBRO", "DEZEMBRO" ],
+        "series": [
+            { 
+                "nome": "Estoque Inicial", 
+                "data": [ 82480.28, 98344.55, 121987.71, 96990.42, 129874.30, 140948.79, 140174.17, 106963.33, 108773.11, 0.0, 0.0, 0.0 ] 
+            },
+            { 
+                "nome": "Compras (Notas Central)", // Nome da linha "COMPRAS + (NOTAS CENTRAL)"
+                "data": [ 421235.39, 303981.10, 227497.22, 203099.28, 199782.07, 169102.31, 127739.62, 170832.07, 0.0, 0.0, 0.0, 0.0 ] 
+            },
+            { 
+                "nome": "Estoque Final", 
+                "data": [ 98344.55, 121987.71, 96990.42, 129874.30, 140948.79, 140174.17, 106963.33, 108773.11, 0.0, 0.0, 0.0, 0.0 ] 
+            }
+        ]
     }
 };
 // --- FIM DOS DADOS ---
@@ -74,7 +93,7 @@ const dashboardData = {
 document.addEventListener("DOMContentLoaded", () => {
 
     // --- Declaração de variáveis ---
-    let despesasChartInstance, receitasChartInstance, couvertMusicoChartInstance;
+    let despesasChartInstance, receitasChartInstance, couvertMusicoChartInstance, estoqueChartInstance; 
     const meses = dashboardData.comparativoCouvertMusico.meses;
     const kpis = dashboardData.kpiResumoAnual.indicadores;
 
@@ -93,6 +112,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const despesasSubtitle = document.getElementById('despesas-subtitle');
     const receitasSubtitle = document.getElementById('receitas-subtitle');
     const couvertSubtitle = document.getElementById('couvert-subtitle');
+    const estoqueSubtitle = document.getElementById('estoque-subtitle'); 
 
     // Elementos do Painel de Comparação
     const monthA_select = document.getElementById('month-a');
@@ -101,7 +121,54 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // --- 1. Inicializar Gráficos ---
 
-    // Gráfico de Linha (Couvert vs. Músico) - Cores Verdes/Vermelho
+    // ATUALIZADO: Gráfico de Estoque (tipo 'bar' com dados reais)
+    const ctxEstoque = document.getElementById('estoqueChart').getContext('2d');
+    estoqueChartInstance = new Chart(ctxEstoque, {
+        type: 'bar', // Tipo Coluna/Barra
+        data: {
+            labels: dashboardData.estoqueData.meses,
+            datasets: [
+                {
+                    label: dashboardData.estoqueData.series[0].nome, // Estoque Inicial
+                    data: dashboardData.estoqueData.series[0].data, 
+                    backgroundColor: '#C8A97E', // Tom Creme/Tan
+                },
+                {
+                    label: dashboardData.estoqueData.series[1].nome, // Compras
+                    data: dashboardData.estoqueData.series[1].data, 
+                    backgroundColor: '#28a745', // Verde Sucesso
+                },
+                {
+                    label: dashboardData.estoqueData.series[2].nome, // Estoque Final
+                    data: dashboardData.estoqueData.series[2].data, 
+                    backgroundColor: '#0A6847', // Verde Escuro
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            plugins: { 
+                tooltip: { 
+                    callbacks: { 
+                        label: (context) => `${context.dataset.label}: ${formatCurrency(context.raw)}` 
+                    } 
+                } 
+            },
+            scales: { 
+                y: { 
+                    ticks: { 
+                        callback: (value) => formatCurrency(value) 
+                    } 
+                },
+                x: {
+                    stacked: false // Garante que as barras fiquem lado a lado (agrupadas)
+                }
+            }
+        }
+    });
+
+
+    // Gráfico de Linha (Couvert vs. Músico)
     const ctxLine = document.getElementById('couvertMusicoChart').getContext('2d');
     couvertMusicoChartInstance = new Chart(ctxLine, {
         type: 'line',
@@ -140,28 +207,21 @@ document.addEventListener("DOMContentLoaded", () => {
             datasets: [{
                 label: 'Composição das Despesas',
                 data: dashboardData.composicaoDespesas.data.map(d => d.valorTotal), 
-                backgroundColor: ['#0A6847', '#28a745', '#5cb85c', '#EADCB9', '#C8A97E', '#A88D6A'] // 3 Verdes, 3 Cremes/Tons de Bege
+                backgroundColor: ['#0A6847', '#28a745', '#5cb85c', '#EADCB9', '#C8A97E', '#A88D6A'] // 3 Verdes, 3 Cremes
             }]
         },
         options: {
             responsive: true,
             plugins: {
                 legend: { position: 'bottom' },
-                // *** ATUALIZAÇÃO AQUI: Tooltip agora mostra % ***
                 tooltip: { 
                     callbacks: { 
                         label: function(context) {
                             const label = context.label || '';
                             const value = context.raw;
-                            
-                            // Calcula o total do dataset atual
                             const data = context.chart.data.datasets[0].data;
                             const total = data.reduce((a, b) => a + b, 0);
-                            
-                            // Calcula o percentual
                             const percentage = (value / total * 100);
-                            
-                            // Retorna o texto formatado
                             return `${label}: ${formatCurrency(value)} (${percentage.toFixed(1)}%)`;
                         }
                     } 
@@ -278,6 +338,7 @@ document.addEventListener("DOMContentLoaded", () => {
         despesasSubtitle.textContent = subtitle;
         receitasSubtitle.textContent = subtitle;
         couvertSubtitle.textContent = (selectedMonthIndex === -1) ? "(Ano Completo)" : `(Acumulado até ${meses[selectedMonthIndex]})`;
+        estoqueSubtitle.textContent = (selectedMonthIndex === -1) ? "(Valores mensais)" : `(Apenas ${meses[selectedMonthIndex]})`;
 
         // 2. Atualizar os 5 KPIs principais
         for (const key in kpiElementMap) {
@@ -316,6 +377,25 @@ document.addEventListener("DOMContentLoaded", () => {
         couvertMusicoChartInstance.data.datasets[0].data = dataCouvert;
         couvertMusicoChartInstance.data.datasets[1].data = dataMusico;
         couvertMusicoChartInstance.update();
+        
+        // 6. Atualizar Gráfico de Estoque (Lógica YTD/Mensal)
+        let estoqueLabels, estoqueInicialData, estoqueComprasData, estoqueFinalData;
+        if (selectedMonthIndex === -1) { // Ano Completo
+            estoqueLabels = dashboardData.estoqueData.meses;
+            estoqueInicialData = dashboardData.estoqueData.series[0].data;
+            estoqueComprasData = dashboardData.estoqueData.series[1].data;
+            estoqueFinalData = dashboardData.estoqueData.series[2].data;
+        } else { // Mês Específico (mostra apenas as barras daquele mês)
+            estoqueLabels = [meses[selectedMonthIndex]]; // Apenas um mês
+            estoqueInicialData = [dashboardData.estoqueData.series[0].data[selectedMonthIndex]];
+            estoqueComprasData = [dashboardData.estoqueData.series[1].data[selectedMonthIndex]];
+            estoqueFinalData = [dashboardData.estoqueData.series[2].data[selectedMonthIndex]];
+        }
+        estoqueChartInstance.data.labels = estoqueLabels;
+        estoqueChartInstance.data.datasets[0].data = estoqueInicialData;
+        estoqueChartInstance.data.datasets[1].data = estoqueComprasData;
+        estoqueChartInstance.data.datasets[2].data = estoqueFinalData;
+        estoqueChartInstance.update();
     }
 
     monthFilter.addEventListener('change', updateDashboardForMonth);
@@ -325,5 +405,3 @@ document.addEventListener("DOMContentLoaded", () => {
     updateComparison(); 
 
 });
-
-// --- LÓGICA DO GOOGLE CHARTS REMOVIDA ---
