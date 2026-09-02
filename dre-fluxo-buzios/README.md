@@ -11,17 +11,24 @@ carregado por CDN; nenhum dado é enviado para servidor algum.
 
 - **4 indicadores** do período escolhido: Faturamento Bruto (Receita Bruta), CMV,
   CMV Perfeito e EBITDA — todos lidos da aba `DRE`.
-- **Um gráfico comparativo de barras** com as categorias Operacionais, Pessoal,
-  Administrativo, CTO, Utilities, Terceiros, Marketing, Financeiras e o par
-  Tributos Diversos (DRE) × Impostos (Fluxo). Clicar em uma categoria abre o
-  detalhamento item a item nos dois regimes, na mesma escala.
+- **Um gráfico em árvore (treemap)** em dois painéis lado a lado — DRE e Fluxo de
+  Caixa — com as categorias Operacionais, Pessoal, Administrativo, CTO, Utilities,
+  Terceiros, Marketing, Financeiras e o par Tributos Diversos (DRE) × Impostos
+  (Fluxo). A área de cada retângulo acompanha o valor; clicar em um retângulo
+  subdivide a categoria nos seus itens, nos dois painéis ao mesmo tempo, com a
+  tabela item a item logo abaixo.
+- Os dois painéis são comparáveis em área: o de menor total ocupa uma altura
+  proporcional e a folga tracejada mostra o tamanho da diferença. Os dois seguem a
+  mesma ordem de itens, para o mesmo item cair no mesmo lugar dos dois lados.
+- A partir de 15 itens, a cauda vira um bloco "Outros" no treemap para não virar
+  lasca ilegível — a tabela abaixo continua listando item por item.
 - Filtro de período: acumulado ou mês a mês.
 
 ## Regras de negócio aplicadas
 
 1. **Material de limpeza e descartáveis** e **Sistema operacional de vendas** ficam
-   fora da somatória de Operacionais, mas continuam visíveis no detalhamento, em
-   "Fora da somatória", com seus valores.
+   fora da somatória de Operacionais (e fora dos retângulos), mas continuam visíveis
+   na tabela de itens, marcados como "fora do total", com seus valores.
 2. **Administrativo** exibe a observação de que a **Fee Holding** é lançada no DRE e
    não entra no Fluxo de Caixa — origem da discrepância.
 3. **Utilities** exibe a observação de que o fluxo de janeiro pagou contas de

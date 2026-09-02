@@ -22,6 +22,8 @@
   --dre-soft:rgba(42,120,214,.14);
   --caixa:#eb6834;
   --caixa-soft:rgba(235,104,52,.16);
+  --dre-1:#154c86; --dre-2:#2a78d6; --dre-3:#63a0e6; --dre-4:#9cc4f0; --dre-5:#cbe0f8;
+  --cx-1:#b0491b;  --cx-2:#dd6023;  --cx-3:#ef8a56;  --cx-4:#f6b18d;  --cx-5:#fbd7c5;
   --nota-bg:#fdf3e3;
   --nota-line:#d99a3c;
   --nota-ink:#7a4d10;
@@ -47,6 +49,8 @@
     --dre-soft:rgba(57,135,229,.20);
     --caixa:#d95926;
     --caixa-soft:rgba(217,89,38,.22);
+    --dre-1:#123f70; --dre-2:#2668b8; --dre-3:#3f8ada; --dre-4:#6ba7e6; --dre-5:#9ac4ef;
+    --cx-1:#9c3d16;  --cx-2:#c05221;  --cx-3:#d97440;  --cx-4:#e69b74;  --cx-5:#f0bda3;
     --nota-bg:rgba(217,154,60,.13);
     --nota-line:#a9761f;
     --nota-ink:#e8c68a;
@@ -69,6 +73,8 @@
   --dre-soft:rgba(57,135,229,.20);
   --caixa:#d95926;
   --caixa-soft:rgba(217,89,38,.22);
+  --dre-1:#123f70; --dre-2:#2668b8; --dre-3:#3f8ada; --dre-4:#6ba7e6; --dre-5:#9ac4ef;
+  --cx-1:#9c3d16;  --cx-2:#c05221;  --cx-3:#d97440;  --cx-4:#e69b74;  --cx-5:#f0bda3;
   --nota-bg:rgba(217,154,60,.13);
   --nota-line:#a9761f;
   --nota-ink:#e8c68a;
@@ -149,55 +155,59 @@ button{font:inherit;color:inherit}
 .legend b i{width:11px;height:11px;border-radius:3px;display:block}
 .sw-dre{background:var(--dre)} .sw-caixa{background:var(--caixa)}
 
-.chart{padding:6px 20px 18px}
-.row-grid{display:grid;grid-template-columns:236px 1fr 104px;gap:14px;align-items:center}
-@media(max-width:900px){.row-grid{grid-template-columns:190px 1fr}.row-grid .diff{display:none}}
-@media(max-width:560px){.row-grid{grid-template-columns:126px 1fr;gap:10px}}
-.axis{padding:12px 0 6px;color:var(--ink-3);font-size:11px}
-.axis .ticks{position:relative;height:14px}
-.axis .ticks span{position:absolute;transform:translateX(-50%);white-space:nowrap;font-family:var(--mono)}
-.axis .ticks span:first-child{transform:none}
+/* trilha de navegação */
+.crumbs{display:flex;align-items:center;gap:7px;flex-wrap:wrap;padding:14px 20px 0;font-size:12.5px;color:var(--ink-3)}
+.crumbs .sep{color:var(--line-2)}
+.crumbs .aqui{color:var(--ink);font-weight:600}
+.crumbs .voltar{margin-left:auto}
 
-.cat{
-  width:100%;text-align:left;background:none;border:none;border-top:1px solid var(--line);
-  padding:11px 8px 11px 10px;margin:0 -10px;width:calc(100% + 20px);cursor:pointer;border-radius:8px;
-  transition:background .13s ease;
+/* treemap */
+.tm-wrap{display:grid;grid-template-columns:1fr 1fr;gap:18px;padding:14px 20px 4px}
+@media(max-width:860px){.tm-wrap{grid-template-columns:1fr}}
+.tm-panel{display:flex;flex-direction:column;gap:7px;min-width:0}
+.tm-head{display:flex;align-items:baseline;gap:8px}
+.tm-head .nm{font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;font-weight:600;color:var(--ink-2);display:flex;align-items:center;gap:7px}
+.tm-head .nm i{width:10px;height:10px;border-radius:3px;display:block}
+.tm-head .tot{margin-left:auto;font-family:var(--mono);font-size:13.5px;font-weight:600;font-variant-numeric:tabular-nums}
+.tm{position:relative;height:340px;border-radius:9px;background:var(--surface-2);border:1px solid var(--line);overflow:hidden}
+.fundo .tm{height:430px}
+@media(max-width:860px){.tm{height:300px}.fundo .tm{height:360px}}
+.tile{
+  position:absolute;border:none;border-radius:3px;padding:6px 8px;overflow:hidden;text-align:left;cursor:pointer;
+  display:flex;flex-direction:column;gap:1px;font-family:var(--sans);
 }
-.cat:hover{background:var(--surface-2)}
-.cat[aria-expanded="true"]{background:var(--surface-2)}
-.cat-name{display:flex;align-items:center;gap:8px;font-weight:600;font-size:13.5px;letter-spacing:-.005em}
-.cat-name .caret{color:var(--ink-3);transition:transform .18s ease;flex:none;font-size:10px}
-.cat[aria-expanded="true"] .caret{transform:rotate(90deg)}
-.cat-name .flag{
-  flex:none;width:17px;height:17px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;
-  font-family:var(--display);font-size:11px;font-weight:700;color:var(--nota-ink);
-  background:var(--nota-bg);border:1px solid var(--nota-line);
+.tile.leaf{cursor:default}
+.tile:hover{filter:saturate(1.15) brightness(1.06)}
+.tile::after{content:"";position:absolute;inset:0;border-radius:3px;border:2px solid transparent}
+.tile:hover::after,.tile.sel::after{border-color:var(--ink)}
+.tile .t-nm{font-size:11.5px;font-weight:600;line-height:1.2;letter-spacing:-.005em;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;word-break:normal;overflow-wrap:break-word}
+.tile.temflag .t-nm{padding-right:17px}
+.tile .t-vl{font-family:var(--mono);font-size:11px;font-variant-numeric:tabular-nums;opacity:.9}
+.tile .t-fl{position:absolute;top:5px;right:6px;width:15px;height:15px;border-radius:50%;font-size:10px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;background:var(--nota-bg);color:var(--nota-ink);border:1px solid var(--nota-line)}
+.ink-claro{color:#ffffff}
+.ink-escuro{color:#0f171e}
+.tm-falta{
+  position:absolute;left:0;right:0;bottom:0;border:1px dashed var(--line-2);border-radius:6px;margin:2px;
+  display:flex;align-items:center;justify-content:center;text-align:center;padding:8px;
+  font-size:11.5px;color:var(--ink-3);line-height:1.35;
 }
-.plot{position:relative;display:flex;flex-direction:column;gap:2px;padding:3px 0}
-.plot::before{
-  content:"";position:absolute;inset:0;pointer-events:none;
-  background:repeating-linear-gradient(to right,var(--line) 0 1px,transparent 1px 25%);
-  opacity:.75;
-}
-.bar-line{position:relative;height:15px}
-.bar-line.sm{height:10px}
-.bar{
-  position:absolute;left:0;top:0;bottom:0;border-radius:2px 4px 4px 2px;min-width:2px;
-  transition:width .32s cubic-bezier(.22,.61,.36,1);
-}
-.bar.dre{background:var(--dre)} .bar.caixa{background:var(--caixa)}
-.bar-val{
-  position:absolute;top:50%;transform:translateY(-50%);white-space:nowrap;
-  font-family:var(--mono);font-size:11px;font-variant-numeric:tabular-nums;color:var(--ink-2);padding-left:7px;
-}
-.bar-val.inside{color:#fff;padding:0 7px 0 0;transform:translate(-100%,-50%)}
-.bar-line.sm .bar-val{font-size:10px}
-.diff{text-align:right;font-family:var(--mono);font-size:11.5px;font-variant-numeric:tabular-nums;color:var(--ink-2);line-height:1.3}
-.diff .pct{display:block;color:var(--ink-3);font-size:10.5px}
+.tm-vazio{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--ink-3);font-size:12.5px;text-align:center;padding:16px}
+.escala{display:flex;align-items:center;gap:6px;font-size:10.5px;color:var(--ink-3)}
+.escala .steps{display:flex;gap:2px}
+.escala .steps i{width:13px;height:8px;border-radius:2px;display:block}
 
-/* ---------- detalhe ---------- */
-.det{border-top:1px solid var(--line);background:var(--surface-2);margin:0 -20px;padding:16px 20px 20px}
-.det-head{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+/* faixa de comparação */
+.faixa{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border-top:1px solid var(--line);margin-top:14px}
+.faixa div{background:var(--surface);padding:11px 20px}
+.faixa .f-lbl{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3);font-weight:600}
+.faixa .f-vl{font-family:var(--mono);font-size:15px;font-weight:600;font-variant-numeric:tabular-nums;margin-top:2px}
+.faixa .f-sub{font-size:11.5px;color:var(--ink-3)}
+@media(max-width:640px){.faixa{grid-template-columns:1fr}}
+
+/* detalhamento */
+.det{padding:16px 20px 20px;background:var(--surface-2);border-top:1px solid var(--line)}
+.det-head{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:10px}
 .det-head h3{font-size:13.5px}
 .det-head .cnt{font-size:11.5px;color:var(--ink-3)}
 .nota{
@@ -205,16 +215,10 @@ button{font:inherit;color:inherit}
   border-radius:7px;padding:10px 13px;margin:0 0 14px;font-size:12.5px;color:var(--nota-ink);line-height:1.45;
 }
 .nota svg{flex:none;margin-top:1px}
-.det-sub{font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin:16px 0 6px}
-.item{padding:5px 0;border-top:1px dotted var(--line)}
-.item:first-of-type{border-top:none}
-.item .nm{font-size:12.5px;color:var(--ink-2);line-height:1.3;overflow-wrap:anywhere}
-.item.off .nm{color:var(--ink-3)}
-.item.off .bar{opacity:.5;background-image:repeating-linear-gradient(135deg,rgba(255,255,255,.6) 0 2px,transparent 2px 5px)}
-.bar-val.zero{color:var(--ink-3)}
-.bar-val.fora{color:var(--ink-3)}
-.tot-row{border-top:1px solid var(--line-2);margin-top:8px;padding-top:8px;font-weight:600}
-.tot-row .nm{color:var(--ink)}
+.det-sub{font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin:16px 0 4px}
+tr.off td{color:var(--ink-3)}
+tr.hl td{background:var(--dre-soft)}
+td .tag{font-size:10px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-3);border:1px solid var(--line-2);border-radius:4px;padding:1px 5px;margin-left:7px}
 
 /* ---------- tabela ---------- */
 .tabela-wrap{overflow-x:auto;margin-top:14px}
@@ -279,7 +283,7 @@ tbody td.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
     <div class="panel-head">
       <div>
         <h2>Categorias: DRE contra Fluxo de Caixa</h2>
-        <p>Clique em uma categoria para abrir os itens que a compõem, lado a lado nos dois regimes.</p>
+        <p>Cada retângulo é uma categoria e a área acompanha o valor. Clique para subdividir a categoria nos seus itens, nos dois regimes ao mesmo tempo.</p>
       </div>
       <div class="legend">
         <b><i class="sw-dre"></i>DRE (competência)</b>
@@ -287,7 +291,10 @@ tbody td.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
         <button class="btn-link" id="btn-tabela">Ver como tabela</button>
       </div>
     </div>
-    <div class="chart" id="chart"></div>
+    <div class="crumbs" id="crumbs"></div>
+    <div class="tm-wrap" id="tm"></div>
+    <div class="faixa" id="faixa"></div>
+    <div id="detalhe"></div>
   </section>
 
   <div id="tabela"></div>
@@ -618,7 +625,7 @@ var DADOS_PADRAO = {"meta":{"arquivo":"f52565c4-DRE_E_FLUXO_DE_CAIXA_B_ZIOS_2026
 
 /* =========================== estado e formatação =========================== */
 var CHAVE_LS = 'dre-fluxo-buzios:v1';
-var estado = { dados: null, periodo: 'acum', aberta: null, todos: {}, tabela: false, custom: false };
+var estado = { dados: null, periodo: 'acum', aberta: null, tabela: false, custom: false };
 
 var brl = function (v) { return (v < 0 ? '-' : '') + 'R$ ' + Math.abs(v).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); };
 var brlCurto = function (v) {
@@ -695,55 +702,59 @@ function renderKpis() {
   document.getElementById('kpis').innerHTML = html;
 }
 
-/* =========================== gráfico =========================== */
-function escalaBonita(max) {
-  if (max <= 0) return 1;
-  var exp = Math.pow(10, Math.floor(Math.log10(max)));
-  var passos = [1, 1.25, 1.5, 2, 2.5, 3, 4, 5, 6, 8, 10];
-  for (var i = 0; i < passos.length; i++) {
-    if (passos[i] * exp >= max) return passos[i] * exp;
+/* =========================== treemap =========================== */
+/* algoritmo squarified: fatia o retângulo em linhas mantendo as áreas
+   proporcionais aos valores e os blocos o mais quadrados possível. */
+function pior(linha, soma, lado) {
+  var mx = Math.max.apply(null, linha), mn = Math.min.apply(null, linha);
+  var s2 = soma * soma, l2 = lado * lado;
+  return Math.max(l2 * mx / s2, s2 / (l2 * mn));
+}
+function squarify(valores, x, y, w, h) {
+  var total = valores.reduce(function (a, b) { return a + b; }, 0);
+  var res = [];
+  if (total <= 0 || w <= 0 || h <= 0) return res;
+  var escala = (w * h) / total;
+  var areas = valores.map(function (v) { return v * escala; });
+  var i = 0, rx = x, ry = y, rw = w, rh = h;
+  while (i < areas.length && rw > 0.5 && rh > 0.5) {
+    var vertical = rw >= rh;
+    var lado = vertical ? rh : rw;
+    var linha = [areas[i]], soma = areas[i], j = i + 1;
+    while (j < areas.length) {
+      var nova = linha.concat([areas[j]]);
+      if (pior(linha, soma, lado) >= pior(nova, soma + areas[j], lado)) {
+        linha = nova; soma += areas[j]; j++;
+      } else break;
+    }
+    var espessura = soma / lado, off = 0;
+    for (var k = 0; k < linha.length; k++) {
+      var comp = linha[k] / espessura;
+      res.push(vertical
+        ? { x: rx, y: ry + off, w: espessura, h: comp }
+        : { x: rx + off, y: ry, w: comp, h: espessura });
+      off += comp;
+    }
+    if (vertical) { rx += espessura; rw -= espessura; } else { ry += espessura; rh -= espessura; }
+    i = j;
   }
-  return 10 * exp;
+  while (res.length < areas.length) res.push({ x: rx, y: ry, w: 0, h: 0 });
+  return res;
 }
 
-function barra(valor, max, classe, pequena, sempreFora) {
-  var linha = '<div class="bar-line' + (pequena ? ' sm' : '') + '">';
-  if (Math.abs(valor) < 0.005) {
-    return linha + '<span class="bar-val zero" style="left:0">—</span></div>';
-  }
-  var w = max > 0 ? Math.min(100, valor / max * 100) : 0;
-  var dentro = !sempreFora && w >= 76;
-  var lbl = '<span class="bar-val' + (dentro ? ' inside' : (sempreFora ? ' fora' : '')) + '" style="left:' + w + '%">' +
-    esc(brlCurto(valor)) + '</span>';
-  return linha + '<div class="bar ' + classe + '" style="width:' + w + '%"></div>' + lbl + '</div>';
-}
+var atual = { itens: [], cat: null };
 
-function chipDiff(dre, fluxo) {
-  var d = fluxo - dre;
-  var seta = Math.abs(d) < 0.01 ? '=' : (d > 0 ? '▲' : '▼');
-  var rel = dre ? '<span class="pct">' + (d > 0 ? '+' : '') + pct(d / Math.abs(dre)) + '</span>' : '<span class="pct">—</span>';
-  return '<div class="diff" title="Fluxo de Caixa menos DRE">' + seta + ' ' + esc(brlCurto(Math.abs(d))) + rel + '</div>';
+function temNota(c) {
+  return !!(c.nota && (c.nota.sempre || (c.nota.mes !== undefined && mesesSelecionados().indexOf(c.nota.mes) >= 0)));
 }
-
-function linhaItem(nome, dre, fluxo, max, fora, semFluxo) {
-  return '<div class="item row-grid' + (fora ? ' off' : '') + '" data-nome="' + esc(nome) + '">' +
-    '<div class="nm" title="' + esc(nome) + '">' + esc(nome) + (fora ? ' · fora do total' : '') + '</div>' +
-    '<div class="plot">' +
-      barra(dre, max, 'dre', true, fora) +
-      (semFluxo ? '<div class="bar-line sm"><span class="bar-val fora" style="left:0">sem lançamento no fluxo</span></div>' : barra(fluxo, max, 'caixa', true, fora)) +
-    '</div>' +
-    (semFluxo ? '<div class="diff">—</div>' : chipDiff(dre, fluxo)) +
-    '</div>';
-}
-
 function itensDoDetalhe(cat) {
   var mapa = {};
   cat.dre.itens.forEach(function (it) {
-    mapa[it.key] = mapa[it.key] || { nome: it.label, dre: 0, fluxo: 0 };
+    mapa[it.key] = mapa[it.key] || { key: it.key, nome: it.label, dre: 0, fluxo: 0 };
     mapa[it.key].dre += agrega(it.values);
   });
   cat.fluxo.itens.forEach(function (it) {
-    mapa[it.key] = mapa[it.key] || { nome: it.label, dre: 0, fluxo: 0 };
+    mapa[it.key] = mapa[it.key] || { key: it.key, nome: it.label, dre: 0, fluxo: 0 };
     mapa[it.key].fluxo += agrega(it.values);
   });
   return Object.keys(mapa).map(function (k) { return mapa[k]; })
@@ -751,100 +762,195 @@ function itensDoDetalhe(cat) {
     .sort(function (a, b) { return Math.max(b.dre, b.fluxo) - Math.max(a.dre, a.fluxo); });
 }
 
-var ICONE_NOTA = '<svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="8" cy="8" r="6.5"/><path d="M8 7.2v4M8 4.8v.6" stroke-linecap="round"/></svg>';
-
-function notasDaCategoria(cat) {
-  if (!cat.nota) return '';
-  var vale = cat.nota.sempre || (cat.nota.mes !== undefined && mesesSelecionados().indexOf(cat.nota.mes) >= 0);
-  if (!vale) return '';
-  return '<p class="nota">' + ICONE_NOTA + '<span>' + cat.nota.texto + '</span></p>';
+function passo(valor, maior) {
+  var r = maior > 0 ? valor / maior : 0;
+  if (r >= 0.6) return 1;
+  if (r >= 0.3) return 2;
+  if (r >= 0.14) return 3;
+  if (r >= 0.05) return 4;
+  return 5;
 }
+
+function desenhaTreemap(el, regime) {
+  var W = el.clientWidth, H = el.clientHeight;
+  if (!W || !H) return;
+  /* os dois painéis seguem a mesma ordem (pelo maior valor entre os regimes),
+     para o mesmo item cair aproximadamente no mesmo lugar dos dois lados. */
+  var lista = atual.itens
+    .map(function (it) { return { it: it, v: it[regime] }; })
+    .filter(function (o) { return o.v > 0.005; });
+
+  var totalRegime = lista.reduce(function (a, o) { return a + o.v; }, 0);
+  var maiorTotal = Math.max(atual.totalDre, atual.totalFluxo);
+  if (!lista.length || maiorTotal <= 0) {
+    el.innerHTML = '<div class="tm-vazio">Sem valores lançados neste período</div>';
+    return;
+  }
+  /* a altura usada é proporcional ao total do regime: os dois painéis
+     ficam comparáveis em área, e a folga mostra o tamanho da diferença. */
+  var fracao = totalRegime / maiorTotal;
+  var usada = Math.max(24, H * fracao);
+  var rects = squarify(lista.map(function (o) { return o.v; }), 0, 0, W, usada);
+  var maior = lista[0].v;
+
+  var html = lista.map(function (o, i) {
+    var r = rects[i];
+    if (!r || r.w < 1 || r.h < 1) return '';
+    var p = passo(o.v, maior);
+    var cor = (regime === 'dre' ? '--dre-' : '--cx-') + p;
+    var tinta = p <= 2 ? 'ink-claro' : 'ink-escuro';
+    var porLinha = Math.floor((r.w - 15) / 6);
+    var linhas = porLinha >= 5 ? Math.min(2, Math.ceil(o.it.nome.length / porLinha)) : 0;
+    var alturaNome = linhas * 14 + 8;
+    var cabe = linhas > 0 && r.h >= alturaNome;
+    var cabeValor = cabe && r.w >= 58 && r.h >= alturaNome + 14;
+    var temFlag = o.it.nota && r.w >= 70 && r.h >= 34;
+    var texto = cabe
+      ? '<span class="t-nm">' + esc(o.it.nome) + '</span>' + (cabeValor ? '<span class="t-vl">' + esc(brlCurto(o.v)) + '</span>' : '')
+      : '';
+    return '<button class="tile ' + tinta + (o.it.drill ? '' : ' leaf') + (temFlag ? ' temflag' : '') + '"' +
+      ' style="left:' + (r.x + 1) + 'px;top:' + (r.y + 1) + 'px;width:' + Math.max(0, r.w - 2) + 'px;height:' + Math.max(0, r.h - 2) + 'px;background:var(' + cor + ')"' +
+      ' data-key="' + esc(o.it.key) + '"' + (o.it.drill ? ' data-drill="1"' : '') +
+      ' title="' + esc(o.it.nome + ' · ' + brl(o.v)) + '">' +
+      texto + (temFlag ? '<span class="t-fl" aria-hidden="true">i</span>' : '') +
+      '</button>';
+  }).join('');
+
+  if (H - usada > 26) {
+    var falta = maiorTotal - totalRegime;
+    html += '<div class="tm-falta" style="top:' + usada + 'px">' +
+      esc(brlCurto(falta)) + ' a menos que o ' + (regime === 'dre' ? 'Fluxo de Caixa' : 'DRE') + '</div>';
+  }
+  el.innerHTML = html;
+}
+
+function layout() {
+  var el = document.getElementById('tm');
+  if (!el || !atual.itens.length) return;
+  desenhaTreemap(el.querySelector('[data-reg="dre"] .tm'), 'dre');
+  desenhaTreemap(el.querySelector('[data-reg="fluxo"] .tm'), 'fluxo');
+}
+
+function escalaKey(regime) {
+  var v = [1, 2, 3, 4, 5].map(function (p) {
+    return '<i style="background:var(' + (regime === 'dre' ? '--dre-' : '--cx-') + p + ')"></i>';
+  }).reverse().join('');
+  return '<div class="escala"><span>menor</span><span class="steps">' + v + '</span><span>maior</span></div>';
+}
+
+/* =========================== render do painel =========================== */
+var ICONE_NOTA = '<svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="8" cy="8" r="6.5"/><path d="M8 7.2v4M8 4.8v.6" stroke-linecap="round"/></svg>';
 
 function renderChart() {
   var d = estado.dados;
-  var linhas = d.categorias.map(function (c) {
-    return { cat: c, dre: agrega(c.dre.total), fluxo: agrega(c.fluxo.total) };
-  });
-  var maxCat = 0;
-  linhas.forEach(function (l) { maxCat = Math.max(maxCat, l.dre, l.fluxo); });
-  var max = escalaBonita(maxCat);
+  var cat = estado.aberta ? d.categorias.filter(function (c) { return c.key === estado.aberta; })[0] : null;
+  var itens = cat
+    ? itensDoDetalhe(cat)
+    : d.categorias.map(function (c) {
+        return { key: c.key, nome: c.label, dre: agrega(c.dre.total), fluxo: agrega(c.fluxo.total), nota: temNota(c), drill: true };
+      });
+  itens.sort(function (a, b) { return Math.max(b.dre, b.fluxo) - Math.max(a.dre, a.fluxo); });
 
-  var ticks = [0, .25, .5, .75, 1].map(function (f) {
-    return '<span style="left:' + (f * 100) + '%">' + esc(f === 0 ? '0' : brlCurto(max * f)) + '</span>';
-  }).join('');
+  /* muitos itens viram lascas ilegíveis: o rabo da lista vira um bloco
+     "Outros", e a tabela abaixo continua listando item por item. */
+  var LIMITE = 14, blocos = itens;
+  if (itens.length > LIMITE + 1) {
+    var resto = itens.slice(LIMITE);
+    blocos = itens.slice(0, LIMITE).concat([{
+      key: '__OUTROS__',
+      nome: 'Outros (' + resto.length + ' itens)',
+      dre: resto.reduce(function (a, i) { return a + Math.max(0, i.dre); }, 0),
+      fluxo: resto.reduce(function (a, i) { return a + Math.max(0, i.fluxo); }, 0)
+    }]);
+  }
+  atual = {
+    itens: blocos, todos: itens, cat: cat,
+    totalDre: itens.reduce(function (a, i) { return a + Math.max(0, i.dre); }, 0),
+    totalFluxo: itens.reduce(function (a, i) { return a + Math.max(0, i.fluxo); }, 0)
+  };
 
-  var html = '<div class="axis row-grid"><div></div><div class="ticks">' + ticks + '</div><div></div></div>';
+  /* trilha */
+  var crumbs = '<button class="btn-link" data-raiz="1">Todas as categorias</button>';
+  if (cat) crumbs += '<span class="sep">›</span><span class="aqui">' + esc(cat.label) + '</span>' +
+    '<button class="btn-link voltar" data-raiz="1">← voltar</button>';
+  else crumbs = '<span class="aqui">Todas as categorias</span><span class="sep">·</span>' +
+    '<span>clique em um retângulo para subdividir</span>';
+  document.getElementById('crumbs').innerHTML = crumbs;
 
-  linhas.forEach(function (l) {
-    var c = l.cat, aberta = estado.aberta === c.key;
-    var temNota = c.nota && (c.nota.sempre || (c.nota.mes !== undefined && mesesSelecionados().indexOf(c.nota.mes) >= 0));
-    html += '<button class="cat row-grid" data-cat="' + c.key + '" aria-expanded="' + aberta + '">' +
-      '<span class="cat-name"><span class="caret">▶</span>' + esc(c.label) +
-        (temNota ? '<span class="flag" title="Há uma observação sobre esta categoria" aria-label="Categoria com observação">i</span>' : '') + '</span>' +
-      '<span class="plot" data-tip-cat="' + c.key + '">' +
-        barra(l.dre, max, 'dre') + barra(l.fluxo, max, 'caixa') +
-      '</span>' +
-      chipDiff(l.dre, l.fluxo) +
-      '</button>';
+  /* painéis */
+  var caixaTm = document.getElementById('tm');
+  caixaTm.className = 'tm-wrap' + (cat ? ' fundo' : '');
+  caixaTm.innerHTML = [['dre', 'DRE (competência)', 'sw-dre', atual.totalDre],
+                                             ['fluxo', 'Fluxo de Caixa (pago)', 'sw-caixa', atual.totalFluxo]]
+    .map(function (r) {
+      return '<div class="tm-panel" data-reg="' + r[0] + '">' +
+        '<div class="tm-head"><span class="nm"><i class="' + r[2] + '"></i>' + r[1] + '</span>' +
+        '<span class="tot">' + esc(brl(r[3])) + '</span></div>' +
+        '<div class="tm"></div>' + escalaKey(r[0]) + '</div>';
+    }).join('');
 
-    if (!aberta) return;
+  /* faixa de comparação */
+  var dif = atual.totalFluxo - atual.totalDre;
+  var rel = atual.totalDre ? (dif > 0 ? '+' : '') + pct(dif / Math.abs(atual.totalDre)) : '—';
+  document.getElementById('faixa').innerHTML =
+    '<div><div class="f-lbl">' + (cat ? esc(cat.label) : 'Todas as categorias') + '</div>' +
+      '<div class="f-sub" style="margin-top:4px">' + esc(rotuloPeriodo()) + ' · ' + itens.length + ' ' + (cat ? 'itens' : 'categorias') + '</div></div>' +
+    '<div><div class="f-lbl">Diferença (fluxo − DRE)</div><div class="f-vl">' + esc(brl(dif)) + '</div></div>' +
+    '<div><div class="f-lbl">Variação</div><div class="f-vl">' + rel + '</div>' +
+      '<div class="f-sub">' + (dif >= 0 ? 'o caixa pagou mais do que o DRE reconheceu' : 'o DRE reconheceu mais do que o caixa pagou') + '</div></div>';
 
-    var itens = itensDoDetalhe(c);
-    var mostrarTodos = !!estado.todos[c.key];
-    var LIMITE = 12;
-    var visiveis = mostrarTodos ? itens : itens.slice(0, LIMITE);
-    var maxItem = 0;
-    itens.forEach(function (i) { maxItem = Math.max(maxItem, i.dre, i.fluxo); });
-    (c.foraDoTotal || []).forEach(function (f) { maxItem = Math.max(maxItem, agrega(f.dre), agrega(f.fluxo)); });
-    var escalaItem = escalaBonita(maxItem);
-
-    var det = '<div class="det">';
-    det += '<div class="det-head"><h3>Detalhamento de ' + esc(c.label) + '</h3>' +
-           '<span class="cnt">' + itens.length + ' itens · ' + esc(rotuloPeriodo()) + ' · escala própria até ' + esc(brlCurto(escalaItem)) + '</span></div>';
-    det += notasDaCategoria(c);
-
-    det += visiveis.map(function (i) { return linhaItem(i.nome, i.dre, i.fluxo, escalaItem, false, false); }).join('');
-
-    if (itens.length > LIMITE) {
-      det += '<button class="btn-link" data-todos="' + c.key + '">' +
-        (mostrarTodos ? 'Mostrar apenas os 12 maiores' : 'Mostrar todos os ' + itens.length + ' itens') + '</button>';
-    }
-
-    det += '<div class="item row-grid tot-row"><div class="nm">Total ' + esc(c.label) + '</div>' +
-      '<div class="plot">' + barra(l.dre, escalaItem, 'dre', true) + barra(l.fluxo, escalaItem, 'caixa', true) + '</div>' +
-      chipDiff(l.dre, l.fluxo) + '</div>';
-
-    if (c.foraDoTotal && c.foraDoTotal.length) {
-      var fora = c.foraDoTotal.filter(function (f) { return agrega(f.dre) || agrega(f.fluxo); });
-      if (fora.length) {
-        det += '<div class="det-sub">Fora da somatória — exibidos apenas como referência</div>';
-        det += fora.map(function (f) {
-          return linhaItem(f.label, agrega(f.dre), agrega(f.fluxo), escalaItem, true, !f.temFluxo);
-        }).join('');
-      }
-    }
-    det += '</div>';
-    html += det;
-  });
-
-  document.getElementById('chart').innerHTML = html;
-  renderTabela(linhas);
+  renderDetalhe(cat, itens);
+  renderTabela(itens, cat);
+  document.getElementById('faixa').setAttribute('data-nivel', cat ? 'itens' : 'categorias');
+  layout();
 }
 
-/* =========================== tabela alternativa =========================== */
-function renderTabela(linhas) {
+function linhaTabela(nome, dre, fluxo, marca) {
+  var dif = fluxo - dre;
+  if (Math.abs(dif) < 0.005) dif = 0;
+  return '<tr class="' + (marca ? 'off' : '') + '" data-nome="' + esc(nome) + '">' +
+    '<td>' + esc(nome) + (marca ? '<span class="tag">' + marca + '</span>' : '') + '</td>' +
+    '<td class="num">' + (Math.abs(dre) < 0.005 ? '—' : esc(brl(dre))) + '</td>' +
+    '<td class="num">' + (Math.abs(fluxo) < 0.005 ? '—' : esc(brl(fluxo))) + '</td>' +
+    '<td class="num">' + (marca ? '' : (dif > 0 ? '+' : '') + esc(brl(dif))) + '</td></tr>';
+}
+
+function renderDetalhe(cat, itens) {
+  var el = document.getElementById('detalhe');
+  if (!cat) { el.innerHTML = ''; return; }
+  var html = '<div class="det"><div class="det-head"><h3>Itens de ' + esc(cat.label) + '</h3>' +
+    '<span class="cnt">' + itens.length + ' itens · ' + esc(rotuloPeriodo()) + '</span></div>';
+  if (temNota(cat)) html += '<p class="nota">' + ICONE_NOTA + '<span>' + cat.nota.texto + '</span></p>';
+
+  var corpo = itens.map(function (i) { return linhaTabela(i.nome, i.dre, i.fluxo, null); }).join('');
+  corpo += '<tr class="tot"><td><strong>Total ' + esc(cat.label) + '</strong></td>' +
+    '<td class="num"><strong>' + esc(brl(atual.totalDre)) + '</strong></td>' +
+    '<td class="num"><strong>' + esc(brl(atual.totalFluxo)) + '</strong></td>' +
+    '<td class="num"><strong>' + esc(brl(atual.totalFluxo - atual.totalDre)) + '</strong></td></tr>';
+
+  var fora = (cat.foraDoTotal || []).filter(function (f) { return agrega(f.dre) || agrega(f.fluxo); });
+  fora.forEach(function (f) {
+    corpo += linhaTabela(f.label, agrega(f.dre), f.temFluxo ? agrega(f.fluxo) : 0, 'fora do total');
+  });
+
+  html += '<div class="tabela-wrap"><table><thead><tr><th>Item</th><th>DRE</th><th>Fluxo de Caixa</th><th>Diferença</th></tr></thead>' +
+    '<tbody>' + corpo + '</tbody></table></div>';
+  if (fora.length) html += '<p class="f-sub" style="margin:10px 0 0;font-size:11.5px;color:var(--ink-3)">' +
+    'As linhas marcadas como “fora do total” aparecem só como referência: elas não entram na somatória da categoria nem nos retângulos acima.</p>';
+  html += '</div>';
+  el.innerHTML = html;
+}
+
+/* =========================== tabela das categorias =========================== */
+function renderTabela(itens, cat) {
   var el = document.getElementById('tabela');
-  if (!estado.tabela) { el.innerHTML = ''; return; }
-  var corpo = linhas.map(function (l) {
-    return '<tr><td>' + esc(l.cat.label) + '</td>' +
-      '<td class="num">' + esc(brl(l.dre)) + '</td>' +
-      '<td class="num">' + esc(brl(l.fluxo)) + '</td>' +
-      '<td class="num">' + esc(brl(l.fluxo - l.dre)) + '</td></tr>';
-  }).join('');
-  el.innerHTML = '<div class="panel" style="margin-top:16px"><div class="panel-head"><h2>Tabela — ' + esc(rotuloPeriodo()) + '</h2></div>' +
+  if (!estado.tabela || cat) { el.innerHTML = ''; return; }
+  var corpo = itens.map(function (i) { return linhaTabela(i.nome, i.dre, i.fluxo, null); }).join('');
+  el.innerHTML = '<div class="panel" style="margin-top:16px"><div class="panel-head"><h2>Tabela das categorias — ' + esc(rotuloPeriodo()) + '</h2></div>' +
     '<div class="tabela-wrap" style="padding:0 20px 18px"><table><thead><tr><th>Categoria</th><th>DRE</th><th>Fluxo de Caixa</th><th>Diferença</th></tr></thead><tbody>' +
     corpo + '</tbody></table></div></div>';
 }
+
 
 /* =========================== período =========================== */
 function renderChips() {
@@ -868,59 +974,64 @@ function render() {
 
 /* =========================== tooltip =========================== */
 var tip = document.getElementById('tip');
+function escondeTip() { tip.style.opacity = '0'; }
 function mostraTip(html, x, y) {
   tip.innerHTML = html;
   tip.style.opacity = '1';
   var r = tip.getBoundingClientRect();
-  var left = Math.min(window.innerWidth - r.width - 10, Math.max(10, x + 14));
-  var top = Math.max(10, y - r.height - 12);
-  tip.style.left = left + 'px';
-  tip.style.top = top + 'px';
+  tip.style.left = Math.min(window.innerWidth - r.width - 10, Math.max(10, x + 14)) + 'px';
+  tip.style.top = Math.max(10, y - r.height - 12) + 'px';
 }
-function escondeTip() { tip.style.opacity = '0'; }
-
 document.addEventListener('mousemove', function (ev) {
-  var alvo = ev.target.closest ? ev.target.closest('.cat, .item') : null;
+  var alvo = ev.target.closest ? ev.target.closest('.tile') : null;
   if (!alvo) { escondeTip(); return; }
-  var d = estado.dados, nome, dre, fluxo;
-  if (alvo.classList.contains('cat')) {
-    var cat = d.categorias.filter(function (c) { return c.key === alvo.dataset.cat; })[0];
-    if (!cat) { escondeTip(); return; }
-    nome = cat.label; dre = agrega(cat.dre.total); fluxo = agrega(cat.fluxo.total);
-  } else {
-    nome = alvo.dataset.nome || '';
-    var vals = alvo.querySelectorAll('.bar-val');
-    if (!vals.length) { escondeTip(); return; }
-    var achado = itensDoDetalhe(d.categorias.filter(function (c) { return c.key === estado.aberta; })[0] || { dre: { itens: [] }, fluxo: { itens: [] } })
-      .filter(function (i) { return i.nome === nome; })[0];
-    if (!achado) { escondeTip(); return; }
-    dre = achado.dre; fluxo = achado.fluxo;
-  }
-  mostraTip('<div class="t-nm">' + esc(nome) + '</div>' +
-    '<div class="t-ln"><span>DRE</span><span>' + esc(brl(dre)) + '</span></div>' +
-    '<div class="t-ln"><span>Fluxo</span><span>' + esc(brl(fluxo)) + '</span></div>' +
-    '<div class="t-ln"><span>Diferença</span><span>' + esc(brl(fluxo - dre)) + '</span></div>', ev.clientX, ev.clientY);
+  var item = atual.itens.filter(function (i) { return String(i.key) === alvo.dataset.key; })[0];
+  if (!item) { escondeTip(); return; }
+  var dif = item.fluxo - item.dre;
+  mostraTip('<div class="t-nm">' + esc(item.nome) + '</div>' +
+    '<div class="t-ln"><span>DRE</span><span>' + esc(brl(item.dre)) + '</span></div>' +
+    '<div class="t-ln"><span>Fluxo</span><span>' + esc(brl(item.fluxo)) + '</span></div>' +
+    '<div class="t-ln"><span>Diferença</span><span>' + (dif > 0 ? '+' : '') + esc(brl(dif)) + '</span></div>' +
+    (item.drill ? '<div class="t-ln" style="margin-top:4px;opacity:.75"><span>clique para subdividir</span></div>' : ''),
+    ev.clientX, ev.clientY);
 });
 
 /* =========================== eventos =========================== */
+function destacaLinha(nome) {
+  var linhas = document.querySelectorAll('#detalhe tr');
+  for (var i = 0; i < linhas.length; i++) linhas[i].classList.remove('hl');
+  for (var j = 0; j < linhas.length; j++) {
+    if (linhas[j].dataset.nome === nome) {
+      linhas[j].classList.add('hl');
+      linhas[j].scrollIntoView({ block: 'center', behavior: 'smooth' });
+      break;
+    }
+  }
+}
 document.addEventListener('click', function (ev) {
   var chip = ev.target.closest('.chip');
   if (chip && !chip.disabled) {
     estado.periodo = chip.dataset.p === 'acum' ? 'acum' : parseInt(chip.dataset.p, 10);
     render(); return;
   }
-  var todos = ev.target.closest('[data-todos]');
-  if (todos) {
-    estado.todos[todos.dataset.todos] = !estado.todos[todos.dataset.todos];
-    renderChart(); return;
+  if (ev.target.closest('[data-raiz]')) {
+    estado.aberta = null; escondeTip(); renderChart(); return;
   }
-  var cat = ev.target.closest('.cat');
-  if (cat) {
-    estado.aberta = estado.aberta === cat.dataset.cat ? null : cat.dataset.cat;
-    renderChart();
-    if (estado.aberta) {
-      var novo = document.querySelector('.cat[data-cat="' + estado.aberta + '"]');
-      if (novo) novo.focus({ preventScroll: true });
+  var tile = ev.target.closest('.tile');
+  if (tile) {
+    if (tile.dataset.drill) {
+      estado.aberta = tile.dataset.key;
+      escondeTip();
+      renderChart();
+      var painel = document.getElementById('crumbs');
+      if (painel) painel.scrollIntoView({ block: 'start', behavior: 'smooth' });
+    } else {
+      var todos = document.querySelectorAll('.tile');
+      for (var i = 0; i < todos.length; i++) {
+        todos[i].classList.toggle('sel', todos[i].dataset.key === tile.dataset.key);
+      }
+      var item = atual.itens.filter(function (o) { return String(o.key) === tile.dataset.key; })[0];
+      if (item) destacaLinha(item.nome);
     }
     return;
   }
@@ -930,6 +1041,12 @@ document.getElementById('btn-tabela').addEventListener('click', function () {
   estado.tabela = !estado.tabela;
   this.textContent = estado.tabela ? 'Ocultar tabela' : 'Ver como tabela';
   renderChart();
+});
+
+var reflow;
+window.addEventListener('resize', function () {
+  clearTimeout(reflow);
+  reflow = setTimeout(layout, 120);
 });
 
 /* =========================== importação =========================== */
