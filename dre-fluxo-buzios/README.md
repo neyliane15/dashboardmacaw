@@ -11,24 +11,21 @@ carregado por CDN; nenhum dado é enviado para servidor algum.
 
 - **4 indicadores** do período escolhido: Faturamento Bruto (Receita Bruta), CMV,
   CMV Perfeito e EBITDA — todos lidos da aba `DRE`.
-- **Um gráfico em árvore (treemap)** em dois painéis lado a lado — DRE e Fluxo de
-  Caixa — com as categorias Operacionais, Pessoal, Administrativo, CTO, Utilities,
-  Terceiros, Marketing, Financeiras e o par Tributos Diversos (DRE) × Impostos
-  (Fluxo). A área de cada retângulo acompanha o valor; clicar em um retângulo
-  subdivide a categoria nos seus itens, nos dois painéis ao mesmo tempo, com a
-  tabela item a item logo abaixo.
-- Os dois painéis são comparáveis em área: o de menor total ocupa uma altura
-  proporcional e a folga tracejada mostra o tamanho da diferença. Os dois seguem a
-  mesma ordem de itens, para o mesmo item cair no mesmo lugar dos dois lados.
-- A partir de 15 itens, a cauda vira um bloco "Outros" no treemap para não virar
-  lasca ilegível — a tabela abaixo continua listando item por item.
+- **Um gráfico comparativo de barras**: para cada categoria, a barra do DRE e a barra
+  do Fluxo de Caixa, com a diferença em R$ e %. Categorias: Operacionais, Pessoal,
+  Administrativo, CTO, Utilities, Terceiros, Marketing, Financeiras e o par
+  Tributos Diversos (DRE) × Impostos (Fluxo).
+- **Clicando na categoria**, abre abaixo a tabela com os **itens do DRE** que formam
+  aquele valor — descrição, valor e participação na categoria. O detalhamento item a
+  item existe apenas no DRE; do Fluxo de Caixa vem só o total da categoria, exibido no
+  resumo (Total no DRE · Total no Fluxo · Diferença).
 - Filtro de período: acumulado ou mês a mês.
 
 ## Regras de negócio aplicadas
 
 1. **Material de limpeza e descartáveis** e **Sistema operacional de vendas** ficam
-   fora da somatória de Operacionais (e fora dos retângulos), mas continuam visíveis
-   na tabela de itens, marcados como "fora do total", com seus valores.
+   fora da somatória de Operacionais, mas continuam visíveis no detalhamento, no bloco
+   "Fora da somatória", com seus valores.
 2. **Administrativo** exibe a observação de que a **Fee Holding** é lançada no DRE e
    não entra no Fluxo de Caixa — origem da discrepância.
 3. **Utilities** exibe a observação de que o fluxo de janeiro pagou contas de
@@ -38,6 +35,28 @@ carregado por CDN; nenhum dado é enviado para servidor algum.
 
 Mapeamentos auxiliares: Administrativo do fluxo soma `ADMINISTRATIVO` + `HOLDING`;
 Financeiras do fluxo soma `FINANCEIRAS` + `TARIFA`.
+
+## Identidade
+
+Segue o manual de marca Macaw:
+
+| Uso | Cor |
+| --- | --- |
+| Fundo (claro) | OFF WHITE `#F2E3D6` |
+| Marca, barras do DRE, botões | VERDE `#7A731C` |
+| Apoio, sparklines, trilhos | VERDE CLARO `#CCC48F` |
+| Barras do Fluxo de Caixa | MARROM `#69593B`, aprofundado para `#4A3B22` |
+
+O marrom do manual foi escurecido só nas barras: lado a lado com o verde da marca, o
+`#69593B` original não se distingue o suficiente (ΔE 9,6 — abaixo do mínimo legível,
+inclusive para daltonismo). O `#4A3B22` é o mesmo matiz em um degrau mais escuro e
+resolve a leitura. No tema escuro os dois viram `#A89D3D` e `#8A6A46`, mantendo a
+mesma relação sobre fundo escuro.
+
+A logomarca (pássaro + tipografia) foi extraída em vetor do manual e vai embutida como
+SVG no `index.html`; os arquivos soltos estão em `logo-passaro.svg` e `logo-macaw.svg`.
+As fontes do manual (Anita e Mont) não estão disponíveis para web, então o painel usa
+**Poppins** — geométrica, próxima da Mont — e **IBM Plex Mono** nos números.
 
 ## Importar uma planilha nova
 
@@ -49,9 +68,8 @@ A leitura procura as abas e as colunas **pelo nome**, não pela posição:
 
 | Aba | Uso |
 | --- | --- |
-| `DRE` | totais das linhas (Receita Bruta, CMV, CMV Perfeito, EBITDA, Tributos Diversos) e itens por categoria, nas colunas `CATEGORIA` / `APLICACOES` |
+| `DRE` | linhas de indicadores (Receita Bruta, CMV, CMV Perfeito, EBITDA, Tributos Diversos) e itens por categoria, nas colunas `CATEGORIA` / `APLICACOES` |
 | `RELATÓRIO FLUXO DE CAIXA` | bloco `FLUXO DETALHADO`: total pago por categoria em cada mês |
-| `CONTAS A PAGAR` | detalhamento item a item, pelas colunas `MES PAGAMENTO`, `DESCRICAO`, `CATEGORIA DRE`, `CATEGORIA FLUXO` e `VALOR` |
 
 Linhas podem ser inseridas ou removidas na planilha sem quebrar o painel; o que não
 pode mudar são os nomes das abas, dos cabeçalhos de coluna e dos meses.
