@@ -1,0 +1,997 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DRE × Caixa Búzios</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+:root{
+  color-scheme: light;
+  --ground:#eef1f4;
+  --surface:#ffffff;
+  --surface-2:#f7f9fb;
+  --line:#dde3ea;
+  --line-2:#c5cdd6;
+  --ink:#0f171e;
+  --ink-2:#4b5866;
+  --ink-3:#7b8794;
+  --dre:#2a78d6;
+  --dre-soft:rgba(42,120,214,.14);
+  --caixa:#eb6834;
+  --caixa-soft:rgba(235,104,52,.16);
+  --nota-bg:#fdf3e3;
+  --nota-line:#d99a3c;
+  --nota-ink:#7a4d10;
+  --chip:#eef1f5;
+  --focus:#0f171e;
+  --shadow:0 1px 2px rgba(15,23,30,.06), 0 8px 24px -16px rgba(15,23,30,.28);
+  --display:"Bricolage Grotesque","Trebuchet MS",sans-serif;
+  --sans:"IBM Plex Sans",system-ui,-apple-system,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme: dark;
+    --ground:#0f1418;
+    --surface:#171d23;
+    --surface-2:#1c232a;
+    --line:#28313a;
+    --line-2:#3a454f;
+    --ink:#eef3f7;
+    --ink-2:#a6b2bd;
+    --ink-3:#7c8894;
+    --dre:#3987e5;
+    --dre-soft:rgba(57,135,229,.20);
+    --caixa:#d95926;
+    --caixa-soft:rgba(217,89,38,.22);
+    --nota-bg:rgba(217,154,60,.13);
+    --nota-line:#a9761f;
+    --nota-ink:#e8c68a;
+    --chip:#212a32;
+    --focus:#eef3f7;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 28px -18px rgba(0,0,0,.8);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --ground:#0f1418;
+  --surface:#171d23;
+  --surface-2:#1c232a;
+  --line:#28313a;
+  --line-2:#3a454f;
+  --ink:#eef3f7;
+  --ink-2:#a6b2bd;
+  --ink-3:#7c8894;
+  --dre:#3987e5;
+  --dre-soft:rgba(57,135,229,.20);
+  --caixa:#d95926;
+  --caixa-soft:rgba(217,89,38,.22);
+  --nota-bg:rgba(217,154,60,.13);
+  --nota-line:#a9761f;
+  --nota-ink:#e8c68a;
+  --chip:#212a32;
+  --focus:#eef3f7;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 28px -18px rgba(0,0,0,.8);
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0;background:var(--ground);color:var(--ink);
+  font-family:var(--sans);font-size:14px;line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3{font-family:var(--display);font-weight:700;margin:0;text-wrap:balance;letter-spacing:-.01em}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:3px}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1}
+.wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+
+/* ---------- topo ---------- */
+.topbar{
+  position:sticky;top:0;z-index:40;background:color-mix(in srgb,var(--ground) 88%,transparent);
+  backdrop-filter:blur(8px);border-bottom:1px solid var(--line);
+}
+.topbar-in{display:flex;align-items:center;gap:20px;flex-wrap:wrap;padding:14px 20px;max-width:1180px;margin:0 auto}
+.brand{display:flex;flex-direction:column;gap:2px;margin-right:auto}
+.brand h1{font-size:19px;line-height:1.15}
+.brand .sub{font-size:11.5px;color:var(--ink-3);letter-spacing:.09em;text-transform:uppercase;font-weight:500}
+.src{display:flex;align-items:center;gap:8px;font-size:11.5px;color:var(--ink-3);max-width:280px}
+.src .dot{width:6px;height:6px;border-radius:50%;background:var(--caixa);flex:none}
+.src span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.btn{
+  display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:7px;
+  border:1px solid var(--line-2);background:var(--surface);cursor:pointer;font-weight:500;font-size:13px;
+  transition:background .15s ease,border-color .15s ease;
+}
+.btn:hover{background:var(--surface-2);border-color:var(--ink-3)}
+.btn-primary{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.btn-primary:hover{background:var(--ink-2);border-color:var(--ink-2)}
+.btn-link{background:none;border:none;padding:4px 0;text-decoration:underline;text-underline-offset:3px;cursor:pointer;color:var(--ink-2);font-size:12.5px}
+.btn-link:hover{color:var(--ink)}
+
+/* ---------- período ---------- */
+.periodo{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:18px 0 4px}
+.periodo .lbl{font-size:11.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3);font-weight:500}
+.chips{display:flex;gap:5px;flex-wrap:wrap}
+.chip{
+  padding:5px 11px;border-radius:999px;border:1px solid var(--line);background:var(--surface);
+  font-size:12.5px;cursor:pointer;color:var(--ink-2);transition:all .13s ease;
+}
+.chip:hover:not(:disabled){border-color:var(--ink-3);color:var(--ink)}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink);font-weight:500}
+.chip:disabled{opacity:.32;cursor:not-allowed}
+
+/* ---------- kpis ---------- */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:16px 0 26px}
+@media(max-width:880px){.kpis{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:520px){.kpis{grid-template-columns:1fr}}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:16px 16px 12px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:9px}
+.kpi .k-lbl{font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600}
+.kpi .k-val{font-family:var(--mono);font-size:23px;font-weight:600;letter-spacing:-.02em;line-height:1.1}
+.kpi .k-meta{font-size:12px;color:var(--ink-2);display:flex;align-items:baseline;gap:6px;min-height:18px}
+.kpi .k-meta b{font-family:var(--mono);font-weight:600;color:var(--ink)}
+.spark{position:relative;display:flex;gap:2px;height:30px;margin-top:2px}
+.spark i{flex:1;position:relative;display:block}
+.spark i span{background:var(--line-2);border-radius:1.5px;display:block}
+.spark i.on span{background:var(--ink)}
+.spark .zero{position:absolute;left:0;right:0;height:1px;background:var(--line);pointer-events:none}
+
+/* ---------- painel do gráfico ---------- */
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);overflow:hidden}
+.panel-head{display:flex;align-items:flex-start;gap:18px;flex-wrap:wrap;padding:18px 20px 14px;border-bottom:1px solid var(--line)}
+.panel-head h2{font-size:16px}
+.panel-head p{margin:4px 0 0;font-size:12.5px;color:var(--ink-3);max-width:62ch}
+.legend{display:flex;gap:16px;margin-left:auto;align-items:center;flex-wrap:wrap}
+.legend b{display:flex;align-items:center;gap:7px;font-size:12.5px;font-weight:500;color:var(--ink-2)}
+.legend b i{width:11px;height:11px;border-radius:3px;display:block}
+.sw-dre{background:var(--dre)} .sw-caixa{background:var(--caixa)}
+
+.chart{padding:6px 20px 18px}
+.row-grid{display:grid;grid-template-columns:236px 1fr 104px;gap:14px;align-items:center}
+@media(max-width:900px){.row-grid{grid-template-columns:190px 1fr}.row-grid .diff{display:none}}
+@media(max-width:560px){.row-grid{grid-template-columns:126px 1fr;gap:10px}}
+.axis{padding:12px 0 6px;color:var(--ink-3);font-size:11px}
+.axis .ticks{position:relative;height:14px}
+.axis .ticks span{position:absolute;transform:translateX(-50%);white-space:nowrap;font-family:var(--mono)}
+.axis .ticks span:first-child{transform:none}
+
+.cat{
+  width:100%;text-align:left;background:none;border:none;border-top:1px solid var(--line);
+  padding:11px 8px 11px 10px;margin:0 -10px;width:calc(100% + 20px);cursor:pointer;border-radius:8px;
+  transition:background .13s ease;
+}
+.cat:hover{background:var(--surface-2)}
+.cat[aria-expanded="true"]{background:var(--surface-2)}
+.cat-name{display:flex;align-items:center;gap:8px;font-weight:600;font-size:13.5px;letter-spacing:-.005em}
+.cat-name .caret{color:var(--ink-3);transition:transform .18s ease;flex:none;font-size:10px}
+.cat[aria-expanded="true"] .caret{transform:rotate(90deg)}
+.cat-name .flag{
+  flex:none;width:17px;height:17px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;
+  font-family:var(--display);font-size:11px;font-weight:700;color:var(--nota-ink);
+  background:var(--nota-bg);border:1px solid var(--nota-line);
+}
+.plot{position:relative;display:flex;flex-direction:column;gap:2px;padding:3px 0}
+.plot::before{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:repeating-linear-gradient(to right,var(--line) 0 1px,transparent 1px 25%);
+  opacity:.75;
+}
+.bar-line{position:relative;height:15px}
+.bar-line.sm{height:10px}
+.bar{
+  position:absolute;left:0;top:0;bottom:0;border-radius:2px 4px 4px 2px;min-width:2px;
+  transition:width .32s cubic-bezier(.22,.61,.36,1);
+}
+.bar.dre{background:var(--dre)} .bar.caixa{background:var(--caixa)}
+.bar-val{
+  position:absolute;top:50%;transform:translateY(-50%);white-space:nowrap;
+  font-family:var(--mono);font-size:11px;font-variant-numeric:tabular-nums;color:var(--ink-2);padding-left:7px;
+}
+.bar-val.inside{color:#fff;padding:0 7px 0 0;transform:translate(-100%,-50%)}
+.bar-line.sm .bar-val{font-size:10px}
+.diff{text-align:right;font-family:var(--mono);font-size:11.5px;font-variant-numeric:tabular-nums;color:var(--ink-2);line-height:1.3}
+.diff .pct{display:block;color:var(--ink-3);font-size:10.5px}
+
+/* ---------- detalhe ---------- */
+.det{border-top:1px solid var(--line);background:var(--surface-2);margin:0 -20px;padding:16px 20px 20px}
+.det-head{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.det-head h3{font-size:13.5px}
+.det-head .cnt{font-size:11.5px;color:var(--ink-3)}
+.nota{
+  display:flex;gap:10px;background:var(--nota-bg);border:1px solid var(--nota-line);border-left-width:3px;
+  border-radius:7px;padding:10px 13px;margin:0 0 14px;font-size:12.5px;color:var(--nota-ink);line-height:1.45;
+}
+.nota svg{flex:none;margin-top:1px}
+.det-sub{font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin:16px 0 6px}
+.item{padding:5px 0;border-top:1px dotted var(--line)}
+.item:first-of-type{border-top:none}
+.item .nm{font-size:12.5px;color:var(--ink-2);line-height:1.3;overflow-wrap:anywhere}
+.item.off .nm{color:var(--ink-3)}
+.item.off .bar{opacity:.5;background-image:repeating-linear-gradient(135deg,rgba(255,255,255,.6) 0 2px,transparent 2px 5px)}
+.bar-val.zero{color:var(--ink-3)}
+.bar-val.fora{color:var(--ink-3)}
+.tot-row{border-top:1px solid var(--line-2);margin-top:8px;padding-top:8px;font-weight:600}
+.tot-row .nm{color:var(--ink)}
+
+/* ---------- tabela ---------- */
+.tabela-wrap{overflow-x:auto;margin-top:14px}
+table{border-collapse:collapse;width:100%;font-size:12.5px}
+th,td{padding:7px 10px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+thead th{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);font-weight:600}
+tbody td.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+
+/* ---------- tooltip / rodapé / erro ---------- */
+#tip{
+  position:fixed;z-index:80;pointer-events:none;opacity:0;transition:opacity .12s ease;
+  background:var(--ink);color:var(--ground);border-radius:7px;padding:8px 11px;font-size:12px;
+  box-shadow:0 10px 24px -10px rgba(0,0,0,.5);max-width:270px;
+}
+#tip .t-nm{font-weight:600;margin-bottom:3px}
+#tip .t-ln{display:flex;justify-content:space-between;gap:14px;font-family:var(--mono);font-size:11.5px}
+.foot{padding:26px 0 40px;color:var(--ink-3);font-size:11.5px;line-height:1.7}
+.foot b{color:var(--ink-2);font-weight:600}
+.erro{
+  background:var(--caixa-soft);border:1px solid var(--caixa);border-radius:9px;padding:12px 15px;
+  margin:14px 0;font-size:13px;color:var(--ink);
+}
+.drop{
+  position:fixed;inset:0;z-index:90;background:color-mix(in srgb,var(--ground) 82%,transparent);
+  display:none;align-items:center;justify-content:center;font-family:var(--display);font-size:22px;
+  border:3px dashed var(--dre);
+}
+.drop.on{display:flex}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-in">
+    <div class="brand">
+      <h1>DRE × Fluxo de Caixa</h1>
+      <div class="sub">Búzios · 2026 &nbsp;·&nbsp; competência vs. pagamento</div>
+    </div>
+    <div class="src"><i class="dot"></i><span id="src-nome">planilha base</span></div>
+    <button class="btn btn-primary" id="btn-import">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 11V2M8 2 4.5 5.5M8 2l3.5 3.5M2 10.5V13a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-2.5"/></svg>
+      Importar planilha
+    </button>
+    <input type="file" id="file" accept=".xlsx,.xlsm,.xls" hidden>
+  </div>
+</div>
+
+<div class="wrap">
+  <div id="erro"></div>
+
+  <div class="periodo">
+    <span class="lbl">Período</span>
+    <div class="chips" id="chips"></div>
+    <button class="btn-link" id="btn-reset" hidden>Voltar à planilha original</button>
+  </div>
+
+  <section class="kpis" id="kpis" aria-label="Indicadores do período"></section>
+
+  <section class="panel">
+    <div class="panel-head">
+      <div>
+        <h2>Categorias: DRE contra Fluxo de Caixa</h2>
+        <p>Clique em uma categoria para abrir os itens que a compõem, lado a lado nos dois regimes.</p>
+      </div>
+      <div class="legend">
+        <b><i class="sw-dre"></i>DRE (competência)</b>
+        <b><i class="sw-caixa"></i>Fluxo de Caixa (pago)</b>
+        <button class="btn-link" id="btn-tabela">Ver como tabela</button>
+      </div>
+    </div>
+    <div class="chart" id="chart"></div>
+  </section>
+
+  <div id="tabela"></div>
+
+  <div class="foot">
+    <b>Fontes na planilha:</b> aba <b>DRE</b> (totais e itens por categoria) · aba <b>RELATÓRIO FLUXO DE CAIXA</b> (totais pagos por categoria) · aba <b>CONTAS A PAGAR</b> (detalhamento item a item do que foi pago).<br>
+    <b>Ajustes aplicados:</b> Material de limpeza e descartáveis e Sistema operacional de vendas saem da somatória de Operacionais e aparecem apenas no detalhamento · Administrativo do fluxo inclui a linha Holding · Financeiras do fluxo soma Financeiras + Tarifa · Tributos Diversos (DRE) compara com Impostos (Fluxo).<br>
+    Ao importar uma planilha nova, a leitura é refeita pelos nomes das abas e das colunas — a posição das linhas pode mudar sem quebrar o painel.
+  </div>
+</div>
+
+<div id="tip" role="status" aria-live="polite"></div>
+<div class="drop" id="drop">Solte a planilha para atualizar o painel</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+// ===== PARSER START =====
+/* Leitura da planilha "DRE E FLUXO DE CAIXA".
+   Usa apenas as abas DRE, RELATORIO FLUXO DE CAIXA e CONTAS A PAGAR
+   (esta ultima e a origem do detalhamento item a item do fluxo). */
+
+var MESES = ['JANEIRO','FEVEREIRO','MARCO','ABRIL','MAIO','JUNHO','JULHO','AGOSTO','SETEMBRO','OUTUBRO','NOVEMBRO','DEZEMBRO'];
+var MESES_LABEL = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+
+function norm(v) {
+  if (v === null || v === undefined) return '';
+  return String(v)
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .toUpperCase().replace(/\s+/g, ' ').trim();
+}
+function num(v) {
+  if (typeof v === 'number') return isFinite(v) ? v : 0;
+  if (typeof v === 'string') {
+    var s = v.replace(/[R$\s.]/g, '').replace(',', '.');
+    var n = parseFloat(s);
+    return isNaN(n) ? 0 : n;
+  }
+  return 0;
+}
+function zeros() { return [0,0,0,0,0,0,0,0,0,0,0,0]; }
+function addInto(target, values) { for (var i = 0; i < 12; i++) target[i] += values[i] || 0; }
+function sumArr(a) { var t = 0; for (var i = 0; i < a.length; i++) t += a[i] || 0; return t; }
+
+/* Categorias comparadas: chave DRE -> chaves do fluxo de caixa */
+var CATEGORIAS = [
+  { key: 'OPERACIONAIS',   label: 'Operacionais',    dre: ['OPERACIONAIS'],   fluxo: ['OPERACIONAIS'] },
+  { key: 'PESSOAL',        label: 'Pessoal',         dre: ['PESSOAL'],        fluxo: ['PESSOAL'] },
+  { key: 'ADMINISTRATIVO', label: 'Administrativo',  dre: ['ADMINISTRATIVO'], fluxo: ['ADMINISTRATIVO', 'HOLDING'] },
+  { key: 'CTO',            label: 'CTO',             dre: ['CTO'],            fluxo: ['CTO'] },
+  { key: 'UTILITIES',      label: 'Utilities',       dre: ['UTILITIES'],      fluxo: ['UTILITIES'] },
+  { key: 'TERCEIROS',      label: 'Terceiros',       dre: ['TERCEIROS'],      fluxo: ['TERCEIROS'] },
+  { key: 'MARKETING',      label: 'Marketing',       dre: ['MARKETING'],      fluxo: ['MARKETING'] },
+  { key: 'FINANCEIRAS',    label: 'Financeiras',     dre: ['FINANCEIRAS'],    fluxo: ['FINANCEIRAS', 'TARIFA'] },
+  { key: 'TRIBUTOS',       label: 'Tributos × Impostos', dre: [], fluxo: ['IMPOSTOS'],
+    dreLinhas: ['TRIBUTOS DIVERSOS'] }
+];
+
+/* Itens que ficam fora da somatoria mas continuam visiveis no detalhamento */
+var FORA_DO_TOTAL = {
+  OPERACIONAIS: [
+    { match: 'MATERIAL DE LIMPEZA E DESCARTAVEIS (CMV)', label: 'Material de limpeza e descartáveis (CMV)', fluxo: ['LIMPEZA E DESCARTAVEIS'] },
+    { match: 'SISTEMA OPERACIONAL DE VENDAS',            label: 'Sistema operacional de vendas',           fluxo: [] }
+  ],
+  TRIBUTOS: [
+    { match: 'DEDUCOES DE FATURAMENTO', label: 'Deduções de faturamento (impostos sobre vendas no DRE)', fluxo: [], linhaDre: true }
+  ]
+};
+
+var NOTAS = {
+  ADMINISTRATIVO: { sempre: true, texto: 'A <strong>Fee Holding</strong> é lançada no DRE mas não entra no Fluxo de Caixa — por isso a discrepância de valores nesta categoria.' },
+  UTILITIES: { mes: 0, texto: 'Em <strong>janeiro</strong> o Fluxo de Caixa de Utilities pagou contas de <strong>dezembro/2025</strong>. Por isso o valor do fluxo fica descolado do DRE do mês.' },
+  TRIBUTOS: { sempre: true, texto: 'No DRE os impostos sobre venda ficam em <strong>Deduções de Faturamento</strong> (linha exibida no detalhamento, fora do total). A linha <strong>Tributos Diversos</strong> do DRE compara com <strong>Impostos</strong> do Fluxo de Caixa.' }
+};
+
+var MINUSCULAS = ['de','da','do','das','dos','e','em','na','no','nas','nos','a','o','as','os','para','com','por','ao'];
+function titulo(txt) {
+  var t = String(txt || '').toLowerCase().replace(/\s+/g, ' ').trim();
+  t = t.replace(/(^|[\s(|\/])([a-z\u00e0-\u00fc])/g, function (m, p, c) { return p + c.toUpperCase(); });
+  return t.replace(/\s([A-Z][a-z\u00e0-\u00fc]*)/g, function (m, palavra) {
+    return MINUSCULAS.indexOf(palavra.toLowerCase()) >= 0 ? ' ' + palavra.toLowerCase() : m;
+  });
+}
+
+function sheetRows(wb, XLSXlib, matcher) {
+  var nome = null;
+  for (var i = 0; i < wb.SheetNames.length; i++) {
+    if (matcher(norm(wb.SheetNames[i]))) { nome = wb.SheetNames[i]; break; }
+  }
+  if (!nome) return null;
+  return { nome: nome, rows: XLSXlib.utils.sheet_to_json(wb.Sheets[nome], { header: 1, raw: true, defval: null, blankrows: true }) };
+}
+
+/* Localiza a linha de cabecalho que contem os meses e devolve col -> indice do mes */
+function acharMeses(rows, aPartirDe) {
+  for (var r = aPartirDe || 0; r < rows.length; r++) {
+    var linha = rows[r] || [], mapa = {}, achou = 0;
+    for (var c = 0; c < linha.length; c++) {
+      var idx = MESES.indexOf(norm(linha[c]));
+      if (idx >= 0 && mapa[idx] === undefined) { mapa[idx] = c; achou++; }
+    }
+    if (achou >= 6) return { linha: r, colunas: mapa };
+  }
+  return null;
+}
+function valoresDaLinha(linha, colunas) {
+  var v = zeros();
+  for (var m = 0; m < 12; m++) {
+    var c = colunas[m];
+    if (c === undefined) continue;
+    v[m] = num(linha[c]);
+  }
+  return v;
+}
+
+function lerDRE(wb, XLSXlib) {
+  var sh = sheetRows(wb, XLSXlib, function (n) { return n === 'DRE'; })
+        || sheetRows(wb, XLSXlib, function (n) { return n.indexOf('DRE') === 0; });
+  if (!sh) throw new Error('Aba "DRE" não encontrada na planilha.');
+  var hdr = acharMeses(sh.rows, 0);
+  if (!hdr) throw new Error('Não foi possível localizar os meses na aba DRE.');
+  var colCat = 1, colApl = 2;
+  var head = sh.rows[hdr.linha] || [];
+  for (var c = 0; c < head.length; c++) {
+    if (norm(head[c]) === 'CATEGORIA') { colCat = c; colApl = c + 1; }
+    if (norm(head[c]) === 'APLICACOES' || norm(head[c]) === 'APLICACAO') colApl = c;
+  }
+  var itens = {}, linhas = {};
+  for (var r = hdr.linha + 1; r < sh.rows.length; r++) {
+    var linha = sh.rows[r] || [];
+    var cat = norm(linha[colCat]);
+    if (!cat) continue;
+    var apl = norm(linha[colApl]);
+    var valores = valoresDaLinha(linha, hdr.colunas);
+    if (apl) {
+      if (!itens[cat]) itens[cat] = [];
+      itens[cat].push({ key: apl, label: titulo(linha[colApl]), values: valores });
+    } else if (!linhas[cat]) {
+      linhas[cat] = valores;
+    }
+  }
+  return { itens: itens, linhas: linhas };
+}
+
+function lerFluxo(wb, XLSXlib) {
+  var sh = sheetRows(wb, XLSXlib, function (n) { return n.indexOf('FLUXO') >= 0 && n.indexOf('RELATORIO') >= 0; })
+        || sheetRows(wb, XLSXlib, function (n) { return n.indexOf('FLUXO') >= 0; });
+  if (!sh) throw new Error('Aba de Fluxo de Caixa não encontrada na planilha.');
+  var inicio = 0;
+  for (var r = 0; r < sh.rows.length; r++) {
+    var linha = sh.rows[r] || [];
+    for (var c = 0; c < linha.length; c++) {
+      if (norm(linha[c]).indexOf('FLUXO DETALHADO') >= 0) { inicio = r; r = sh.rows.length; break; }
+    }
+  }
+  var hdr = acharMeses(sh.rows, inicio);
+  if (!hdr) throw new Error('Não foi possível localizar os meses na aba de Fluxo de Caixa.');
+  var colLabel = 1;
+  var head = sh.rows[hdr.linha] || [];
+  for (var k = 0; k < head.length; k++) {
+    if (norm(head[k]).indexOf('FLUXO') >= 0) { colLabel = k; break; }
+  }
+  var totais = {};
+  for (var i = hdr.linha + 1; i < sh.rows.length; i++) {
+    var l = sh.rows[i] || [];
+    var nome = norm(l[colLabel]);
+    if (!nome) continue;
+    if (!totais[nome]) totais[nome] = zeros();
+    addInto(totais[nome], valoresDaLinha(l, hdr.colunas));
+  }
+  return totais;
+}
+
+function lerContasAPagar(wb, XLSXlib) {
+  var sh = sheetRows(wb, XLSXlib, function (n) { return n.indexOf('CONTAS A PAGAR') >= 0; });
+  var vazio = { porFluxo: {}, porCategoriaDre: {} };
+  if (!sh) return vazio;
+  var hdrLinha = -1, col = {};
+  for (var r = 0; r < Math.min(sh.rows.length, 60); r++) {
+    var linha = sh.rows[r] || [], mapa = {};
+    for (var c = 0; c < linha.length; c++) {
+      var n = norm(linha[c]);
+      if (n === 'MES PAGAMENTO') mapa.mes = c;
+      else if (n === 'DESCRICAO') mapa.desc = c;
+      else if (n === 'CATEGORIA DRE') mapa.catDre = c;
+      else if (n === 'CATEGORIA FLUXO') mapa.catFluxo = c;
+      else if (n === 'VALOR') mapa.valor = c;
+    }
+    if (mapa.catFluxo !== undefined && mapa.valor !== undefined && mapa.mes !== undefined) { hdrLinha = r; col = mapa; break; }
+  }
+  if (hdrLinha < 0) return vazio;
+
+  var porFluxo = {}, porCategoriaDre = {};
+  for (var i = hdrLinha + 1; i < sh.rows.length; i++) {
+    var l = sh.rows[i] || [];
+    var mes = MESES.indexOf(norm(l[col.mes]));
+    if (mes < 0) continue;
+    var valor = num(l[col.valor]);
+    if (!valor) continue;
+    var catDre = col.catDre !== undefined ? norm(l[col.catDre]) : '';
+    var desc = col.desc !== undefined ? norm(l[col.desc]) : '';
+    var catFluxo = norm(l[col.catFluxo]);
+
+    if (catDre) {
+      if (!porCategoriaDre[catDre]) porCategoriaDre[catDre] = zeros();
+      porCategoriaDre[catDre][mes] += valor;
+    }
+    if (!catFluxo) continue;
+    if (!porFluxo[catFluxo]) porFluxo[catFluxo] = {};
+    var chave = catDre || desc || 'SEM DESCRICAO';
+    if (!porFluxo[catFluxo][chave]) {
+      porFluxo[catFluxo][chave] = { key: chave, label: titulo(catDre || desc || 'Sem descrição'), values: zeros() };
+    }
+    porFluxo[catFluxo][chave].values[mes] += valor;
+  }
+  return { porFluxo: porFluxo, porCategoriaDre: porCategoriaDre };
+}
+
+function parseWorkbook(wb, XLSXlib, nomeArquivo) {
+  var dre = lerDRE(wb, XLSXlib);
+  var fluxoTotais = lerFluxo(wb, XLSXlib);
+  var cap = lerContasAPagar(wb, XLSXlib);
+
+  var kpis = {
+    faturamento: dre.linhas['RECEITA BRUTA'] || zeros(),
+    cmv:         dre.linhas['CMV'] || zeros(),
+    cmvPerfeito: dre.linhas['CMV PERFEITO'] || zeros(),
+    ebitda:      dre.linhas['EBITDA'] || zeros(),
+    receitaLiquida: dre.linhas['RECEITA LIQUIDA'] || zeros(),
+    lucroLiquido:   dre.linhas['LUCRO LIQUIDO'] || zeros()
+  };
+
+  var categorias = CATEGORIAS.map(function (cfg) {
+    var fora = FORA_DO_TOTAL[cfg.key] || [];
+    var foraMatch = fora.map(function (f) { return f.match; });
+
+    /* --- lado DRE --- */
+    var itensDre = [], totalDre = zeros(), foraDre = [];
+    cfg.dre.forEach(function (catNome) {
+      (dre.itens[catNome] || []).forEach(function (it) {
+        if (foraMatch.indexOf(it.key) >= 0) return;
+        itensDre.push(it);
+        addInto(totalDre, it.values);
+      });
+    });
+    (cfg.dreLinhas || []).forEach(function (nomeLinha) {
+      var v = dre.linhas[norm(nomeLinha)];
+      if (v) { itensDre.push({ key: norm(nomeLinha), label: titulo(nomeLinha), values: v }); addInto(totalDre, v); }
+    });
+    fora.forEach(function (f) {
+      var achado = null;
+      if (f.linhaDre) {
+        var v = dre.linhas[f.match];
+        if (v) achado = { key: f.match, label: f.label, values: v };
+      } else {
+        cfg.dre.forEach(function (catNome) {
+          (dre.itens[catNome] || []).forEach(function (it) { if (it.key === f.match) achado = it; });
+        });
+      }
+      var valoresFluxo = zeros();
+      (f.fluxo || []).forEach(function (fk) {
+        if (fluxoTotais[fk]) addInto(valoresFluxo, fluxoTotais[fk]);
+      });
+      foraDre.push({
+        key: f.match, label: f.label,
+        dre: achado ? achado.values : zeros(),
+        fluxo: valoresFluxo,
+        temFluxo: (f.fluxo || []).length > 0
+      });
+    });
+
+    /* --- lado Fluxo de Caixa --- */
+    var totalFluxo = zeros(), itensFluxo = [];
+    cfg.fluxo.forEach(function (fk) {
+      if (fluxoTotais[fk]) addInto(totalFluxo, fluxoTotais[fk]);
+      var det = cap.porFluxo[fk];
+      if (det) Object.keys(det).forEach(function (k) { itensFluxo.push(det[k]); });
+    });
+    /* consolida itens repetidos entre as chaves de fluxo */
+    var mapaFluxo = {};
+    itensFluxo.forEach(function (it) {
+      if (!mapaFluxo[it.key]) mapaFluxo[it.key] = { key: it.key, label: it.label, values: zeros() };
+      addInto(mapaFluxo[it.key].values, it.values);
+    });
+    itensFluxo = Object.keys(mapaFluxo).map(function (k) { return mapaFluxo[k]; });
+
+    /* diferenca entre o total oficial do fluxo e o detalhamento de contas a pagar */
+    var detalhado = zeros();
+    itensFluxo.forEach(function (it) { addInto(detalhado, it.values); });
+    var residuo = zeros(), temResiduo = false;
+    for (var m = 0; m < 12; m++) {
+      var d = totalFluxo[m] - detalhado[m];
+      if (Math.abs(d) > 0.01) { residuo[m] = d; temResiduo = true; }
+    }
+    if (temResiduo && itensFluxo.length) {
+      itensFluxo.push({ key: '__RESIDUO__', label: 'Outros lançamentos do fluxo', values: residuo });
+    }
+
+    return {
+      key: cfg.key, label: cfg.label,
+      dre: { total: totalDre, itens: itensDre },
+      fluxo: { total: totalFluxo, itens: itensFluxo },
+      foraDoTotal: foraDre,
+      nota: NOTAS[cfg.key] || null
+    };
+  });
+
+  var mesesComDados = [];
+  for (var m = 0; m < 12; m++) {
+    var tem = kpis.faturamento[m] !== 0;
+    categorias.forEach(function (c) { if (c.dre.total[m] || c.fluxo.total[m]) tem = true; });
+    if (tem) mesesComDados.push(m);
+  }
+
+  return {
+    meta: {
+      arquivo: nomeArquivo || '',
+      gerado: new Date().toISOString(),
+      meses: MESES_LABEL,
+      mesesComDados: mesesComDados
+    },
+    kpis: kpis,
+    categorias: categorias
+  };
+}
+// ===== PARSER END =====
+
+var DADOS_PADRAO = {"meta":{"arquivo":"f52565c4-DRE_E_FLUXO_DE_CAIXA_B_ZIOS_2026_4.xlsx","gerado":"2026-09-02T20:05:55.924Z","meses":["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"],"mesesComDados":[0,1,2,3,4,5,6,7,8]},"kpis":{"faturamento":[766575.1500000001,350755.36000000004,245106.67,277239.32,167160.68,161474.38,186314.71999999997,0,0,0,0,0],"cmv":[205287.33933836833,135000.72999999998,81812.88000000002,111402.92000000001,50574.65000000001,54002.93000000001,49243.8,40563.58,0,0,0,0],"cmvPerfeito":[203112.01,118765.11,56340.53,73168.73,42875.55,36492.12,47680.22,0,0,0,0,0],"ebitda":[312733.83466163184,46776.52560000011,25182.70319999999,21810.437199999986,4963.472799999989,-14891.295200000022,30019.111199999956,-84559.47,-315,0,0,0],"receitaLiquida":[708367.6700000002,322311.89,224312.2,255661.24,153125.78999999998,148355.06,171552.81999999998,0,0,0,0,0],"lucroLiquido":[312733.83466163184,46776.52560000011,25182.70319999999,21810.437199999986,4963.472799999989,-14891.295200000022,30019.111199999956,-84559.47,-315,0,0,0]},"categorias":[{"key":"OPERACIONAIS","label":"Operacionais","dre":{"total":[26957.439999999995,24623.42,14068,18290.62,17458.449999999997,18814.73,20651.3,9233.89,0,0,0,0],"itens":[{"key":"CO2","label":"Co2","values":[295,0,115,0,200,0,460,100,0,0,0,0]},{"key":"MATERIAIS MANUTENCAO","label":"Materiais Manutencao","values":[2419.51,1556.82,120.75,103.93,847.65,831.31,1111.21,762.5,0,0,0,0]},{"key":"LENHA E CARVAO","label":"Lenha e Carvao","values":[1635.98,450,0,0,0,0,0,0,0,0,0,0]},{"key":"LOCACAO MAQUINA DE GELO","label":"Locacao Maquina de Gelo","values":[1924.32,1900,2134.07,1928.12,1954.72,1934.96,1928.88,0,0,0,0,0]},{"key":"LOCACAO MAQUINA DE PONTO","label":"Locacao Maquina de Ponto","values":[241.01,251.28,256.75,256.6,257.05,257.05,251.28,251.28,0,0,0,0]},{"key":"LOCACAO MAQUINA DE CARTAO","label":"Locacao Maquina de Cartao","values":[0,0,200,200,0,0,0,0,0,0,0,0]},{"key":"LOCACAO TOTEN","label":"Locacao Toten","values":[680,680,680,680,680,521,0,0,0,0,0,0]},{"key":"LOCACAO LAVA LOUCA","label":"Locacao Lava Louca","values":[2031.99,2031.99,2031.99,2031.99,2265.54,2254.98,2141.54,0,0,0,0,0]},{"key":"LOCACAO PRESH","label":"Locacao Presh","values":[502.2,502.2,613.98,616.03,615.28,683.9,684.5,0,0,0,0,0]},{"key":"INSUMOS PRESH","label":"Insumos Presh","values":[1058.8,640,299.4,619.4,328,0,0,0,0,0,0,0]},{"key":"DESPESAS GERAIS","label":"Despesas Gerais","values":[330.96999999999997,1393.1,421.83,2136,0,584.7,962.76,40,0,0,0,0]},{"key":"CARDAPIO E COMANDAS","label":"Cardapio e Comandas","values":[0,3316.4,2487.3,2487.3,0,0,0,0,0,0,0,0]},{"key":"LOCACAO MAQUINA DE ETIQUETAS","label":"Locacao Maquina de Etiquetas","values":[729,729,744.45,745.11,753.74,744.45,729,744.01,0,0,0,0]},{"key":"ETIQUETAS MAQUINA","label":"Etiquetas Maquina","values":[306,444,0,0,0,213.79,213.21,0,0,0,0,0]},{"key":"RECREACAO","label":"Recreacao","values":[5139.16,2553.7,1620,2668.87,2276.55,2901.19,2964.5,0,0,0,0,0]},{"key":"GASOLINA","label":"Gasolina","values":[40,0,0,0,0,0,251.6,0,0,0,0,0]},{"key":"IMPRESSORA","label":"Impressora","values":[0,0,0,0,0,0,0,0,0,0,0,0]},{"key":"SEGURANCA DO TRABALHO (PRONTO MED)","label":"Seguranca do Trabalho (Pronto Med)","values":[519.19,558.21,394.22,250.55,250.32,394.34,0,0,0,0,0,0]},{"key":"SEGURADORA LOJA","label":"Seguradora Loja","values":[404.6,404.6,404.6,404.6,413.08,413.99,413.34,0,0,0,0,0]},{"key":"SISTEMA DE RESERVA","label":"Sistema de Reserva","values":[329,336.9,329,346.98,336.02,337.78,329,0,0,0,0,0]},{"key":"SISTEMA DE COMPRAS (VMARKET)","label":"Sistema de Compras (Vmarket)","values":[317.79,317.79,324.66,324.24,324.45,343.21,343.21,0,0,0,0,0]},{"key":"SISTEMA ARQUIVEI (NOTAS)","label":"Sistema Arquivei (Notas)","values":[227.29,0,0,0,0,0,0,0,0,0,0,0]},{"key":"SISTEMA DE AVALIACAO","label":"Sistema de Avaliacao","values":[390,390,390,390,409.98,0,0,0,0,0,0,0]},{"key":"COMPRA DE EQUIPAMENTOS","label":"Compra de Equipamentos","values":[0,0,0,0,0,908.55,0,0,0,0,0,0]},{"key":"LAVANDERIA","label":"Lavanderia","values":[120,0,0,0,0,0,0,0,0,0,0,0]},{"key":"DEDETIZACAO","label":"Dedetizacao","values":[0,0,0,380,388.48,387.72,380,380,0,0,0,0]},{"key":"MANUTENCAO | CAMARA | REFRIGERACAO","label":"Manutencao | Camara | Refrigeracao","values":[2720,2000,500,1700,4407.59,4376.86,3641.5,3957.1,0,0,0,0]},{"key":"PAPELARIA","label":"Papelaria","values":[0,0,0,0,0,0,0,0,0,0,0,0]},{"key":"CARTORIOS E TAXAS","label":"Cartorios e Taxas","values":[0,0,0,0,0,0,0,0,0,0,0,0]},{"key":"REPOSICAO DE LOUCAS E UTENSILIOS DE COZINHA","label":"Reposicao de Loucas e Utensilios de Cozinha","values":[2471.6699999999996,2203.4300000000003,0,20.9,0,224.95,0,0,0,0,0,0]},{"key":"INFORMATICA | SOM | VIDEO","label":"Informatica | Som | Video","values":[0,0,0,0,750,500,500,2999,0,0,0,0]},{"key":"UNIFORMES","label":"Uniformes","values":[2123.96,1964,0,0,0,0,3345.77,0,0,0,0,0]}]},"fluxo":{"total":[26753.37,39480.479999999996,15712.570000000002,24148.230000000003,10925.189999999999,10546.429999999998,28907.839999999997,24156.93,0,0,0,0],"itens":[{"key":"LENHA E CARVAO","label":"Lenha e Carvao","values":[1635.98,450,0,0,0,0,0,0,0,0,0,0]},{"key":"REPOSICAO DE LOUCAS E UTENSILIOS DE COZINHA","label":"Reposicao de Loucas e Utensilios de Cozinha","values":[2471.6699999999996,2217.3300000000004,0,20.9,0,224.95,0,0,0,0,0,0]},{"key":"DESPESAS GERAIS","label":"Despesas Gerais","values":[194.33999999999997,1529.73,421.83,2136,0,0,1547.4599999999998,40,0,0,0,0]},{"key":"LAVANDERIA","label":"Lavanderia","values":[120,0,0,0,0,0,0,0,0,0,0,0]},{"key":"UNIFORMES","label":"Uniformes","values":[2123.96,1964,0,0,0,0,3345.77,0,0,0,0,0]},{"key":"EVERTEC REFRIGERACAO E ASSISTE","label":"Evertec Refrigeracao e Assiste","values":[2390,490,0,0,0,0,0,0,0,0,0,0]},{"key":"VIRTUAL MARKET SERVICOS ELETRO","label":"Virtual Market Servicos Eletro","values":[317.79,0,0,0,0,0,0,0,0,0,0,0]},{"key":"CUSTO LOCOMOCAO","label":"Custo Locomocao","values":[1599.93,688.13,121.48,213.83,0,0,0,450,0,0,0,0]},{"key":"GASOLINA","label":"Gasolina","values":[40,0,0,0,0,0,251.6,0,0,0,0,0]},{"key":"SEGUROS SURA S.A.","label":"Seguros Sura S.a.","values":[413.08,0,0,0,0,0,0,0,0,0,0,0]},{"key":"TAGME SISTEMAS PARA RESTAURANT","label":"Tagme Sistemas para Restaurant","values":[329,0,0,0,0,0,0,0,0,0,0,0]},{"key":"SISTEMA DE AVALIACAO","label":"Sistema de Avaliacao","values":[390,390,390,390,409.98,0,0,0,0,0,0,0]},{"key":"MANUTENCAO | CAMARA | REFRIGERACAO","label":"Manutencao | Camara | Refrigeracao","values":[2720,2000,0,2200,2750,2726.62,5066.38,5840.05,0,0,0,0]},{"key":"MATERIAIS MANUTENCAO","label":"Materiais Manutencao","values":[1887.8900000000003,1535.26,673.93,103.93,847.65,778.81,753.94,1172.27,0,0,0,0]},{"key":"INSUMOS PRESH","label":"Insumos Presh","values":[1058.8,640,299.4,619.4,328,0,0,0,0,0,0,0]},{"key":"LOCACAO PRESH","label":"Locacao Presh","values":[502.2,502.2,613.98,616.03,615.28,0,683.9,684.5,0,0,0,0]},{"key":"ARQUIVEI SERVICOS ON LINE LTDA","label":"Arquivei Servicos On Line Ltda","values":[227.29,0,0,0,0,0,0,0,0,0,0,0]},{"key":"POSTERUS CONSULTING LTDA","label":"Posterus Consulting Ltda","values":[680,0,0,0,0,0,0,0,0,0,0,0]},{"key":"SUFLEX TECNOLOGIA LTDA","label":"Suflex Tecnologia Ltda","values":[729,0,0,0,0,0,0,0,0,0,0,0]},{"key":"ON DM -001008","label":"On Dm -001008","values":[23.9,0,0,0,0,0,0,0,0,0,0,0]},{"key":"OR COMPANY IMPORTACAO E EXPORT","label":"Or Company Importacao e Export","values":[578.18,0,0,0,0,0,0,0,0,0,0,0]},{"key":"LOCACAO MAQUINA DE PONTO","label":"Locacao Maquina de Ponto","values":[241.01,251.28,256.75,256.6,257.05,257.05,251.28,251.28,0,0,0,0]},{"key":"ETIQUETAS MAQUINA","label":"Etiquetas Maquina","values":[306,444,0,0,0,0,427,0,0,0,0,0]},{"key":"LOCACAO LAVA LOUCA","label":"Locacao Lava Louca","values":[2031.99,2031.99,2031.99,2031.99,0,1127.17,4412.339999999999,1122.55,0,0,0,0]},{"key":"CO2","label":"Co2","values":[115,0,0,115,200,0,460,100,0,0,0,0]},{"key":"SEGURADORA LOJA","label":"Seguradora Loja","values":[404.6,0,809.2,404.6,0,413.08,413.99,413.34,0,0,0,0]},{"key":"PRONTOMED MEDICINA E SEGURANCA","label":"Prontomed Medicina e Seguranca","values":[721.76,0,0,0,0,0,0,0,0,0,0,0]},{"key":"HOSPEDAGEM","label":"Hospedagem","values":[2500,0,0,0,0,0,0,3000,0,0,0,0]},{"key":"SISTEMA DE COMPRAS (VMARKET)","label":"Sistema de Compras (Vmarket)","values":[0,317.79,317.79,324.66,324.24,0,667.66,343.21,0,0,0,0]},{"key":"SISTEMA DE RESERVA","label":"Sistema de Reserva","values":[0,329,336.9,675.98,336.02,0,337.78,329,0,0,0,0]},{"key":"NACIONAL UNIFORMES","label":"Nacional Uniformes","values":[0,15000,0,0,0,0,0,0,0,0,0,0]},{"key":"LOCACAO TOTEN","label":"Locacao Toten","values":[0,680,680,680,680,680,521,0,0,0,0,0]},{"key":"LOCACAO MAQUINA DE GELO","label":"Locacao Maquina de Gelo","values":[0,1924.32,2104.43,1929.64,1928.12,0,3889.6800000000003,1928.88,0,0,0,0]},{"key":"LOCACAO MAQUINA DE ETIQUETAS","label":"Locacao Maquina de Etiquetas","values":[0,729,729,744.45,1498.85,0,1473.45,744.01,0,0,0,0]},{"key":"SISTEMA ARQUIVEI (NOTAS)","label":"Sistema Arquivei (Notas)","values":[0,227.29,0,0,0,0,0,0,0,0,0,0]},{"key":"RECREACAO","label":"Recreacao","values":[0,5139.16,2553.7,1620,0,2276.55,2901.19,2964.5,0,0,0,0]},{"key":"SEGURANCA DO TRABALHO (PRONTO MED)","label":"Seguranca do Trabalho (Pronto Med)","values":[0,0,1077.4,394.22,0,0,500.87,394.34,0,0,0,0]},{"key":"WINTERHALTER BRASIL COMERCIO D","label":"Winterhalter Brasil Comercio D","values":[0,0,2294.79,0,0,0,0,0,0,0,0,0]},{"key":"DEDETIZACAO","label":"Dedetizacao","values":[0,0,0,380,0,776.2,380,380,0,0,0,0]},{"key":"CARDAPIO E COMANDAS","label":"Cardapio e Comandas","values":[0,0,0,8291,0,0,0,0,0,0,0,0]},{"key":"INFORMATICA | SOM | VIDEO","label":"Informatica | Som | Video","values":[0,0,0,0,750,500,500,2999,0,0,0,0]},{"key":"COMPRA DE EQUIPAMENTOS","label":"Compra de Equipamentos","values":[0,0,0,0,0,786,122.55,0,0,0,0,0]},{"key":"NB UNIFORMES","label":"Nb Uniformes","values":[0,0,0,0,0,0,0,1000,0,0,0,0]}]},"foraDoTotal":[{"key":"MATERIAL DE LIMPEZA E DESCARTAVEIS (CMV)","label":"Material de limpeza e descartáveis (CMV)","dre":[7852.31,7506.06,2249.46,4154.68,1542.71,2196.63,4845.77,0,0,0,0,0],"fluxo":[12224.24,9319.8,2880.51,5820.9800000000005,1459.04,1546.07,4803.7699999999995,3343.04,0,0,0,0],"temFluxo":true},{"key":"SISTEMA OPERACIONAL DE VENDAS","label":"Sistema operacional de vendas","dre":[2919.46,1469.13,1300,1300,1550,1550,1500,0,0,0,0,0],"fluxo":[0,0,0,0,0,0,0,0,0,0,0,0],"temFluxo":false}],"nota":null},{"key":"PESSOAL","label":"Pessoal","dre":{"total":[166781.72999999995,108509.80999999998,98489.23999999999,95631.57,76232.93,82696.06000000001,70501.31,28137.86,315,0,0,0],"itens":[{"key":"SALARIOS E ADIANTAMENTOS","label":"Salarios e Adiantamentos","values":[40524.64000000001,43876.77,42350.71,38407.229999999996,32284.039999999997,30964.870000000003,33134.28,0,0,0,0,0]},{"key":"COMISSOES","label":"Comissoes","values":[74851.29999999997,25164.969999999998,22738.070000000007,22574.37,12531.109999999999,13907.170000000004,17977.93,4814.87,0,0,0,0]},{"key":"EXTRAS","label":"Extras","values":[28628.4,10440,920,960,0,629.54,0,3360,0,0,0,0]},{"key":"PROVISIONAMENTO | 13º | FERIAS","label":"Provisionamento | 13º | Férias","values":[0,4625.98,2132.65,8147.1,7972.46,7387.93,0,2979.19,0,0,0,0]},{"key":"FGTS","label":"Fgts","values":[4261.49,4872.07,4886.47,4631.14,4138.2,3825.4,4012.68,0,0,0,0,0]},{"key":"INSS","label":"Inss","values":[5832.15,6514.09,5302.56,5191.69,4661.16,4082.75,4145.65,0,0,0,0,0]},{"key":"PREMIACOES","label":"Premiacoes","values":[0,0,0,0,0,0,0,0,0,0,0,0]},{"key":"COMPRA DE FOLGAS","label":"Compra de Folgas","values":[0,0,0,0,0,0,0,0,0,0,0,0]},{"key":"RESCICOES TRABALHISTAS","label":"Rescicoes Trabalhistas","values":[4496.8099999999995,3792.64,11812.66,9216.720000000001,9217.47,16824.13,6177.23,12468.8,0,0,0,0]},{"key":"CUSTO LOCOMOCAO","label":"Custo Locomocao","values":[1599.93,688.13,121.48,213.83,0,0,0,450,0,0,0,0]},{"key":"VALE COMBUSTIVEL","label":"Vale Combustivel","values":[1080,1340,1100,1220,1220,860,860,1100,0,0,0,0]},{"key":"VALE TRANSPORTE","label":"Vale Transporte","values":[3853,5321.2,5248.7,3576,3005,2985,2705,2965,315,0,0,0]},{"key":"VALE TRANSPORTE COM DESCONTO","label":"Vale Transporte com Desconto","values":[1654.01,1873.96,1875.94,1493.49,1203.49,1229.27,1488.54,0,0,0,0,0]}]},"fluxo":{"total":[188105.19999999992,115017.30999999994,94683.80000000005,99516.90999999999,83405.98999999996,74329.70999999999,69055.62000000005,74209.14,0,0,0,0],"itens":[{"key":"EXTRAS","label":"Extras","values":[28628.4,9940,1220,1010,150,629.54,0,3360,0,0,0,0]},{"key":"ANALIA ALEJANDRA ROMERO","label":"Analia Alejandra Romero","values":[1102.42,0,0,0,0,0,0,0,0,0,0,0]},{"key":"LUCIANE MARIA DE SOUZA","label":"Luciane Maria de Souza","values":[275.55,0,0,0,0,0,0,0,0,0,0,0]},{"key":"RAIMUNDA TAVARES DE QUEIROS","label":"Raimunda Tavares de Queiros","values":[385.77,0,0,0,0,0,0,0,0,0,0,0]},{"key":"MARCOS VINICIUS ARAUJO DOS SANTOS","label":"Marcos Vinicius Araujo dos Santos","values":[586.17,0,0,0,0,0,0,0,0,0,0,0]},{"key":"FEDERICO AMADO RUIZ","label":"Federico Amado Ruiz","values":[495.99,0,0,0,0,0,0,0,0,0,0,0]},{"key":"LEONARDO OLIVEIRA SILVA","label":"Leonardo Oliveira Silva","values":[440.88,0,0,0,0,0,0,0,0,0,0,0]},{"key":"THIAGO DE OLIVEIRA PESSANHA DIAS","label":"Thiago de Oliveira Pessanha Dias","values":[606.21,0,0,0,0,0,0,0,0,0,0,0]},{"key":"CLEZIANO DE ALMEIDA SILVA","label":"Cleziano de Almeida Silva","values":[716.43,0,0,0,0,0,0,0,0,0,0,0]},{"key":"DELFINA PAZ","label":"Delfina Paz","values":[532.89,0,0,0,0,0,0,0,0,0,0,0]},{"key":"FABIO DE ARAUJO MEIRELLES MAGALHAES","label":"Fabio de Araujo Meirelles Magalhaes","values":[1102.2,0,0,0,0,0,0,0,0,0,0,0]},{"key":"ELOYSA CRYSTINA MARTINS DE SOUZA","label":"Eloysa Crystina Martins de Souza","values":[1212.42,0,0,0,0,0,0,0,0,0,0,0]},{"key":"RAPHAELLA CUNHA CORREA","label":"Raphaella Cunha Correa","values":[352.7,0,0,0,0,0,0,0,0,0,0,0]},{"key":"KAWE GONCALVES DE OLIVEIRA","label":"Kawe Goncalves de Oliveira","values":[426.31,0,0,0,0,0,0,0,0,0,0,0]},{"key":"PAULO SERGIO GONCALVES GOYANO","label":"Paulo Sergio Goncalves Goyano","values":[551.1,0,0,0,0,0,0,0,0,0,0,0]},{"key":"COMISSOES","label":"Comissoes","values":[67880.98999999999,32333.669999999995,21425.89000000001,23886.549999999992,12472.499999999998,13965.780000000004,17977.93,4814.87,0,0,0,0]},{"key":"VALE TRANSPORTE","label":"Vale Transporte","values":[5480.2,4913.4,4206.3,2975,2885,2785,3065,315,0,0,0,0]},{"key":"CAMILLE DOCIO","label":"Camille Docio","values":[198.39,0,0,0,0,0,0,0,0,0,0,0]},{"key":"WALACE ESTEVAM","label":"Walace Estevam","values":[606.21,0,0,0,0,0,0,0,0,0,0,0]},{"key":"PRISCILA ALMEIDA","label":"Priscila Almeida","values":[297.59,0,0,0,0,0,0,0,0,0,0,0]},{"key":"MARIA MADALENA","label":"Maria Madalena","values":[220.44,0,0,0,0,0,0,0,0,0,0,0]},{"key":"MAURICIO FEIJO","label":"Mauricio Feijo","values":[586.17,0,0,0,0,0,0,0,0,0,0,0]},{"key":"AGUSTIN BAEZ","label":"Agustin Baez","values":[479.6,0,0,0,0,0,0,0,0,0,0,0]},{"key":"RAFAEL VALE","label":"Rafael Vale","values":[385.77,0,0,0,0,0,0,0,0,0,0,0]},{"key":"JHONATHAN CAMPELLO","label":"Jhonathan Campello","values":[440.88,0,0,0,0,0,0,0,0,0,0,0]},{"key":"RANIERIS GOMES","label":"Ranieris Gomes","values":[697.73,0,0,0,0,0,0,0,0,0,0,0]},{"key":"RESCICOES TRABALHISTAS","label":"Rescicoes Trabalhistas","values":[4300.23,5360.32,11812.66,10716.720000000001,9217.47,16824.13,6177.23,12468.8,0,0,0,0]},{"key":"SISPAG SALARIOS","label":"Sispag Salarios","values":[25644.92,0,0,0,0,0,0,0,0,0,0,0]},{"key":"JHONATAN RENAN VIEIRA CAMPELO","label":"Jhonatan Renan Vieira Campelo","values":[1536.87,0,0,0,0,0,0,0,0,0,0,0]},{"key":"RIKELMY LUCAS LIMA ARAUJO","label":"Rikelmy Lucas Lima Araujo","values":[306.48,0,0,0,0,0,0,0,0,0,0,0]},{"key":"RAFAEL DOS SANTOS VALE","label":"Rafael dos Santos Vale","values":[1651.03,0,0,0,0,0,0,0,0,0,0,0]},{"key":"CAMILLE LIMA DOCIO","label":"Camille Lima Docio","values":[302.05,0,0,0,0,0,0,0,0,0,0,0]},{"key":"FABIO DE ARAUJO MEIRELLES MAGA","label":"Fabio de Araujo Meirelles Maga","values":[4011.33,0,0,0,0,0,0,0,0,0,0,0]},{"key":"WALLACE ESTEVAM","label":"Wallace Estevam","values":[1543.13,0,0,0,0,0,0,0,0,0,0,0]},{"key":"CEF MATRIZ","label":"Cef Matriz","values":[19254.949999999997,2397.86,2430.46,0,7017.33,0,8455.59,10650.35,0,0,0,0]},{"key":"SIND DOS EMP EM HOTEIS MEIOS D","label":"Sind dos Emp em Hoteis Meios D","values":[579,507,507,0,0,0,0,0,0,0,0,0]},{"key":"RECEITA FEDERAL","label":"Receita Federal","values":[5459,0,0,0,0,0,0,0,0,0,0,0]},{"key":"CAMILA BERTA CHEROZA","label":"Camila Berta Cheroza","values":[3037.16,0,0,0,0,0,0,0,0,0,0,0]},{"key":"LAVINIA CAROLAINE LIMA FARIAS","label":"Lavinia Carolaine Lima Farias","values":[2574.72,0,0,0,0,0,0,0,0,0,0,0]},{"key":"MAURO DANIEL GONZALEZ OTERO","label":"Mauro Daniel Gonzalez Otero","values":[3214.92,0,0,0,0,0,0,0,0,0,0,0]},{"key":"VALE COMBUSTIVEL","label":"Vale Combustivel","values":[0,1340,2200,1340,860,0,1840,120,0,0,0,0]},{"key":"BANCO DO BRASIL SA","label":"Banco do Brasil Sa","values":[0,2980.8,0,0,0,0,0,0,0,0,0,0]},{"key":"SALARIOS E ADIANTAMENTOS","label":"Salarios e Adiantamentos","values":[0,40524.64000000001,43876.77,42350.71,38407.229999999996,32284.039999999997,30964.870000000003,33134.28,0,0,0,0]},{"key":"FGTS","label":"Fgts","values":[0,4261.49,4872.07,0,0,0,0,0,0,0,0,0]},{"key":"INSS","label":"Inss","values":[0,5832.15,0,0,0,0,0,4145.65,0,0,0,0]},{"key":"PROVISIONAMENTO | 13º | FERIAS","label":"Provisionamento | 13º | Ferias","values":[0,4625.98,2132.65,8147.1,7972.46,7387.93,0,2979.19,0,0,0,0]},{"key":"BANCO AGIBANK S.A.","label":"Banco Agibank S.a.","values":[0,0,0,906.58,0,453.29,0,0,0,0,0,0]},{"key":"BANCO DO BRASIL S.A. - SETOR PUBLICO RJ","label":"Banco do Brasil S.a. - Setor Publico Rj","values":[0,0,0,1542.56,0,0,0,0,0,0,0,0]},{"key":"CAIXA ECONOMICA FEDERAL","label":"Caixa Economica Federal","values":[0,0,0,6641.69,0,0,0,0,0,0,0,0]},{"key":"CAIXA ECONOMICA FEDERAL - TRT01","label":"Caixa Economica Federal - Trt01","values":[0,0,0,0,1796,0,0,0,0,0,0,0]},{"key":"ANA BEATRIZ MORETTI DE ASSIS","label":"Ana Beatriz Moretti de Assis","values":[0,0,0,0,2000,0,0,0,0,0,0,0]},{"key":"SINDICATO DOS EMPREGADOS EM HOTEIS,MEIOS","label":"Sindicato dos Empregados em Hoteis,meios","values":[0,0,0,0,628,0,575,3,0,0,0,0]},{"key":"SINDICATO DOS EMPREGADOS EM HOTEIS,MEIOS DE HOSPEDAGE","label":"Sindicato dos Empregados em Hoteis,meios de Hospedage","values":[0,0,0,0,0,0,0,575,0,0,0,0]},{"key":"SINDICATO DOS EMPREGADOS EM HOTEIS,MEIOS DE HOSPEDA","label":"Sindicato dos Empregados em Hoteis,meios de Hospeda","values":[0,0,0,0,0,0,0,1643,0,0,0,0]}]},"foraDoTotal":[],"nota":null},{"key":"ADMINISTRATIVO","label":"Administrativo","dre":{"total":[34663.00600000001,15270.364400000002,9804.266800000001,11089.5728,6686.4272,6458.9752,7452.588799999999,3000,0,0,0,0],"itens":[{"key":"HOSPEDAGEM","label":"Hospedagem","values":[4000,1240.15,0,0,0,0,0,3000,0,0,0,0]},{"key":"ADMINISTRATIVO","label":"Administrativo","values":[7665.751500000001,3507.5536000000006,2451.0667000000003,2772.3932,1671.6068,1614.7438000000002,1863.1471999999997,0,0,0,0,0]},{"key":"FEE HOLDING","label":"Fee Holding","values":[22997.254500000003,10522.660800000001,7353.2001,8317.1796,5014.8204,4844.2314,5589.441599999999,0,0,0,0,0]}]},"fluxo":{"total":[1500,4665.75,20,0,5526.87,7000,1750,30640.15,0,0,0,0],"itens":[{"key":"HOSPEDAGEM","label":"Hospedagem","values":[1500,0,0,0,0,0,0,1240.15,0,0,0,0]},{"key":"ALEXANDRE MARCOS COSTA RIBEIRO II","label":"Alexandre Marcos Costa Ribeiro Ii","values":[0,4665.75,0,0,5526.87,7000,1250,0,0,0,0,0]},{"key":"ALEXANDRE MARCOS COSTA RIBEIRO","label":"Alexandre Marcos Costa Ribeiro","values":[0,0,20,0,0,0,0,0,0,0,0,0]},{"key":"ALEXANDRE MARCOS COSTA RIBEIRO SEGUNDO","label":"Alexandre Marcos Costa Ribeiro Segundo","values":[0,0,0,0,0,0,500,24400,0,0,0,0]},{"key":"JORGE HELENO MENDONCA FERNANDES JUNIOR","label":"Jorge Heleno Mendonca Fernandes Junior","values":[0,0,0,0,0,0,0,5000,0,0,0,0]}]},"foraDoTotal":[],"nota":{"sempre":true,"texto":"A <strong>Fee Holding</strong> é lançada no DRE mas não entra no Fluxo de Caixa — por isso a discrepância de valores nesta categoria."}},{"key":"CTO","label":"CTO","dre":{"total":[31404.13,26804.89,26071.850000000002,25461.99,25461.99,25239.46,25239.56,6733.86,0,0,0,0],"itens":[{"key":"ALUGUEL E IPTU","label":"Aluguel e Iptu","values":[17754.58,18683.71,18505.600000000002,18505.600000000002,18505.600000000002,18505.6,18505.7,0,0,0,0,0]},{"key":"CONDOMINIO","label":"Condominio","values":[8566.24,8121.18,7566.25,6956.39,6956.39,6733.86,6733.86,6733.86,0,0,0,0]},{"key":"ALUGUEL PERCENTUAL DE VENDAS","label":"Aluguel Percentual de Vendas","values":[5083.31,0,0,0,0,0,0,0,0,0,0,0]}]},"fluxo":{"total":[29819.67,30959.070000000003,34364.51,28867.45,0,30102.03,41749.79,49452.96,0,0,0,0],"itens":[{"key":"PDB MALLS FUNDO DE INVESTIMENT","label":"Pdb Malls Fundo de Investiment","values":[21253.43,0,25347.84,20938.75,0,30102.03,41749.79,41446.78999999999,0,0,0,0]},{"key":"CONDOMINIO","label":"Condominio","values":[8566.24,8121.18,7566.25,6656.39,0,0,0,6733.86,0,0,0,0]},{"key":"ALUGUEL E IPTU","label":"Aluguel e Iptu","values":[0,17754.58,1450.42,1272.31,0,0,0,1272.31,0,0,0,0]},{"key":"ALUGUEL PERCENTUAL DE VENDAS","label":"Aluguel Percentual de Vendas","values":[0,5083.31,0,0,0,0,0,0,0,0,0,0]}]},"foraDoTotal":[],"nota":null},{"key":"UTILITIES","label":"Utilities","dre":{"total":[30426.35,24312.9,20414.55,20383.86,21059.84,19635.01,18257.43,0,0,0,0,0],"itens":[{"key":"AGUA","label":"Agua","values":[12394.54,8114.55,3705.46,4640.04,6190.12,4146.12,3902.21,0,0,0,0,0]},{"key":"APLICATIVO DE MUSICA","label":"Aplicativo de Musica","values":[23.9,23.9,23.9,23.9,23.9,23.9,23.9,0,0,0,0,0]},{"key":"GAS","label":"Gas","values":[3914.97,5142.5,3375.04,2576.57,2821.52,2767.21,2192.51,0,0,0,0,0]},{"key":"INTERNET","label":"Internet","values":[130.87,130.87,130.65,130.87,130.87,130.87,133.55,0,0,0,0,0]},{"key":"LUZ","label":"Luz","values":[13962.07,10901.08,13179.5,13012.48,11893.43,12566.91,12005.259999999998,0,0,0,0,0]}]},"fluxo":{"total":[39109.04,30295.48,12111.51,21117.3,7940.99,12633.099999999999,18387.370000000003,21365.32,0,0,0,0],"itens":[{"key":"ASSOC CIVIL QUANTA DE GER DIST","label":"Assoc Civil Quanta de Ger Dist","values":[19416.86,0,190.5,0,0,0,0,0,0,0,0,0]},{"key":"AMPLA ENERGIA E SERVICOS","label":"Ampla Energia e Servicos","values":[8750.78,0,0,0,0,0,0,0,0,0,0,0]},{"key":"SUPERGASBRAS ENERGIA LTDA","label":"Supergasbras Energia Ltda","values":[2566.12,0,0,0,0,0,0,0,0,0,0,0]},{"key":"ENEL DISTRIBUICAO RIO","label":"Enel Distribuicao Rio","values":[8244.41,0,0,0,0,0,0,0,0,0,0,0]},{"key":"INTERNET","label":"Internet","values":[130.87,0,261.52,130.87,130.87,0,264.42,0,0,0,0,0]},{"key":"AGUA","label":"Agua","values":[0,12394.54,0,0,0,0,0,0,0,0,0,0]},{"key":"LUZ","label":"Luz","values":[0,13962.07,6493.09,17587.489999999998,5209.65,12609.2,12510.32,19148.909999999996,0,0,0,0]},{"key":"APLICATIVO DE MUSICA","label":"Aplicativo de Musica","values":[0,23.9,23.9,23.9,23.9,23.9,23.9,23.9,0,0,0,0]},{"key":"GAS","label":"Gas","values":[0,3914.97,5142.5,3375.04,2576.57,0,5588.73,2192.51,0,0,0,0]}]},"foraDoTotal":[],"nota":{"mes":0,"texto":"Em <strong>janeiro</strong> o Fluxo de Caixa de Utilities pagou contas de <strong>dezembro/2025</strong>. Por isso o valor do fluxo fica descolado do DRE do mês."}},{"key":"TERCEIROS","label":"Terceiros","dre":{"total":[15451,10721,11821,11721,3358.01,7200,8350,4450,0,0,0,0],"itens":[{"key":"CONTABILIDADE","label":"Contabilidade","values":[3951,3321,3321,3321,158.01,3000,3000,0,0,0,0,0]},{"key":"JURIDICO","label":"Juridico","values":[0,0,0,0,0,1000,1500,2500,0,0,0,0]},{"key":"NUTRICIONISTA","label":"Nutricionista","values":[600,600,600,600,600,600,600,0,0,0,0,0]},{"key":"MUSICO","label":"Musico","values":[10900,6800,7900,7800,2600,2600,3250,1950,0,0,0,0]}]},"fluxo":{"total":[16509,12771,8500,15042,6026.88,4200,5350,8050,0,0,0,0],"itens":[{"key":"CONTROLTEC ASSESSORIA CONTABIL","label":"Controltec Assessoria Contabil","values":[3108,0,0,0,0,0,0,0,0,0,0,0]},{"key":"MUSICO","label":"Musico","values":[8850,8850,7900,7800,2600,2600,3250,1950,0,0,0,0]},{"key":"CONTABILIDADE","label":"Contabilidade","values":[3951,3321,0,6642,158.01,0,0,3000,0,0,0,0]},{"key":"RENATA LOPES SANCHEZ BOIX","label":"Renata Lopes Sanchez Boix","values":[600,0,0,0,0,0,0,0,0,0,0,0]},{"key":"NUTRICIONISTA","label":"Nutricionista","values":[0,600,600,600,600,600,600,600,0,0,0,0]},{"key":"RECREACAO","label":"Recreacao","values":[0,0,0,0,2668.87,0,0,0,0,0,0,0]},{"key":"JURIDICO","label":"Juridico","values":[0,0,0,0,0,1000,1500,2500,0,0,0,0]}]},"foraDoTotal":[],"nota":null},{"key":"MARKETING","label":"Marketing","dre":{"total":[0,0,4881.08,717,477,1000,0,3973.7,0,0,0,0],"itens":[{"key":"ASSSESSORIA DE IMPRENSA","label":"Asssessoria de Imprensa","values":[0,0,0,0,0,0,0,0,0,0,0,0]},{"key":"COMERCIAL","label":"Comercial","values":[0,0,0,0,0,0,0,0,0,0,0,0]},{"key":"PROGRAMACAO VISUAL E DECORACAO","label":"Programacao Visual e Decoracao","values":[0,0,3100.08,0,477,0,0,973.7,0,0,0,0]},{"key":"PROPAGANDA E PUBLICIDADE","label":"Propaganda e Publicidade","values":[0,0,1781,717,0,1000,0,3000,0,0,0,0]},{"key":"VOUCHER","label":"Voucher","values":[0,0,0,0,0,0,0,0,0,0,0,0]},{"key":"CORTESIAS","label":"Cortesias","values":[0,0,0,0,0,0,0,0,0,0,0,0]},{"key":"SITES E DOMINIOS","label":"Sites e Dominios","values":[0,0,0,0,0,0,0,0,0,0,0,0]}]},"fluxo":{"total":[0,0,4881.08,717,477,1000,0,3973.7,0,0,0,0],"itens":[{"key":"PROGRAMACAO VISUAL E DECORACAO","label":"Programacao Visual e Decoracao","values":[0,0,3100.08,0,477,0,0,973.7,0,0,0,0]},{"key":"PROPAGANDA E PUBLICIDADE","label":"Propaganda e Publicidade","values":[0,0,1781,717,0,1000,0,3000,0,0,0,0]}]},"foraDoTotal":[],"nota":null},{"key":"FINANCEIRAS","label":"Financeiras","dre":{"total":[19713.02,7861.83,6496.08,10296.48,9881.39,9775.49,4089.6,15.309999999999999,0,0,0,0],"itens":[{"key":"CESTA DE SERVICO","label":"Cesta de Servico","values":[0,0,0,0,0,0,0,0,0,0,0,0]},{"key":"JUROS (INFRACAO)","label":"Juros (Infracao)","values":[5151.25,1239.64,2288.64,4880.84,5877.749999999999,6281.47,0,15.309999999999999,0,0,0,0]},{"key":"PIX E TED","label":"Pix e Ted","values":[0,0,0,0,0,0,0,0,0,0,0,0]},{"key":"TARIFA ANTECIPACAO CARTAO DE CREDITO","label":"Tarifa Antecipacao Cartao de Credito","values":[0,0,0,0,0,0,0,0,0,0,0,0]},{"key":"MULTAS E AUTOS DE INFRACAO","label":"Multas e Autos de Infracao","values":[0,0,0,0,0,0,0,0,0,0,0,0]},{"key":"TARIFA DEBITO, CREDITO E PIX","label":"Tarifa Debito, Credito e Pix","values":[14561.77,6622.19,4207.44,5415.64,4003.64,3494.02,4089.6,0,0,0,0,0]}]},"fluxo":{"total":[5447,1349.14,2288.64,4880.84,5877.749999999999,6450.47,0,20.17,0,0,0,0],"itens":[{"key":"JUROS (INFRACAO)","label":"Juros (Infracao)","values":[5151.25,1239.64,2288.64,4880.84,5877.749999999999,6281.47,0,15.309999999999999,0,0,0,0]},{"key":"IOF","label":"Iof","values":[295.75,0,0,0,0,0,0,4.86,0,0,0,0]},{"key":"TARIFA DEBITO, CREDITO E PIX","label":"Tarifa Debito, Credito e Pix","values":[0,109.5,0,0,0,0,0,0,0,0,0,0]},{"key":"TAR PLANO ADAPT 1 05/26","label":"Tar Plano Adapt 1 05/26","values":[0,0,0,0,0,169,0,0,0,0,0,0]}]},"foraDoTotal":[],"nota":null},{"key":"TRIBUTOS","label":"Tributos × Impostos","dre":{"total":[0,0,0,0,0,0,0,0,0,0,0,0],"itens":[{"key":"TRIBUTOS DIVERSOS","label":"Tributos Diversos","values":[0,0,0,0,0,0,0,0,0,0,0,0]}]},"fluxo":{"total":[42629.41,4691.070000000001,10922.420000000002,5493.93,1658.83,1674.92,1691.7800000000002,17644.079999999998,0,0,0,0],"itens":[{"key":"TRIBUTOS DIVERSOS","label":"Tributos Diversos","values":[42629.41,4691.070000000001,10922.420000000002,5493.93,1658.83,1674.92,1691.7800000000002,17644.079999999998,0,0,0,0]}]},"foraDoTotal":[{"key":"DEDUCOES DE FATURAMENTO","label":"Deduções de faturamento (impostos sobre vendas no DRE)","dre":[58207.48,28443.47,20794.47,21578.08,14034.89,13119.32,14761.9,0,0,0,0,0],"fluxo":[0,0,0,0,0,0,0,0,0,0,0,0],"temFluxo":false}],"nota":{"sempre":true,"texto":"No DRE os impostos sobre venda ficam em <strong>Deduções de Faturamento</strong> (linha exibida no detalhamento, fora do total). A linha <strong>Tributos Diversos</strong> do DRE compara com <strong>Impostos</strong> do Fluxo de Caixa."}}]};
+
+/* =========================== estado e formatação =========================== */
+var CHAVE_LS = 'dre-fluxo-buzios:v1';
+var estado = { dados: null, periodo: 'acum', aberta: null, todos: {}, tabela: false, custom: false };
+
+var brl = function (v) { return (v < 0 ? '-' : '') + 'R$ ' + Math.abs(v).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); };
+var brlCurto = function (v) {
+  var a = Math.abs(v), s = v < 0 ? '-' : '';
+  if (a >= 1e6) return s + 'R$ ' + (a / 1e6).toLocaleString('pt-BR', { maximumFractionDigits: 2 }) + ' mi';
+  if (a >= 1e3) return s + 'R$ ' + (a / 1e3).toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + ' mil';
+  return s + 'R$ ' + a.toLocaleString('pt-BR', { maximumFractionDigits: 0 });
+};
+var pct = function (v) { return (v * 100).toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + '%'; };
+var esc = function (s) { return String(s).replace(/[&<>"]/g, function (c) { return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]; }); };
+
+function mesesSelecionados() {
+  var d = estado.dados;
+  return estado.periodo === 'acum' ? d.meta.mesesComDados.slice() : [estado.periodo];
+}
+function agrega(valores) {
+  var ms = mesesSelecionados(), t = 0;
+  for (var i = 0; i < ms.length; i++) t += valores[ms[i]] || 0;
+  return t;
+}
+function rotuloPeriodo() {
+  var d = estado.dados, ms = d.meta.mesesComDados;
+  if (estado.periodo !== 'acum') return d.meta.meses[estado.periodo];
+  if (!ms.length) return 'sem dados';
+  return 'acumulado ' + d.meta.meses[ms[0]].slice(0, 3) + '–' + d.meta.meses[ms[ms.length - 1]].slice(0, 3);
+}
+
+/* =========================== KPIs =========================== */
+var KPIS = [
+  { id: 'faturamento', label: 'Faturamento Bruto', fonte: 'Receita Bruta (DRE)', base: null },
+  { id: 'cmv',         label: 'CMV',               fonte: 'CMV (DRE)',           base: 'faturamento' },
+  { id: 'cmvPerfeito', label: 'CMV Perfeito',      fonte: 'CMV Perfeito (DRE)',  base: 'faturamento' },
+  { id: 'ebitda',      label: 'EBITDA',            fonte: 'EBITDA (DRE)',        base: 'faturamento' }
+];
+
+function renderKpis() {
+  var d = estado.dados, ms = d.meta.mesesComDados;
+  var html = KPIS.map(function (k) {
+    var serie = d.kpis[k.id] || [];
+    var valor = agrega(serie);
+    var meta = '';
+    if (k.base) {
+      var b = agrega(d.kpis[k.base]);
+      meta = b ? '<b>' + pct(valor / b) + '</b> da receita bruta' : '';
+    } else if (estado.periodo === 'acum') {
+      meta = '<b>' + brlCurto(ms.length ? valor / ms.length : 0) + '</b> por mês em média';
+    } else {
+      var ant = estado.periodo - 1;
+      if (ant >= 0 && serie[ant]) {
+        var v = (valor - serie[ant]) / Math.abs(serie[ant]);
+        meta = '<b>' + (v >= 0 ? '+' : '') + pct(v) + '</b> vs. ' + d.meta.meses[ant].toLowerCase();
+      } else meta = 'sem mês anterior para comparar';
+    }
+    var vals = ms.map(function (m) { return serie[m] || 0; });
+    var topo = Math.max.apply(null, vals.concat([0]));
+    var base = Math.min.apply(null, vals.concat([0]));
+    var faixa = (topo - base) || 1;
+    var zero = (0 - base) / faixa * 100;
+    var spark = ms.map(function (m, i) {
+      var v = vals[i];
+      var h = Math.max(1.5, Math.abs(v) / faixa * 100);
+      var pos = v >= 0 ? 'bottom:' + zero + '%;height:' + h + '%' : 'top:' + (100 - zero) + '%;height:' + h + '%';
+      return '<i class="' + (estado.periodo === m ? 'on' : '') + '" title="' + d.meta.meses[m] + ': ' + esc(brl(v)) + '">' +
+        '<span style="position:absolute;left:0;right:0;' + pos + '"></span></i>';
+    }).join('');
+    spark = '<span class="zero" style="bottom:' + zero + '%"></span>' + spark;
+    return '<article class="kpi">' +
+      '<div class="k-lbl">' + k.label + '</div>' +
+      '<div class="k-val">' + esc(brl(valor)) + '</div>' +
+      '<div class="k-meta">' + meta + '</div>' +
+      '<div class="spark" aria-hidden="true">' + spark + '</div>' +
+      '</article>';
+  }).join('');
+  document.getElementById('kpis').innerHTML = html;
+}
+
+/* =========================== gráfico =========================== */
+function escalaBonita(max) {
+  if (max <= 0) return 1;
+  var exp = Math.pow(10, Math.floor(Math.log10(max)));
+  var passos = [1, 1.25, 1.5, 2, 2.5, 3, 4, 5, 6, 8, 10];
+  for (var i = 0; i < passos.length; i++) {
+    if (passos[i] * exp >= max) return passos[i] * exp;
+  }
+  return 10 * exp;
+}
+
+function barra(valor, max, classe, pequena, sempreFora) {
+  var linha = '<div class="bar-line' + (pequena ? ' sm' : '') + '">';
+  if (Math.abs(valor) < 0.005) {
+    return linha + '<span class="bar-val zero" style="left:0">—</span></div>';
+  }
+  var w = max > 0 ? Math.min(100, valor / max * 100) : 0;
+  var dentro = !sempreFora && w >= 76;
+  var lbl = '<span class="bar-val' + (dentro ? ' inside' : (sempreFora ? ' fora' : '')) + '" style="left:' + w + '%">' +
+    esc(brlCurto(valor)) + '</span>';
+  return linha + '<div class="bar ' + classe + '" style="width:' + w + '%"></div>' + lbl + '</div>';
+}
+
+function chipDiff(dre, fluxo) {
+  var d = fluxo - dre;
+  var seta = Math.abs(d) < 0.01 ? '=' : (d > 0 ? '▲' : '▼');
+  var rel = dre ? '<span class="pct">' + (d > 0 ? '+' : '') + pct(d / Math.abs(dre)) + '</span>' : '<span class="pct">—</span>';
+  return '<div class="diff" title="Fluxo de Caixa menos DRE">' + seta + ' ' + esc(brlCurto(Math.abs(d))) + rel + '</div>';
+}
+
+function linhaItem(nome, dre, fluxo, max, fora, semFluxo) {
+  return '<div class="item row-grid' + (fora ? ' off' : '') + '" data-nome="' + esc(nome) + '">' +
+    '<div class="nm" title="' + esc(nome) + '">' + esc(nome) + (fora ? ' · fora do total' : '') + '</div>' +
+    '<div class="plot">' +
+      barra(dre, max, 'dre', true, fora) +
+      (semFluxo ? '<div class="bar-line sm"><span class="bar-val fora" style="left:0">sem lançamento no fluxo</span></div>' : barra(fluxo, max, 'caixa', true, fora)) +
+    '</div>' +
+    (semFluxo ? '<div class="diff">—</div>' : chipDiff(dre, fluxo)) +
+    '</div>';
+}
+
+function itensDoDetalhe(cat) {
+  var mapa = {};
+  cat.dre.itens.forEach(function (it) {
+    mapa[it.key] = mapa[it.key] || { nome: it.label, dre: 0, fluxo: 0 };
+    mapa[it.key].dre += agrega(it.values);
+  });
+  cat.fluxo.itens.forEach(function (it) {
+    mapa[it.key] = mapa[it.key] || { nome: it.label, dre: 0, fluxo: 0 };
+    mapa[it.key].fluxo += agrega(it.values);
+  });
+  return Object.keys(mapa).map(function (k) { return mapa[k]; })
+    .filter(function (x) { return Math.abs(x.dre) > 0.005 || Math.abs(x.fluxo) > 0.005; })
+    .sort(function (a, b) { return Math.max(b.dre, b.fluxo) - Math.max(a.dre, a.fluxo); });
+}
+
+var ICONE_NOTA = '<svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="8" cy="8" r="6.5"/><path d="M8 7.2v4M8 4.8v.6" stroke-linecap="round"/></svg>';
+
+function notasDaCategoria(cat) {
+  if (!cat.nota) return '';
+  var vale = cat.nota.sempre || (cat.nota.mes !== undefined && mesesSelecionados().indexOf(cat.nota.mes) >= 0);
+  if (!vale) return '';
+  return '<p class="nota">' + ICONE_NOTA + '<span>' + cat.nota.texto + '</span></p>';
+}
+
+function renderChart() {
+  var d = estado.dados;
+  var linhas = d.categorias.map(function (c) {
+    return { cat: c, dre: agrega(c.dre.total), fluxo: agrega(c.fluxo.total) };
+  });
+  var maxCat = 0;
+  linhas.forEach(function (l) { maxCat = Math.max(maxCat, l.dre, l.fluxo); });
+  var max = escalaBonita(maxCat);
+
+  var ticks = [0, .25, .5, .75, 1].map(function (f) {
+    return '<span style="left:' + (f * 100) + '%">' + esc(f === 0 ? '0' : brlCurto(max * f)) + '</span>';
+  }).join('');
+
+  var html = '<div class="axis row-grid"><div></div><div class="ticks">' + ticks + '</div><div></div></div>';
+
+  linhas.forEach(function (l) {
+    var c = l.cat, aberta = estado.aberta === c.key;
+    var temNota = c.nota && (c.nota.sempre || (c.nota.mes !== undefined && mesesSelecionados().indexOf(c.nota.mes) >= 0));
+    html += '<button class="cat row-grid" data-cat="' + c.key + '" aria-expanded="' + aberta + '">' +
+      '<span class="cat-name"><span class="caret">▶</span>' + esc(c.label) +
+        (temNota ? '<span class="flag" title="Há uma observação sobre esta categoria" aria-label="Categoria com observação">i</span>' : '') + '</span>' +
+      '<span class="plot" data-tip-cat="' + c.key + '">' +
+        barra(l.dre, max, 'dre') + barra(l.fluxo, max, 'caixa') +
+      '</span>' +
+      chipDiff(l.dre, l.fluxo) +
+      '</button>';
+
+    if (!aberta) return;
+
+    var itens = itensDoDetalhe(c);
+    var mostrarTodos = !!estado.todos[c.key];
+    var LIMITE = 12;
+    var visiveis = mostrarTodos ? itens : itens.slice(0, LIMITE);
+    var maxItem = 0;
+    itens.forEach(function (i) { maxItem = Math.max(maxItem, i.dre, i.fluxo); });
+    (c.foraDoTotal || []).forEach(function (f) { maxItem = Math.max(maxItem, agrega(f.dre), agrega(f.fluxo)); });
+    var escalaItem = escalaBonita(maxItem);
+
+    var det = '<div class="det">';
+    det += '<div class="det-head"><h3>Detalhamento de ' + esc(c.label) + '</h3>' +
+           '<span class="cnt">' + itens.length + ' itens · ' + esc(rotuloPeriodo()) + ' · escala própria até ' + esc(brlCurto(escalaItem)) + '</span></div>';
+    det += notasDaCategoria(c);
+
+    det += visiveis.map(function (i) { return linhaItem(i.nome, i.dre, i.fluxo, escalaItem, false, false); }).join('');
+
+    if (itens.length > LIMITE) {
+      det += '<button class="btn-link" data-todos="' + c.key + '">' +
+        (mostrarTodos ? 'Mostrar apenas os 12 maiores' : 'Mostrar todos os ' + itens.length + ' itens') + '</button>';
+    }
+
+    det += '<div class="item row-grid tot-row"><div class="nm">Total ' + esc(c.label) + '</div>' +
+      '<div class="plot">' + barra(l.dre, escalaItem, 'dre', true) + barra(l.fluxo, escalaItem, 'caixa', true) + '</div>' +
+      chipDiff(l.dre, l.fluxo) + '</div>';
+
+    if (c.foraDoTotal && c.foraDoTotal.length) {
+      var fora = c.foraDoTotal.filter(function (f) { return agrega(f.dre) || agrega(f.fluxo); });
+      if (fora.length) {
+        det += '<div class="det-sub">Fora da somatória — exibidos apenas como referência</div>';
+        det += fora.map(function (f) {
+          return linhaItem(f.label, agrega(f.dre), agrega(f.fluxo), escalaItem, true, !f.temFluxo);
+        }).join('');
+      }
+    }
+    det += '</div>';
+    html += det;
+  });
+
+  document.getElementById('chart').innerHTML = html;
+  renderTabela(linhas);
+}
+
+/* =========================== tabela alternativa =========================== */
+function renderTabela(linhas) {
+  var el = document.getElementById('tabela');
+  if (!estado.tabela) { el.innerHTML = ''; return; }
+  var corpo = linhas.map(function (l) {
+    return '<tr><td>' + esc(l.cat.label) + '</td>' +
+      '<td class="num">' + esc(brl(l.dre)) + '</td>' +
+      '<td class="num">' + esc(brl(l.fluxo)) + '</td>' +
+      '<td class="num">' + esc(brl(l.fluxo - l.dre)) + '</td></tr>';
+  }).join('');
+  el.innerHTML = '<div class="panel" style="margin-top:16px"><div class="panel-head"><h2>Tabela — ' + esc(rotuloPeriodo()) + '</h2></div>' +
+    '<div class="tabela-wrap" style="padding:0 20px 18px"><table><thead><tr><th>Categoria</th><th>DRE</th><th>Fluxo de Caixa</th><th>Diferença</th></tr></thead><tbody>' +
+    corpo + '</tbody></table></div></div>';
+}
+
+/* =========================== período =========================== */
+function renderChips() {
+  var d = estado.dados;
+  var html = '<button class="chip" data-p="acum" aria-pressed="' + (estado.periodo === 'acum') + '">Acumulado</button>';
+  for (var m = 0; m < 12; m++) {
+    var tem = d.meta.mesesComDados.indexOf(m) >= 0;
+    html += '<button class="chip" data-p="' + m + '" aria-pressed="' + (estado.periodo === m) + '"' + (tem ? '' : ' disabled') + '>' +
+      d.meta.meses[m].slice(0, 3) + '</button>';
+  }
+  document.getElementById('chips').innerHTML = html;
+}
+
+function render() {
+  renderChips();
+  renderKpis();
+  renderChart();
+  document.getElementById('src-nome').textContent = estado.dados.meta.arquivo || 'planilha base';
+  document.getElementById('btn-reset').hidden = !estado.custom;
+}
+
+/* =========================== tooltip =========================== */
+var tip = document.getElementById('tip');
+function mostraTip(html, x, y) {
+  tip.innerHTML = html;
+  tip.style.opacity = '1';
+  var r = tip.getBoundingClientRect();
+  var left = Math.min(window.innerWidth - r.width - 10, Math.max(10, x + 14));
+  var top = Math.max(10, y - r.height - 12);
+  tip.style.left = left + 'px';
+  tip.style.top = top + 'px';
+}
+function escondeTip() { tip.style.opacity = '0'; }
+
+document.addEventListener('mousemove', function (ev) {
+  var alvo = ev.target.closest ? ev.target.closest('.cat, .item') : null;
+  if (!alvo) { escondeTip(); return; }
+  var d = estado.dados, nome, dre, fluxo;
+  if (alvo.classList.contains('cat')) {
+    var cat = d.categorias.filter(function (c) { return c.key === alvo.dataset.cat; })[0];
+    if (!cat) { escondeTip(); return; }
+    nome = cat.label; dre = agrega(cat.dre.total); fluxo = agrega(cat.fluxo.total);
+  } else {
+    nome = alvo.dataset.nome || '';
+    var vals = alvo.querySelectorAll('.bar-val');
+    if (!vals.length) { escondeTip(); return; }
+    var achado = itensDoDetalhe(d.categorias.filter(function (c) { return c.key === estado.aberta; })[0] || { dre: { itens: [] }, fluxo: { itens: [] } })
+      .filter(function (i) { return i.nome === nome; })[0];
+    if (!achado) { escondeTip(); return; }
+    dre = achado.dre; fluxo = achado.fluxo;
+  }
+  mostraTip('<div class="t-nm">' + esc(nome) + '</div>' +
+    '<div class="t-ln"><span>DRE</span><span>' + esc(brl(dre)) + '</span></div>' +
+    '<div class="t-ln"><span>Fluxo</span><span>' + esc(brl(fluxo)) + '</span></div>' +
+    '<div class="t-ln"><span>Diferença</span><span>' + esc(brl(fluxo - dre)) + '</span></div>', ev.clientX, ev.clientY);
+});
+
+/* =========================== eventos =========================== */
+document.addEventListener('click', function (ev) {
+  var chip = ev.target.closest('.chip');
+  if (chip && !chip.disabled) {
+    estado.periodo = chip.dataset.p === 'acum' ? 'acum' : parseInt(chip.dataset.p, 10);
+    render(); return;
+  }
+  var todos = ev.target.closest('[data-todos]');
+  if (todos) {
+    estado.todos[todos.dataset.todos] = !estado.todos[todos.dataset.todos];
+    renderChart(); return;
+  }
+  var cat = ev.target.closest('.cat');
+  if (cat) {
+    estado.aberta = estado.aberta === cat.dataset.cat ? null : cat.dataset.cat;
+    renderChart();
+    if (estado.aberta) {
+      var novo = document.querySelector('.cat[data-cat="' + estado.aberta + '"]');
+      if (novo) novo.focus({ preventScroll: true });
+    }
+    return;
+  }
+});
+
+document.getElementById('btn-tabela').addEventListener('click', function () {
+  estado.tabela = !estado.tabela;
+  this.textContent = estado.tabela ? 'Ocultar tabela' : 'Ver como tabela';
+  renderChart();
+});
+
+/* =========================== importação =========================== */
+function erro(msg) {
+  document.getElementById('erro').innerHTML = msg ? '<div class="erro">' + esc(msg) + '</div>' : '';
+}
+function aplicar(dados, custom) {
+  estado.dados = dados;
+  estado.custom = !!custom;
+  if (estado.periodo !== 'acum' && dados.meta.mesesComDados.indexOf(estado.periodo) < 0) estado.periodo = 'acum';
+  estado.aberta = null;
+  erro('');
+  render();
+}
+function lerArquivo(file) {
+  var leitor = new FileReader();
+  leitor.onload = function (e) {
+    try {
+      var wb = XLSX.read(new Uint8Array(e.target.result), { type: 'array' });
+      var dados = parseWorkbook(wb, XLSX, file.name);
+      aplicar(dados, true);
+      try { localStorage.setItem(CHAVE_LS, JSON.stringify(dados)); } catch (x) { /* cota cheia: segue só em memória */ }
+    } catch (x) {
+      erro('Não foi possível ler esta planilha: ' + x.message + ' Confira se ela tem as abas DRE, RELATÓRIO FLUXO DE CAIXA e CONTAS A PAGAR.');
+    }
+  };
+  leitor.onerror = function () { erro('Falha ao abrir o arquivo. Tente novamente.'); };
+  leitor.readAsArrayBuffer(file);
+}
+document.getElementById('btn-import').addEventListener('click', function () { document.getElementById('file').click(); });
+document.getElementById('file').addEventListener('change', function () {
+  if (this.files && this.files[0]) lerArquivo(this.files[0]);
+  this.value = '';
+});
+document.getElementById('btn-reset').addEventListener('click', function () {
+  try { localStorage.removeItem(CHAVE_LS); } catch (x) {}
+  aplicar(DADOS_PADRAO, false);
+});
+
+var drop = document.getElementById('drop');
+['dragenter', 'dragover'].forEach(function (t) {
+  window.addEventListener(t, function (e) { e.preventDefault(); drop.classList.add('on'); });
+});
+['dragleave', 'drop'].forEach(function (t) {
+  window.addEventListener(t, function (e) {
+    e.preventDefault();
+    if (t === 'dragleave' && e.relatedTarget) return;
+    drop.classList.remove('on');
+    if (t === 'drop' && e.dataTransfer && e.dataTransfer.files[0]) lerArquivo(e.dataTransfer.files[0]);
+  });
+});
+
+/* =========================== início =========================== */
+(function () {
+  var salvo = null;
+  try { salvo = localStorage.getItem(CHAVE_LS); } catch (x) {}
+  if (salvo) {
+    try { aplicar(JSON.parse(salvo), true); return; } catch (x) {}
+  }
+  aplicar(DADOS_PADRAO, false);
+})();
+</script>
+
+</body>
+</html>
