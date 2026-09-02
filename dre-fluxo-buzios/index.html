@@ -193,7 +193,8 @@ button{font:inherit;color:inherit}
 .diff .pc{display:block;color:var(--ink-3);font-size:10.5px}
 
 /* ---------- detalhamento ---------- */
-.det{border-top:1px solid var(--line);background:var(--surface-2);padding:18px 22px 22px}
+.det{border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--surface-2);
+  margin:0 -22px;padding:18px 22px 22px}
 .det-head{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:12px}
 .det-head h3{font-size:14px}
 .det-head .cnt{font-size:11.5px;color:var(--ink-3)}
@@ -284,7 +285,6 @@ tr.fora td{color:var(--ink-3)}
       </div>
     </div>
     <div class="chart" id="chart"></div>
-    <div id="detalhe"></div>
   </section>
 
   <div id="tabela"></div>
@@ -666,23 +666,18 @@ function renderChart() {
       '<span class="cat-name"><span class="seta">▶</span>' + esc(c.label) +
         (temNota(c) ? '<span class="selo" title="Há uma observação sobre esta categoria">i</span>' : '') + '</span>' +
       '<span class="plot" data-cat="' + c.key + '">' + barra(l.dre, max, 'dre') + barra(l.fluxo, max, 'caixa') + '</span>' +
-      chipDiff(l.dre, l.fluxo) + '</button>';
+      chipDiff(l.dre, l.fluxo) + '</button>' +
+      (aberta ? detalheHtml(c) : '');
   }).join('');
 
   document.getElementById('chart').innerHTML = html;
-  renderDetalhe();
   renderTabela(ls);
 }
 
 /* =========================== detalhamento (só DRE) =========================== */
 var ICONE_NOTA = '<svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="8" cy="8" r="6.5"/><path d="M8 7.2v4M8 4.8v.6" stroke-linecap="round"/></svg>';
 
-function renderDetalhe() {
-  var el = document.getElementById('detalhe');
-  if (!estado.aberta) { el.innerHTML = ''; return; }
-  var c = estado.dados.categorias.filter(function (x) { return x.key === estado.aberta; })[0];
-  if (!c) { el.innerHTML = ''; return; }
-
+function detalheHtml(c) {
   var totalDre = agrega(c.dre.total), totalFluxo = agrega(c.fluxo.total);
   var itens = c.dre.itens.map(function (it) { return { nome: it.label, valor: agrega(it.values) }; })
     .filter(function (i) { return Math.abs(i.valor) > 0.005; })
@@ -736,7 +731,7 @@ function renderDetalhe() {
     }
   }
   html += '</div>';
-  el.innerHTML = html;
+  return html;
 }
 
 /* =========================== tabela das categorias =========================== */
@@ -807,7 +802,7 @@ document.addEventListener('click', function (ev) {
     estado.aberta = null; estado.todos = false; renderChart(); return;
   }
   if (ev.target.closest('[data-todos]')) {
-    estado.todos = !estado.todos; renderDetalhe(); return;
+    estado.todos = !estado.todos; renderChart(); return;
   }
   var cat = ev.target.closest('.cat');
   if (cat) {

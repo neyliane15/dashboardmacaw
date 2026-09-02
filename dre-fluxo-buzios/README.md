@@ -15,7 +15,8 @@ carregado por CDN; nenhum dado é enviado para servidor algum.
   do Fluxo de Caixa, com a diferença em R$ e %. Categorias: Operacionais, Pessoal,
   Administrativo, CTO, Utilities, Terceiros, Marketing, Financeiras e o par
   Tributos Diversos (DRE) × Impostos (Fluxo).
-- **Clicando na categoria**, abre abaixo a tabela com os **itens do DRE** que formam
+- **Clicando na categoria**, a tabela com os **itens do DRE** abre logo abaixo daquela
+  linha do gráfico (não no fim da página), mostrando os itens que formam
   aquele valor — descrição, valor e participação na categoria. O detalhamento item a
   item existe apenas no DRE; do Fluxo de Caixa vem só o total da categoria, exibido no
   resumo (Total no DRE · Total no Fluxo · Diferença).
