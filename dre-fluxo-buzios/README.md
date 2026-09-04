@@ -88,7 +88,7 @@ Duas regras fecham a conta para que a coluna "pago no fluxo" sempre some o total
 Mapeamentos auxiliares: Administrativo do fluxo soma `ADMINISTRATIVO` + `HOLDING`;
 Financeiras do fluxo soma `FINANCEIRAS` + `TARIFA`.
 
-## Planilha compartilhada
+## Planilha compartilhada e reprocessamento
 
 Quando o painel roda publicado como Artifact, a planilha importada é gravada no
 armazenamento compartilhado da página: **quem abrir depois, em qualquer navegador,
@@ -96,6 +96,14 @@ vê a mesma versão**, e quem estiver com a página aberta recebe a atualizaçã
 Fora dali (arquivo local, servidor estático) não existe esse armazenamento, e a
 planilha importada fica guardada só no navegador de quem importou — o painel avisa
 qual dos dois casos está valendo, na linha abaixo do gráfico.
+
+Junto com os dados já lidos, o painel guarda **o arquivo original** (em pedaços, no
+mesmo armazenamento). O parser tem um número de versão: quando o painel ganha um
+comparativo novo, ele percebe que a planilha guardada foi lida por uma versão
+anterior, reprocessa o arquivo sozinho e republica o resultado para todo mundo — sem
+precisar reimportar. Se o arquivo original não estiver guardado (planilha importada
+antes dessa mudança), o painel mostra um aviso pedindo uma reimportação, uma única
+vez.
 
 ## Identidade
 
