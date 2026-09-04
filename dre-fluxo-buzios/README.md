@@ -27,9 +27,9 @@ carregado por CDN; nenhum dado é enviado para servidor algum.
   Marketing, Financeiras, Impostos, Pró-labore e Dividendos — cada um com a barra do
   DRE, a do Fluxo de Caixa e a diferença.
 - **Clicando na categoria**, abre logo abaixo dela a comparação **item a item**:
-  cada descrição do DRE com as mesmas barras do gráfico (na escala do maior item da
-  tabela), o valor reconhecido, o valor efetivamente pago e a diferença — inclusive
-  na linha de total; abaixo, os pagamentos daquela categoria que não têm item
+  cada descrição do DRE com o valor reconhecido, o valor efetivamente pago e a
+  diferença em colunas, e duas barrinhas discretas sob o nome (na escala do maior
+  item da tabela) com o valor em formato curto, para ler a proporção de relance; abaixo, os pagamentos daquela categoria que não têm item
   correspondente no DRE; e por fim as linhas deixadas fora da somatória.
 - Filtro de período: acumulado ou mês a mês.
 
