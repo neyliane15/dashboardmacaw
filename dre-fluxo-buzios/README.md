@@ -22,13 +22,14 @@ carregado por CDN; nenhum dado é enviado para servidor algum.
   | Resultado DRE | linha `SALDO FINANCEIRO` do DRE |
   | Caixa | linha `SALDO FINAL` do Fluxo de Caixa — é um saldo, então mostra o do último mês do período, não a soma |
 
-- **Um gráfico comparativo de barras** com 12 comparativos: Operacionais, Pessoal,
-  Comissões, Administrativo, CTO, Utilities, Terceiros, Marketing, Financeiras,
-  Impostos, Pró-labore e Dividendos — cada um com a barra do DRE, a do Fluxo de
-  Caixa e a diferença.
+- **Um gráfico comparativo de barras** com 13 comparativos: CMV × Fornecedor,
+  Operacionais, Pessoal, Comissões, Administrativo, CTO, Utilities, Terceiros,
+  Marketing, Financeiras, Impostos, Pró-labore e Dividendos — cada um com a barra do
+  DRE, a do Fluxo de Caixa e a diferença.
 - **Clicando na categoria**, abre logo abaixo dela a comparação **item a item**:
-  cada descrição do DRE com o valor reconhecido, o valor efetivamente pago e a
-  diferença; abaixo, os pagamentos daquela categoria que não têm item
+  cada descrição do DRE com as mesmas barras do gráfico (na escala do maior item da
+  tabela), o valor reconhecido, o valor efetivamente pago e a diferença — inclusive
+  na linha de total; abaixo, os pagamentos daquela categoria que não têm item
   correspondente no DRE; e por fim as linhas deixadas fora da somatória.
 - Filtro de período: acumulado ou mês a mês.
 
@@ -72,7 +73,15 @@ Duas regras fecham a conta para que a coluna "pago no fluxo" sempre some o total
    `IMPOSTOS` do fluxo. O DRE reconhece no mês da competência e o caixa paga no mês
    seguinte, então a diferença no acumulado é justamente esse descasamento. As
    deduções de faturamento aparecem como referência.
-6. **Pró-labore** sai da somatória de Administrativo (onde a planilha o lança) e vira
+6. **CMV × Fornecedor** compara o `CMV` do DRE (estoque inicial + compras − estoque
+   final, ou seja, o que foi consumido) com o **pagamento aos fornecedores** no fluxo
+   — todas as categorias de compra listadas sob `FORNECEDOR` no relatório, de Bebidas
+   a Central. O grupo é lido pela ordem da própria planilha e para na primeira
+   categoria que já pertence a outro comparativo; linhas que são só subtotal no
+   relatório (`BEBIDAS`, que soma Ambev, Chopp, Vinhos...) não entram duas vezes,
+   porque a soma vem do contas a pagar. As linhas do cálculo do CMV e o CMV perfeito
+   aparecem como referência.
+7. **Pró-labore** sai da somatória de Administrativo (onde a planilha o lança) e vira
    comparativo próprio. Se a planilha não tiver essa linha no DRE, o painel avisa que
    ele só existe no fluxo.
 
