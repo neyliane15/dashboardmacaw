@@ -45,6 +45,17 @@ A ligação vem da aba `CONTAS A PAGAR`: cada pagamento traz uma **`CATEGORIA DR
    mas ficam sem item para comparar. Preencher essa coluna na planilha faz a linha
    subir para a tabela principal.
 
+Duas regras fecham a conta para que a coluna "pago no fluxo" sempre some o total:
+
+- **Comparativo de um item só** (Pró-labore, Dividendos, Comissões, Impostos): a
+  categoria de fluxo é inteira daquele item, então os pagamentos sem `CATEGORIA DRE`
+  são atribuídos a ele e listados abaixo em "composição do valor pago". Sem isso a
+  linha do item ficava zerada enquanto o total mostrava o valor pago.
+- **Pagamento cujo item do DRE é de outro comparativo** (Custo locomoção lançado no
+  fluxo de Operacionais, Recreação lançada em Terceiros): ganha linha própria com o
+  aviso de onde o DRE registra, e o item de origem mostra "pago em <categoria>".
+  Antes esse dinheiro só aparecia no total.
+
 ## Regras de negócio aplicadas
 
 1. **Operacionais** soma o **Sistema operacional de vendas** e deixa **Material de
