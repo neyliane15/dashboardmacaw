@@ -9,33 +9,68 @@ carregado por CDN; nenhum dado é enviado para servidor algum.
 
 ## O que o painel mostra
 
-- **4 indicadores** do período escolhido: Faturamento Bruto (Receita Bruta), CMV,
-  CMV Perfeito e EBITDA — todos lidos da aba `DRE`.
-- **Um gráfico comparativo de barras**: para cada categoria, a barra do DRE e a barra
-  do Fluxo de Caixa, com a diferença em R$ e %. Categorias: Operacionais, Pessoal,
-  Administrativo, CTO, Utilities, Terceiros, Marketing, Financeiras e o par
-  Tributos Diversos (DRE) × Impostos (Fluxo).
-- **Clicando na categoria**, a tabela com os **itens do DRE** abre logo abaixo daquela
-  linha do gráfico (não no fim da página), mostrando os itens que formam
-  aquele valor — descrição, valor e participação na categoria. O detalhamento item a
-  item existe apenas no DRE; do Fluxo de Caixa vem só o total da categoria, exibido no
-  resumo (Total no DRE · Total no Fluxo · Diferença).
+- **Duas unidades em abas separadas**: Búzios (planilha embutida) e Camboinhas
+  (entra pelo botão de importar). Cada uma tem sua própria planilha, seus próprios
+  indicadores e seu próprio comparativo; o endereço guarda a aba (`#buzios`,
+  `#camboinhas`).
+- **4 indicadores** do período escolhido:
+
+  | Indicador | Origem |
+  | --- | --- |
+  | Faturamento Bruto | linha `RECEITA BRUTA` do DRE |
+  | Lucro Líquido | linha `LUCRO LIQUIDO` do DRE |
+  | Resultado DRE | linha `SALDO FINANCEIRO` do DRE |
+  | Caixa | linha `SALDO FINAL` do Fluxo de Caixa — é um saldo, então mostra o do último mês do período, não a soma |
+
+- **Um gráfico comparativo de barras** com 12 comparativos: Operacionais, Pessoal,
+  Comissões, Administrativo, CTO, Utilities, Terceiros, Marketing, Financeiras,
+  Impostos, Pró-labore e Dividendos — cada um com a barra do DRE, a do Fluxo de
+  Caixa e a diferença.
+- **Clicando na categoria**, abre logo abaixo dela a comparação **item a item**:
+  cada descrição do DRE com o valor reconhecido, o valor efetivamente pago e a
+  diferença; abaixo, os pagamentos daquela categoria que não têm item
+  correspondente no DRE; e por fim as linhas deixadas fora da somatória.
 - Filtro de período: acumulado ou mês a mês.
+
+## Como o DRE conversa com o Fluxo de Caixa
+
+A ligação vem da aba `CONTAS A PAGAR`: cada pagamento traz uma **`CATEGORIA DRE`**
+(a descrição do item, igual à coluna `APLICACOES` do DRE) e uma **`CATEGORIA FLUXO`**
+(onde ele entra no fluxo de caixa). O painel usa isso para:
+
+1. somar, por item do DRE, quanto foi pago no período;
+2. fechar o total de cada categoria do fluxo (confere com a aba
+   `RELATÓRIO FLUXO DE CAIXA`);
+3. listar os pagamentos sem `CATEGORIA DRE` preenchida — eles entram no total pago,
+   mas ficam sem item para comparar. Preencher essa coluna na planilha faz a linha
+   subir para a tabela principal.
 
 ## Regras de negócio aplicadas
 
-1. **Material de limpeza e descartáveis** e **Sistema operacional de vendas** ficam
-   fora da somatória de Operacionais, mas continuam visíveis no detalhamento, no bloco
-   "Fora da somatória", com seus valores.
-2. **Administrativo** exibe a observação de que a **Fee Holding** é lançada no DRE e
-   não entra no Fluxo de Caixa — origem da discrepância.
-3. **Utilities** exibe a observação de que o fluxo de janeiro pagou contas de
-   dezembro/2025, quando janeiro está no período selecionado.
-4. **Tributos Diversos** (DRE) é comparado com **Impostos** (Fluxo de Caixa). As
-   deduções de faturamento aparecem no detalhamento como referência, fora do total.
+1. **Operacionais** soma o **Sistema operacional de vendas** e deixa **Material de
+   limpeza e descartáveis** fora do total (aparece como referência; no fluxo ele é
+   categoria própria).
+2. **Pessoal** não soma **Comissões** (virou comparativo próprio), **INSS** nem
+   **Vale transporte com desconto** — a exclusão vale para os dois regimes, então o
+   total pago também desconta esses pagamentos.
+3. **Administrativo** avisa que a **Fee Holding** existe no DRE e não no fluxo.
+4. **Utilities** avisa, quando janeiro está no período, que o fluxo de janeiro pagou
+   contas de dezembro/2025.
+5. **Impostos** compara `TRIBUTOS DIVERSOS` (DRE) com `IMPOSTOS` (fluxo); as
+   deduções de faturamento aparecem como referência.
+6. **Pró-labore** só existe no fluxo desta planilha — o painel diz isso na categoria.
 
 Mapeamentos auxiliares: Administrativo do fluxo soma `ADMINISTRATIVO` + `HOLDING`;
 Financeiras do fluxo soma `FINANCEIRAS` + `TARIFA`.
+
+## Planilha compartilhada
+
+Quando o painel roda publicado como Artifact, a planilha importada é gravada no
+armazenamento compartilhado da página: **quem abrir depois, em qualquer navegador,
+vê a mesma versão**, e quem estiver com a página aberta recebe a atualização na hora.
+Fora dali (arquivo local, servidor estático) não existe esse armazenamento, e a
+planilha importada fica guardada só no navegador de quem importou — o painel avisa
+qual dos dois casos está valendo, na linha abaixo do gráfico.
 
 ## Identidade
 
@@ -69,8 +104,9 @@ A leitura procura as abas e as colunas **pelo nome**, não pela posição:
 
 | Aba | Uso |
 | --- | --- |
-| `DRE` | linhas de indicadores (Receita Bruta, CMV, CMV Perfeito, EBITDA, Tributos Diversos) e itens por categoria, nas colunas `CATEGORIA` / `APLICACOES` |
-| `RELATÓRIO FLUXO DE CAIXA` | bloco `FLUXO DETALHADO`: total pago por categoria em cada mês |
+| `DRE` | linhas de indicadores (Receita Bruta, Lucro Líquido, Saldo Financeiro, Tributos Diversos, Dividendos) e itens por categoria, nas colunas `CATEGORIA` / `APLICACOES` |
+| `RELATÓRIO FLUXO DE CAIXA` | `SALDO FINAL` de cada mês e o bloco `FLUXO DETALHADO` (usado para conferir os totais) |
+| `CONTAS A PAGAR` | cada pagamento com `MES PAGAMENTO`, `DESCRICAO`, `CATEGORIA DRE`, `CATEGORIA FLUXO` e `VALOR` — a ponte entre os dois regimes |
 
 Linhas podem ser inseridas ou removidas na planilha sem quebrar o painel; o que não
 pode mudar são os nomes das abas, dos cabeçalhos de coluna e dos meses.

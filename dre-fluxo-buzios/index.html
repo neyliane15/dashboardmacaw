@@ -82,6 +82,7 @@
 }
 
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 body{
   margin:0;background:var(--ground);color:var(--ink);
   font-family:var(--sans);font-size:14px;font-weight:400;line-height:1.55;
@@ -100,6 +101,12 @@ button{font:inherit;color:inherit}
 .marca .logo-passaro{height:27px;width:auto;display:block}
 .marca .logo-macaw{height:15px;width:auto;display:block;margin-bottom:1px}
 .risco{width:1px;height:28px;background:var(--line-2);flex:none}
+.abas{display:flex;gap:4px;background:var(--surface-2);border:1px solid var(--line);border-radius:999px;padding:3px}
+.aba{padding:6px 15px;border-radius:999px;border:none;background:none;cursor:pointer;font-size:13px;
+  color:var(--ink-2);transition:all .13s ease;white-space:nowrap}
+.aba:hover{color:var(--verde)}
+.aba[aria-current="page"]{background:var(--verde);color:var(--ground);font-weight:500}
+.aba .pt{opacity:.55;font-size:11px;margin-left:6px}
 .titulo{margin-right:auto;min-width:0}
 .titulo h1{font-size:16px;font-weight:500}
 .titulo .sub{font-size:10.5px;color:var(--ink-3);letter-spacing:.13em;text-transform:uppercase;font-weight:400}
@@ -117,7 +124,8 @@ button{font:inherit;color:inherit}
 .btn-link:hover{color:var(--verde)}
 
 /* ---------- período ---------- */
-.periodo{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:20px 0 2px}
+.periodo{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:18px 0 2px}
+.linha-abas{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:18px 0 0}
 .periodo .lbl{font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3)}
 .chips{display:flex;gap:5px;flex-wrap:wrap}
 .chip{
@@ -232,6 +240,20 @@ tr.fora td{color:var(--ink-3)}
   box-shadow:0 12px 26px -12px rgba(0,0,0,.55);max-width:280px}
 #tip .t-nm{font-weight:500;margin-bottom:4px}
 #tip .t-ln{display:flex;justify-content:space-between;gap:16px;font-family:var(--mono);font-size:11.5px}
+.vazio{background:var(--surface);border:1px dashed var(--line-2);border-radius:16px;padding:44px 28px;text-align:center;
+  display:flex;flex-direction:column;align-items:center;gap:12px;margin:16px 0 26px}
+.vazio h2{font-size:17px}
+.vazio p{margin:0;max-width:52ch;color:var(--ink-2);font-size:13px;line-height:1.6}
+.sync{display:flex;align-items:center;gap:7px;font-size:11.5px;color:var(--ink-3);padding:10px 0 0}
+.sync .bolha{width:6px;height:6px;border-radius:50%;background:var(--verde-claro);flex:none}
+.sync.viva .bolha{background:var(--verde)}
+td.dre-v{color:var(--ink)}
+td.fx-v{color:var(--ink)}
+.mini{position:relative;display:flex;flex-direction:column;gap:2px;margin-top:5px;max-width:220px}
+.mini span{position:relative;display:block;height:5px;border-radius:3px;background:var(--line-2);opacity:.45}
+.mini span i{position:absolute;left:0;top:0;bottom:0;border-radius:3px;display:block;opacity:2}
+.mini .m-dre i{background:var(--dre)}
+.mini .m-fx i{background:var(--caixa)}
 .foot{padding:26px 0 44px;color:var(--ink-3);font-size:11.5px;line-height:1.8}
 .foot b{color:var(--ink-2);font-weight:500}
 .erro{background:var(--nota-bg);border:1px solid var(--nota-line);border-radius:10px;padding:12px 16px;
@@ -250,7 +272,7 @@ tr.fora td{color:var(--ink-3)}
     <div class="risco" aria-hidden="true"></div>
     <div class="titulo">
       <h1>DRE × Fluxo de Caixa</h1>
-      <div class="sub">Búzios · 2026 · competência vs. pagamento</div>
+      <div class="sub" id="sub-unidade">competência vs. pagamento</div>
     </div>
     <div class="src"><i class="ponto"></i><span id="src-nome">planilha base</span></div>
     <button class="btn" id="btn-import">
@@ -265,6 +287,8 @@ tr.fora td{color:var(--ink-3)}
   <div id="erro"></div>
 
   <div class="periodo">
+    <div class="abas" id="abas" role="tablist" aria-label="Unidade"></div>
+    <div class="risco" aria-hidden="true" style="height:22px"></div>
     <span class="lbl">Período</span>
     <div class="chips" id="chips"></div>
     <button class="btn-link" id="btn-reset" hidden>Voltar à planilha original</button>
@@ -272,11 +296,11 @@ tr.fora td{color:var(--ink-3)}
 
   <section class="kpis" id="kpis" aria-label="Indicadores do período"></section>
 
-  <section class="panel">
+  <section class="panel" id="painel">
     <div class="panel-head">
       <div>
         <h2>Categorias: DRE contra Fluxo de Caixa</h2>
-        <p>Clique em uma categoria para abrir, na tabela abaixo, os itens que formam o valor do DRE.</p>
+        <p>Clique em uma categoria para abrir, logo abaixo dela, o item a item: o que o DRE reconheceu e o que o Fluxo de Caixa pagou, item por item.</p>
       </div>
       <div class="legend">
         <b><i class="sw-dre"></i>DRE (competência)</b>
@@ -286,13 +310,15 @@ tr.fora td{color:var(--ink-3)}
     </div>
     <div class="chart" id="chart"></div>
   </section>
+  <div id="vazio"></div>
+  <div class="sync" id="sync"></div>
 
   <div id="tabela"></div>
 
   <div class="foot">
-    <b>Fontes na planilha:</b> aba <b>DRE</b> (indicadores, totais e itens de cada categoria) · aba <b>RELATÓRIO FLUXO DE CAIXA</b> (total pago por categoria). O detalhamento item a item existe só no DRE — o fluxo de caixa é comparado pelo total da categoria.<br>
-    <b>Ajustes aplicados:</b> Material de limpeza e descartáveis e Sistema operacional de vendas saem da somatória de Operacionais e aparecem apenas no detalhamento · Administrativo do fluxo inclui a linha Holding · Financeiras do fluxo soma Financeiras + Tarifa · Tributos Diversos (DRE) compara com Impostos (Fluxo).<br>
-    Ao importar uma planilha nova, a leitura é refeita pelos nomes das abas e das colunas — a posição das linhas pode mudar sem quebrar o painel.
+    <b>Fontes na planilha:</b> aba <b>DRE</b> (indicadores, categorias e itens) · aba <b>RELATÓRIO FLUXO DE CAIXA</b> (saldos do mês) · aba <b>CONTAS A PAGAR</b>, onde cada pagamento traz sua <b>categoria DRE</b> e sua <b>categoria fluxo</b> — é essa ligação que permite comparar item a item o que foi reconhecido no DRE e o que foi efetivamente pago.<br>
+    <b>Ajustes aplicados:</b> Operacionais soma o Sistema operacional de vendas e deixa Material de limpeza e descartáveis fora do total · Pessoal exclui Comissões (comparativo próprio), INSS e Vale transporte com desconto, nos dois regimes · Administrativo do fluxo inclui a linha Holding · Financeiras do fluxo soma Financeiras + Tarifa · Tributos Diversos (DRE) compara com Impostos (Fluxo).<br>
+    Ao importar uma planilha nova, a leitura é refeita pelos nomes das abas e das colunas — a posição das linhas pode mudar sem quebrar o painel. Cada unidade tem sua própria aba e sua própria planilha.
   </div>
 </div>
 
@@ -303,61 +329,31 @@ tr.fora td{color:var(--ink-3)}
 <script>
 // ===== PARSER START =====
 /* Leitura da planilha "DRE E FLUXO DE CAIXA".
-   Usa apenas as abas DRE e RELATORIO FLUXO DE CAIXA.
-   O detalhamento item a item existe apenas no DRE. */
+   Abas usadas:
+     DRE                      -> indicadores, categorias e itens (competência)
+     RELATÓRIO FLUXO DE CAIXA -> saldos do mês e total pago por categoria
+     CONTAS A PAGAR           -> cada pagamento com sua CATEGORIA DRE e CATEGORIA FLUXO,
+                                 o que permite comparar item a item os dois regimes. */
 
 var MESES = ['JANEIRO','FEVEREIRO','MARCO','ABRIL','MAIO','JUNHO','JULHO','AGOSTO','SETEMBRO','OUTUBRO','NOVEMBRO','DEZEMBRO'];
 var MESES_LABEL = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 
 function norm(v) {
   if (v === null || v === undefined) return '';
-  return String(v)
-    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-    .toUpperCase().replace(/\s+/g, ' ').trim();
+  return String(v).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase().replace(/\s+/g, ' ').trim();
 }
 function num(v) {
   if (typeof v === 'number') return isFinite(v) ? v : 0;
   if (typeof v === 'string') {
-    var s = v.replace(/[R$\s.]/g, '').replace(',', '.');
-    var n = parseFloat(s);
+    var n = parseFloat(v.replace(/[R$\s.]/g, '').replace(',', '.'));
     return isNaN(n) ? 0 : n;
   }
   return 0;
 }
 function zeros() { return [0,0,0,0,0,0,0,0,0,0,0,0]; }
-function addInto(target, values) { for (var i = 0; i < 12; i++) target[i] += values[i] || 0; }
-function sumArr(a) { var t = 0; for (var i = 0; i < a.length; i++) t += a[i] || 0; return t; }
-
-/* Categorias comparadas: chave DRE -> chaves do fluxo de caixa */
-var CATEGORIAS = [
-  { key: 'OPERACIONAIS',   label: 'Operacionais',    dre: ['OPERACIONAIS'],   fluxo: ['OPERACIONAIS'] },
-  { key: 'PESSOAL',        label: 'Pessoal',         dre: ['PESSOAL'],        fluxo: ['PESSOAL'] },
-  { key: 'ADMINISTRATIVO', label: 'Administrativo',  dre: ['ADMINISTRATIVO'], fluxo: ['ADMINISTRATIVO', 'HOLDING'] },
-  { key: 'CTO',            label: 'CTO',             dre: ['CTO'],            fluxo: ['CTO'] },
-  { key: 'UTILITIES',      label: 'Utilities',       dre: ['UTILITIES'],      fluxo: ['UTILITIES'] },
-  { key: 'TERCEIROS',      label: 'Terceiros',       dre: ['TERCEIROS'],      fluxo: ['TERCEIROS'] },
-  { key: 'MARKETING',      label: 'Marketing',       dre: ['MARKETING'],      fluxo: ['MARKETING'] },
-  { key: 'FINANCEIRAS',    label: 'Financeiras',     dre: ['FINANCEIRAS'],    fluxo: ['FINANCEIRAS', 'TARIFA'] },
-  { key: 'TRIBUTOS',       label: 'Tributos × Impostos', dre: [], fluxo: ['IMPOSTOS'],
-    dreLinhas: ['TRIBUTOS DIVERSOS'] }
-];
-
-/* Itens que ficam fora da somatoria mas continuam visiveis no detalhamento */
-var FORA_DO_TOTAL = {
-  OPERACIONAIS: [
-    { match: 'MATERIAL DE LIMPEZA E DESCARTAVEIS (CMV)', label: 'Material de limpeza e descartáveis (CMV)', fluxo: ['LIMPEZA E DESCARTAVEIS'] },
-    { match: 'SISTEMA OPERACIONAL DE VENDAS',            label: 'Sistema operacional de vendas',           fluxo: [] }
-  ],
-  TRIBUTOS: [
-    { match: 'DEDUCOES DE FATURAMENTO', label: 'Deduções de faturamento (impostos sobre vendas no DRE)', fluxo: [], linhaDre: true }
-  ]
-};
-
-var NOTAS = {
-  ADMINISTRATIVO: { sempre: true, texto: 'A <strong>Fee Holding</strong> é lançada no DRE mas não entra no Fluxo de Caixa — por isso a discrepância de valores nesta categoria.' },
-  UTILITIES: { mes: 0, texto: 'Em <strong>janeiro</strong> o Fluxo de Caixa de Utilities pagou contas de <strong>dezembro/2025</strong>. Por isso o valor do fluxo fica descolado do DRE do mês.' },
-  TRIBUTOS: { sempre: true, texto: 'No DRE os impostos sobre venda ficam em <strong>Deduções de Faturamento</strong> (linha exibida no detalhamento, fora do total). A linha <strong>Tributos Diversos</strong> do DRE compara com <strong>Impostos</strong> do Fluxo de Caixa.' }
-};
+function addInto(alvo, v) { if (v) for (var i = 0; i < 12; i++) alvo[i] += v[i] || 0; }
+function subInto(alvo, v) { if (v) for (var i = 0; i < 12; i++) alvo[i] -= v[i] || 0; }
+function algum(v) { if (!v) return false; for (var i = 0; i < 12; i++) if (Math.abs(v[i]) > 0.005) return true; return false; }
 
 var MINUSCULAS = ['de','da','do','das','dos','e','em','na','no','nas','nos','a','o','as','os','para','com','por','ao'];
 function titulo(txt) {
@@ -368,166 +364,274 @@ function titulo(txt) {
   });
 }
 
-function sheetRows(wb, XLSXlib, matcher) {
-  var nome = null;
-  for (var i = 0; i < wb.SheetNames.length; i++) {
-    if (matcher(norm(wb.SheetNames[i]))) { nome = wb.SheetNames[i]; break; }
-  }
-  if (!nome) return null;
-  return { nome: nome, rows: XLSXlib.utils.sheet_to_json(wb.Sheets[nome], { header: 1, raw: true, defval: null, blankrows: true }) };
-}
+/* ---------- comparativos ----------
+   dreCats    itens do DRE (por categoria) que entram no total
+   dreLinhas  linhas-resumo do DRE que entram no total
+   dreItens   itens avulsos do DRE, buscados pelo nome
+   fluxoCats  categorias do fluxo de caixa que entram no total
+   fluxoPorDre categorias DRE do contas a pagar que entram (item que virou comparativo)
+   excluir    itens do DRE fora do total, dos dois lados
+   fora       linhas exibidas só como referência                                  */
+var CATEGORIAS = [
+  { key: 'OPERACIONAIS', label: 'Operacionais', dreCats: ['OPERACIONAIS'], fluxoCats: ['OPERACIONAIS'],
+    excluir: ['MATERIAL DE LIMPEZA E DESCARTAVEIS (CMV)'],
+    fora: [{ match: 'MATERIAL DE LIMPEZA E DESCARTAVEIS (CMV)', label: 'Material de limpeza e descartáveis (CMV)', fluxoCats: ['LIMPEZA E DESCARTAVEIS'] }] },
 
-/* Localiza a linha de cabecalho que contem os meses e devolve col -> indice do mes */
+  { key: 'PESSOAL', label: 'Pessoal', dreCats: ['PESSOAL'], fluxoCats: ['PESSOAL'],
+    excluir: ['COMISSOES', 'INSS', 'VALE TRANSPORTE COM DESCONTO'],
+    fora: [{ match: 'INSS', label: 'INSS' }, { match: 'VALE TRANSPORTE COM DESCONTO', label: 'Vale transporte com desconto' }] },
+
+  { key: 'COMISSOES', label: 'Comissões', dreItens: ['COMISSOES'], fluxoPorDre: ['COMISSOES'] },
+
+  { key: 'ADMINISTRATIVO', label: 'Administrativo', dreCats: ['ADMINISTRATIVO'], fluxoCats: ['ADMINISTRATIVO', 'HOLDING'] },
+  { key: 'CTO',        label: 'CTO',        dreCats: ['CTO'],        fluxoCats: ['CTO'] },
+  { key: 'UTILITIES',  label: 'Utilities',  dreCats: ['UTILITIES'],  fluxoCats: ['UTILITIES'] },
+  { key: 'TERCEIROS',  label: 'Terceiros',  dreCats: ['TERCEIROS'],  fluxoCats: ['TERCEIROS'] },
+  { key: 'MARKETING',  label: 'Marketing',  dreCats: ['MARKETING'],  fluxoCats: ['MARKETING'] },
+  { key: 'FINANCEIRAS', label: 'Financeiras', dreCats: ['FINANCEIRAS'], fluxoCats: ['FINANCEIRAS', 'TARIFA'] },
+
+  { key: 'IMPOSTOS', label: 'Impostos', dreLinhas: ['TRIBUTOS DIVERSOS'], fluxoCats: ['IMPOSTOS'],
+    fora: [{ match: 'DEDUCOES DE FATURAMENTO', label: 'Deduções de faturamento (impostos sobre vendas no DRE)', linhaDre: true }] },
+
+  { key: 'PROLABORE', label: 'Pró-labore', dreItens: ['PRO LABORE'], dreLinhas: ['PRO LABORE'], fluxoCats: ['PRO LABORE'] },
+  { key: 'DIVIDENDOS', label: 'Dividendos', dreLinhas: ['DIVIDENDOS DISTRIBUIDOS'], fluxoCats: ['DIVIDENDOS'] }
+];
+
+var NOTAS = {
+  OPERACIONAIS: { sempre: true, texto: '<strong>Sistema operacional de vendas</strong> entra na somatória. <strong>Material de limpeza e descartáveis</strong> fica fora do total e aparece só como referência — no Fluxo de Caixa ele é uma categoria própria.' },
+  PESSOAL: { sempre: true, texto: 'Fora da somatória de Pessoal: <strong>Comissões</strong> (virou comparativo próprio), <strong>INSS</strong> e <strong>Vale transporte com desconto</strong>. Os dois lados — DRE e Fluxo de Caixa — descontam os mesmos itens.' },
+  ADMINISTRATIVO: { sempre: true, texto: 'A <strong>Fee Holding</strong> é lançada no DRE mas não entra no Fluxo de Caixa — por isso a discrepância de valores nesta categoria.' },
+  UTILITIES: { mes: 0, texto: 'Em <strong>janeiro</strong> o Fluxo de Caixa de Utilities pagou contas de <strong>dezembro/2025</strong>. Por isso o valor do fluxo fica descolado do DRE do mês.' },
+  IMPOSTOS: { sempre: true, texto: 'Compara <strong>Tributos Diversos</strong> (DRE) com <strong>Impostos</strong> (Fluxo de Caixa). Os impostos sobre venda ficam em <strong>Deduções de Faturamento</strong>, exibida abaixo apenas como referência.' },
+  PROLABORE: { sempre: true, texto: 'O <strong>Pró-labore</strong> não tem linha no DRE desta planilha: ele aparece apenas como pagamento no Fluxo de Caixa.' }
+};
+
+/* =========================== leitura das abas =========================== */
+function pegarAba(wb, XLSXlib, testa) {
+  for (var i = 0; i < wb.SheetNames.length; i++) {
+    if (testa(norm(wb.SheetNames[i]))) {
+      return { nome: wb.SheetNames[i], rows: XLSXlib.utils.sheet_to_json(wb.Sheets[wb.SheetNames[i]], { header: 1, raw: true, defval: null, blankrows: true }) };
+    }
+  }
+  return null;
+}
 function acharMeses(rows, aPartirDe) {
   for (var r = aPartirDe || 0; r < rows.length; r++) {
     var linha = rows[r] || [], mapa = {}, achou = 0;
     for (var c = 0; c < linha.length; c++) {
-      var idx = MESES.indexOf(norm(linha[c]));
-      if (idx >= 0 && mapa[idx] === undefined) { mapa[idx] = c; achou++; }
+      var i = MESES.indexOf(norm(linha[c]));
+      if (i >= 0 && mapa[i] === undefined) { mapa[i] = c; achou++; }
     }
     if (achou >= 6) return { linha: r, colunas: mapa };
   }
   return null;
 }
-function valoresDaLinha(linha, colunas) {
+function valores(linha, colunas) {
   var v = zeros();
-  for (var m = 0; m < 12; m++) {
-    var c = colunas[m];
-    if (c === undefined) continue;
-    v[m] = num(linha[c]);
-  }
+  for (var m = 0; m < 12; m++) if (colunas[m] !== undefined) v[m] = num(linha[colunas[m]]);
   return v;
 }
 
 function lerDRE(wb, XLSXlib) {
-  var sh = sheetRows(wb, XLSXlib, function (n) { return n === 'DRE'; })
-        || sheetRows(wb, XLSXlib, function (n) { return n.indexOf('DRE') === 0; });
-  if (!sh) throw new Error('Aba "DRE" não encontrada na planilha.');
+  var sh = pegarAba(wb, XLSXlib, function (n) { return n === 'DRE'; }) ||
+           pegarAba(wb, XLSXlib, function (n) { return n.indexOf('DRE') === 0; });
+  if (!sh) throw new Error('Aba "DRE" não encontrada.');
   var hdr = acharMeses(sh.rows, 0);
   if (!hdr) throw new Error('Não foi possível localizar os meses na aba DRE.');
-  var colCat = 1, colApl = 2;
-  var head = sh.rows[hdr.linha] || [];
+  var colCat = 1, colApl = 2, head = sh.rows[hdr.linha] || [];
   for (var c = 0; c < head.length; c++) {
     if (norm(head[c]) === 'CATEGORIA') { colCat = c; colApl = c + 1; }
     if (norm(head[c]) === 'APLICACOES' || norm(head[c]) === 'APLICACAO') colApl = c;
   }
-  var itens = {}, linhas = {};
+  var itens = {}, linhas = {}, ordem = [];
   for (var r = hdr.linha + 1; r < sh.rows.length; r++) {
-    var linha = sh.rows[r] || [];
-    var cat = norm(linha[colCat]);
+    var l = sh.rows[r] || [], cat = norm(l[colCat]);
     if (!cat) continue;
-    var apl = norm(linha[colApl]);
-    var valores = valoresDaLinha(linha, hdr.colunas);
+    var apl = norm(l[colApl]), v = valores(l, hdr.colunas);
     if (apl) {
       if (!itens[cat]) itens[cat] = [];
-      itens[cat].push({ key: apl, label: titulo(linha[colApl]), values: valores });
+      itens[cat].push({ key: apl, label: titulo(l[colApl]), values: v });
+      ordem.push(apl);
     } else if (!linhas[cat]) {
-      linhas[cat] = valores;
+      linhas[cat] = v;
     }
   }
   return { itens: itens, linhas: linhas };
 }
 
 function lerFluxo(wb, XLSXlib) {
-  var sh = sheetRows(wb, XLSXlib, function (n) { return n.indexOf('FLUXO') >= 0 && n.indexOf('RELATORIO') >= 0; })
-        || sheetRows(wb, XLSXlib, function (n) { return n.indexOf('FLUXO') >= 0; });
-  if (!sh) throw new Error('Aba de Fluxo de Caixa não encontrada na planilha.');
-  var inicio = 0;
-  for (var r = 0; r < sh.rows.length; r++) {
-    var linha = sh.rows[r] || [];
-    for (var c = 0; c < linha.length; c++) {
-      if (norm(linha[c]).indexOf('FLUXO DETALHADO') >= 0) { inicio = r; r = sh.rows.length; break; }
-    }
-  }
-  var hdr = acharMeses(sh.rows, inicio);
+  var sh = pegarAba(wb, XLSXlib, function (n) { return n.indexOf('FLUXO') >= 0 && n.indexOf('RELATORIO') >= 0; }) ||
+           pegarAba(wb, XLSXlib, function (n) { return n.indexOf('FLUXO') >= 0; });
+  if (!sh) throw new Error('Aba de Fluxo de Caixa não encontrada.');
+  var hdr = acharMeses(sh.rows, 0);
   if (!hdr) throw new Error('Não foi possível localizar os meses na aba de Fluxo de Caixa.');
-  var colLabel = 1;
-  var head = sh.rows[hdr.linha] || [];
-  for (var k = 0; k < head.length; k++) {
-    if (norm(head[k]).indexOf('FLUXO') >= 0) { colLabel = k; break; }
-  }
-  var totais = {};
+  var colLabel = 1, head = sh.rows[hdr.linha] || [];
+  for (var k = 0; k < head.length; k++) { if (norm(head[k])) { colLabel = k; break; } }
+  var linhas = {};
   for (var i = hdr.linha + 1; i < sh.rows.length; i++) {
-    var l = sh.rows[i] || [];
-    var nome = norm(l[colLabel]);
-    if (!nome) continue;
-    if (!totais[nome]) totais[nome] = zeros();
-    addInto(totais[nome], valoresDaLinha(l, hdr.colunas));
+    var l = sh.rows[i] || [], nome = norm(l[colLabel]);
+    if (!nome || MESES.indexOf(nome) >= 0) continue;
+    if (!linhas[nome]) linhas[nome] = valores(l, hdr.colunas);
   }
-  return totais;
+  return linhas;
 }
 
+/* Cada pagamento com CATEGORIA DRE e CATEGORIA FLUXO: é daqui que sai
+   a comparação item a item entre os dois regimes. */
+function lerContasAPagar(wb, XLSXlib) {
+  var vazio = { porItem: {}, porFluxo: {}, semItem: {}, temDados: false };
+  var sh = pegarAba(wb, XLSXlib, function (n) { return n.indexOf('CONTAS A PAGAR') >= 0; });
+  if (!sh) return vazio;
+  var hdrLinha = -1, col = {};
+  for (var r = 0; r < Math.min(sh.rows.length, 80); r++) {
+    var l = sh.rows[r] || [], mapa = {};
+    for (var c = 0; c < l.length; c++) {
+      var n = norm(l[c]);
+      if (n === 'MES PAGAMENTO') mapa.mes = c;
+      else if (n === 'DESCRICAO') mapa.desc = c;
+      else if (n === 'CATEGORIA DRE') mapa.catDre = c;
+      else if (n === 'CATEGORIA FLUXO') mapa.catFluxo = c;
+      else if (n === 'VALOR') mapa.valor = c;
+    }
+    if (mapa.catFluxo !== undefined && mapa.valor !== undefined && mapa.mes !== undefined) { hdrLinha = r; col = mapa; break; }
+  }
+  if (hdrLinha < 0) return vazio;
+
+  var porItem = {}, porFluxo = {}, semItem = {}, temDados = false;
+  for (var i = hdrLinha + 1; i < sh.rows.length; i++) {
+    var linha = sh.rows[i] || [];
+    var mes = MESES.indexOf(norm(linha[col.mes]));
+    if (mes < 0) continue;
+    var valor = num(linha[col.valor]);
+    if (!valor) continue;
+    var catFluxo = norm(linha[col.catFluxo]);
+    if (!catFluxo) continue;               /* sem categoria de fluxo = não é caixa */
+    var catDre = col.catDre !== undefined ? norm(linha[col.catDre]) : '';
+    var desc = col.desc !== undefined ? norm(linha[col.desc]) : '';
+    temDados = true;
+
+    if (!porFluxo[catFluxo]) porFluxo[catFluxo] = zeros();
+    porFluxo[catFluxo][mes] += valor;
+
+    if (catDre) {
+      if (!porItem[catDre]) porItem[catDre] = {};
+      if (!porItem[catDre][catFluxo]) porItem[catDre][catFluxo] = zeros();
+      porItem[catDre][catFluxo][mes] += valor;
+    } else {
+      var chave = desc || 'SEM DESCRICAO';
+      if (!semItem[catFluxo]) semItem[catFluxo] = {};
+      if (!semItem[catFluxo][chave]) semItem[catFluxo][chave] = { key: chave, label: titulo(chave), values: zeros() };
+      semItem[catFluxo][chave].values[mes] += valor;
+    }
+  }
+  return { porItem: porItem, porFluxo: porFluxo, semItem: semItem, temDados: temDados };
+}
+
+/* =========================== montagem =========================== */
 function parseWorkbook(wb, XLSXlib, nomeArquivo) {
   var dre = lerDRE(wb, XLSXlib);
-  var fluxoTotais = lerFluxo(wb, XLSXlib);
+  var fluxo = lerFluxo(wb, XLSXlib);
+  var cap = lerContasAPagar(wb, XLSXlib);
 
-  var kpis = {
-    faturamento: dre.linhas['RECEITA BRUTA'] || zeros(),
-    cmv:         dre.linhas['CMV'] || zeros(),
-    cmvPerfeito: dre.linhas['CMV PERFEITO'] || zeros(),
-    ebitda:      dre.linhas['EBITDA'] || zeros(),
-    receitaLiquida: dre.linhas['RECEITA LIQUIDA'] || zeros(),
-    lucroLiquido:   dre.linhas['LUCRO LIQUIDO'] || zeros()
-  };
+  /* soma os pagamentos de um item do DRE dentro de certas categorias de fluxo */
+  function pagoDoItem(catDre, fluxoCats, todas) {
+    var t = zeros(), mapa = cap.porItem[catDre];
+    if (!mapa) return t;
+    Object.keys(mapa).forEach(function (cf) {
+      if (todas || (fluxoCats && fluxoCats.indexOf(cf) >= 0)) addInto(t, mapa[cf]);
+    });
+    return t;
+  }
+  function itemDoDre(nome) {
+    var achado = null;
+    Object.keys(dre.itens).forEach(function (cat) {
+      dre.itens[cat].forEach(function (it) { if (it.key === nome && !achado) achado = it; });
+    });
+    return achado;
+  }
 
   var categorias = CATEGORIAS.map(function (cfg) {
-    var fora = FORA_DO_TOTAL[cfg.key] || [];
-    var foraMatch = fora.map(function (f) { return f.match; });
+    var excluir = cfg.excluir || [];
+    var itens = [], totalDre = zeros();
 
-    /* --- lado DRE --- */
-    var itensDre = [], totalDre = zeros(), foraDre = [];
-    cfg.dre.forEach(function (catNome) {
-      (dre.itens[catNome] || []).forEach(function (it) {
-        if (foraMatch.indexOf(it.key) >= 0) return;
-        itensDre.push(it);
+    (cfg.dreCats || []).forEach(function (cat) {
+      (dre.itens[cat] || []).forEach(function (it) {
+        if (excluir.indexOf(it.key) >= 0) return;
+        itens.push({ key: it.key, label: it.label, dre: it.values, fluxo: pagoDoItem(it.key, cfg.fluxoCats) });
         addInto(totalDre, it.values);
       });
     });
-    (cfg.dreLinhas || []).forEach(function (nomeLinha) {
-      var v = dre.linhas[norm(nomeLinha)];
-      if (v) { itensDre.push({ key: norm(nomeLinha), label: titulo(nomeLinha), values: v }); addInto(totalDre, v); }
+    (cfg.dreItens || []).forEach(function (nome) {
+      var it = itemDoDre(nome);
+      if (!it) return;
+      itens.push({ key: it.key, label: it.label, dre: it.values, fluxo: pagoDoItem(it.key, null, true) });
+      addInto(totalDre, it.values);
     });
-    fora.forEach(function (f) {
-      var achado = null;
-      if (f.linhaDre) {
-        var v = dre.linhas[f.match];
-        if (v) achado = { key: f.match, label: f.label, values: v };
-      } else {
-        cfg.dre.forEach(function (catNome) {
-          (dre.itens[catNome] || []).forEach(function (it) { if (it.key === f.match) achado = it; });
-        });
-      }
-      var valoresFluxo = zeros();
-      (f.fluxo || []).forEach(function (fk) {
-        if (fluxoTotais[fk]) addInto(valoresFluxo, fluxoTotais[fk]);
-      });
-      foraDre.push({
-        key: f.match, label: f.label,
-        dre: achado ? achado.values : zeros(),
-        fluxo: valoresFluxo,
-        temFluxo: (f.fluxo || []).length > 0
-      });
+    (cfg.dreLinhas || []).forEach(function (nome) {
+      var v = dre.linhas[norm(nome)];
+      if (!v) return;
+      var jaTem = itens.some(function (x) { return x.key === norm(nome); });
+      if (jaTem) return;
+      itens.push({ key: norm(nome), label: titulo(nome), dre: v, fluxo: pagoDoItem(norm(nome), cfg.fluxoCats) });
+      addInto(totalDre, v);
     });
 
-    /* --- lado Fluxo de Caixa: só o total da categoria --- */
+    /* ---- lado do fluxo ---- */
     var totalFluxo = zeros();
-    cfg.fluxo.forEach(function (fk) {
-      if (fluxoTotais[fk]) addInto(totalFluxo, fluxoTotais[fk]);
+    (cfg.fluxoCats || []).forEach(function (cf) { addInto(totalFluxo, cap.porFluxo[cf]); });
+    excluir.forEach(function (nome) { subInto(totalFluxo, pagoDoItem(nome, cfg.fluxoCats)); });
+    (cfg.fluxoPorDre || []).forEach(function (nome) { addInto(totalFluxo, pagoDoItem(nome, null, true)); });
+
+    /* pagamentos da categoria sem item correspondente no DRE */
+    var semItem = [];
+    (cfg.fluxoCats || []).forEach(function (cf) {
+      var m = cap.semItem[cf];
+      if (m) Object.keys(m).forEach(function (k) { semItem.push({ key: cf + '|' + k, label: m[k].label, values: m[k].values }); });
     });
+    semItem.sort(function (a, b) {
+      var sa = 0, sb = 0;
+      for (var i = 0; i < 12; i++) { sa += a.values[i]; sb += b.values[i]; }
+      return sb - sa;
+    });
+
+    /* ---- referências fora do total ---- */
+    var fora = (cfg.fora || []).map(function (f) {
+      var vDre = f.linhaDre ? (dre.linhas[f.match] || zeros()) : ((itemDoDre(f.match) || {}).values || zeros());
+      var vFluxo = f.fluxoCats ? (function () {
+        var t = zeros();
+        f.fluxoCats.forEach(function (cf) { addInto(t, cap.porFluxo[cf]); });
+        return t;
+      })() : pagoDoItem(f.match, null, true);
+      return { key: f.match, label: f.label, dre: vDre, fluxo: vFluxo, temFluxo: algum(vFluxo) };
+    }).filter(function (f) { return algum(f.dre) || algum(f.fluxo); });
+
+    /* confere o total do fluxo contra a aba de fluxo de caixa */
+    var totalPlanilha = null;
+    if (!excluir.length && !(cfg.fluxoPorDre || []).length && (cfg.fluxoCats || []).length) {
+      totalPlanilha = zeros();
+      cfg.fluxoCats.forEach(function (cf) { addInto(totalPlanilha, fluxo[cf]); });
+    }
 
     return {
       key: cfg.key, label: cfg.label,
-      dre: { total: totalDre, itens: itensDre },
-      fluxo: { total: totalFluxo },
-      foraDoTotal: foraDre,
+      dre: { total: totalDre, itens: itens },
+      fluxo: { total: totalFluxo, semItem: semItem, planilha: totalPlanilha },
+      foraDoTotal: fora,
       nota: NOTAS[cfg.key] || null
     };
   });
 
+  var kpis = {
+    faturamento:  dre.linhas['RECEITA BRUTA'] || zeros(),
+    lucroLiquido: dre.linhas['LUCRO LIQUIDO'] || zeros(),
+    resultadoDre: dre.linhas['SALDO FINANCEIRO'] || zeros(),
+    caixa:        fluxo['SALDO FINAL'] || zeros()
+  };
+
   var mesesComDados = [];
   for (var m = 0; m < 12; m++) {
-    var tem = kpis.faturamento[m] !== 0;
-    categorias.forEach(function (c) { if (c.dre.total[m] || c.fluxo.total[m]) tem = true; });
+    var tem = Math.abs(kpis.faturamento[m]) > 0.005;
+    categorias.forEach(function (c) { if (Math.abs(c.dre.total[m]) > 0.005 || Math.abs(c.fluxo.total[m]) > 0.005) tem = true; });
     if (tem) mesesComDados.push(m);
   }
 
@@ -536,7 +640,8 @@ function parseWorkbook(wb, XLSXlib, nomeArquivo) {
       arquivo: nomeArquivo || '',
       gerado: new Date().toISOString(),
       meses: MESES_LABEL,
-      mesesComDados: mesesComDados
+      mesesComDados: mesesComDados,
+      temContasAPagar: cap.temDados
     },
     kpis: kpis,
     categorias: categorias
@@ -544,11 +649,22 @@ function parseWorkbook(wb, XLSXlib, nomeArquivo) {
 }
 // ===== PARSER END =====
 
-var DADOS_PADRAO = {"meta":{"arquivo":"f52565c4-DRE_E_FLUXO_DE_CAIXA_B_ZIOS_2026_4.xlsx","gerado":"2026-09-02T20:34:26.837Z","meses":["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"],"mesesComDados":[0,1,2,3,4,5,6,7,8]},"kpis":{"faturamento":[766575.1500000001,350755.36000000004,245106.67,277239.32,167160.68,161474.38,186314.71999999997,0,0,0,0,0],"cmv":[205287.33933836833,135000.72999999998,81812.88000000002,111402.92000000001,50574.65000000001,54002.93000000001,49243.8,40563.58,0,0,0,0],"cmvPerfeito":[203112.01,118765.11,56340.53,73168.73,42875.55,36492.12,47680.22,0,0,0,0,0],"ebitda":[312733.83466163184,46776.52560000011,25182.70319999999,21810.437199999986,4963.472799999989,-14891.295200000022,30019.111199999956,-84559.47,-315,0,0,0],"receitaLiquida":[708367.6700000002,322311.89,224312.2,255661.24,153125.78999999998,148355.06,171552.81999999998,0,0,0,0,0],"lucroLiquido":[312733.83466163184,46776.52560000011,25182.70319999999,21810.437199999986,4963.472799999989,-14891.295200000022,30019.111199999956,-84559.47,-315,0,0,0]},"categorias":[{"key":"OPERACIONAIS","label":"Operacionais","dre":{"total":[26957.439999999995,24623.42,14068,18290.62,17458.449999999997,18814.73,20651.3,9233.89,0,0,0,0],"itens":[{"key":"CO2","label":"Co2","values":[295,0,115,0,200,0,460,100,0,0,0,0]},{"key":"MATERIAIS MANUTENCAO","label":"Materiais Manutencao","values":[2419.51,1556.82,120.75,103.93,847.65,831.31,1111.21,762.5,0,0,0,0]},{"key":"LENHA E CARVAO","label":"Lenha e Carvao","values":[1635.98,450,0,0,0,0,0,0,0,0,0,0]},{"key":"LOCACAO MAQUINA DE GELO","label":"Locacao Maquina de Gelo","values":[1924.32,1900,2134.07,1928.12,1954.72,1934.96,1928.88,0,0,0,0,0]},{"key":"LOCACAO MAQUINA DE PONTO","label":"Locacao Maquina de Ponto","values":[241.01,251.28,256.75,256.6,257.05,257.05,251.28,251.28,0,0,0,0]},{"key":"LOCACAO MAQUINA DE CARTAO","label":"Locacao Maquina de Cartao","values":[0,0,200,200,0,0,0,0,0,0,0,0]},{"key":"LOCACAO TOTEN","label":"Locacao Toten","values":[680,680,680,680,680,521,0,0,0,0,0,0]},{"key":"LOCACAO LAVA LOUCA","label":"Locacao Lava Louca","values":[2031.99,2031.99,2031.99,2031.99,2265.54,2254.98,2141.54,0,0,0,0,0]},{"key":"LOCACAO PRESH","label":"Locacao Presh","values":[502.2,502.2,613.98,616.03,615.28,683.9,684.5,0,0,0,0,0]},{"key":"INSUMOS PRESH","label":"Insumos Presh","values":[1058.8,640,299.4,619.4,328,0,0,0,0,0,0,0]},{"key":"DESPESAS GERAIS","label":"Despesas Gerais","values":[330.96999999999997,1393.1,421.83,2136,0,584.7,962.76,40,0,0,0,0]},{"key":"CARDAPIO E COMANDAS","label":"Cardapio e Comandas","values":[0,3316.4,2487.3,2487.3,0,0,0,0,0,0,0,0]},{"key":"LOCACAO MAQUINA DE ETIQUETAS","label":"Locacao Maquina de Etiquetas","values":[729,729,744.45,745.11,753.74,744.45,729,744.01,0,0,0,0]},{"key":"ETIQUETAS MAQUINA","label":"Etiquetas Maquina","values":[306,444,0,0,0,213.79,213.21,0,0,0,0,0]},{"key":"RECREACAO","label":"Recreacao","values":[5139.16,2553.7,1620,2668.87,2276.55,2901.19,2964.5,0,0,0,0,0]},{"key":"GASOLINA","label":"Gasolina","values":[40,0,0,0,0,0,251.6,0,0,0,0,0]},{"key":"IMPRESSORA","label":"Impressora","values":[0,0,0,0,0,0,0,0,0,0,0,0]},{"key":"SEGURANCA DO TRABALHO (PRONTO MED)","label":"Seguranca do Trabalho (Pronto Med)","values":[519.19,558.21,394.22,250.55,250.32,394.34,0,0,0,0,0,0]},{"key":"SEGURADORA LOJA","label":"Seguradora Loja","values":[404.6,404.6,404.6,404.6,413.08,413.99,413.34,0,0,0,0,0]},{"key":"SISTEMA DE RESERVA","label":"Sistema de Reserva","values":[329,336.9,329,346.98,336.02,337.78,329,0,0,0,0,0]},{"key":"SISTEMA DE COMPRAS (VMARKET)","label":"Sistema de Compras (Vmarket)","values":[317.79,317.79,324.66,324.24,324.45,343.21,343.21,0,0,0,0,0]},{"key":"SISTEMA ARQUIVEI (NOTAS)","label":"Sistema Arquivei (Notas)","values":[227.29,0,0,0,0,0,0,0,0,0,0,0]},{"key":"SISTEMA DE AVALIACAO","label":"Sistema de Avaliacao","values":[390,390,390,390,409.98,0,0,0,0,0,0,0]},{"key":"COMPRA DE EQUIPAMENTOS","label":"Compra de Equipamentos","values":[0,0,0,0,0,908.55,0,0,0,0,0,0]},{"key":"LAVANDERIA","label":"Lavanderia","values":[120,0,0,0,0,0,0,0,0,0,0,0]},{"key":"DEDETIZACAO","label":"Dedetizacao","values":[0,0,0,380,388.48,387.72,380,380,0,0,0,0]},{"key":"MANUTENCAO | CAMARA | REFRIGERACAO","label":"Manutencao | Camara | Refrigeracao","values":[2720,2000,500,1700,4407.59,4376.86,3641.5,3957.1,0,0,0,0]},{"key":"PAPELARIA","label":"Papelaria","values":[0,0,0,0,0,0,0,0,0,0,0,0]},{"key":"CARTORIOS E TAXAS","label":"Cartorios e Taxas","values":[0,0,0,0,0,0,0,0,0,0,0,0]},{"key":"REPOSICAO DE LOUCAS E UTENSILIOS DE COZINHA","label":"Reposicao de Loucas e Utensilios de Cozinha","values":[2471.6699999999996,2203.4300000000003,0,20.9,0,224.95,0,0,0,0,0,0]},{"key":"INFORMATICA | SOM | VIDEO","label":"Informatica | Som | Video","values":[0,0,0,0,750,500,500,2999,0,0,0,0]},{"key":"UNIFORMES","label":"Uniformes","values":[2123.96,1964,0,0,0,0,3345.77,0,0,0,0,0]}]},"fluxo":{"total":[26753.37,39480.479999999996,15712.570000000002,24148.230000000003,10925.189999999999,10546.429999999998,28907.839999999997,24156.93,0,0,0,0]},"foraDoTotal":[{"key":"MATERIAL DE LIMPEZA E DESCARTAVEIS (CMV)","label":"Material de limpeza e descartáveis (CMV)","dre":[7852.31,7506.06,2249.46,4154.68,1542.71,2196.63,4845.77,0,0,0,0,0],"fluxo":[12224.24,9319.8,2880.51,5820.9800000000005,1459.04,1546.07,4803.7699999999995,3343.04,0,0,0,0],"temFluxo":true},{"key":"SISTEMA OPERACIONAL DE VENDAS","label":"Sistema operacional de vendas","dre":[2919.46,1469.13,1300,1300,1550,1550,1500,0,0,0,0,0],"fluxo":[0,0,0,0,0,0,0,0,0,0,0,0],"temFluxo":false}],"nota":null},{"key":"PESSOAL","label":"Pessoal","dre":{"total":[166781.72999999995,108509.80999999998,98489.23999999999,95631.57,76232.93,82696.06000000001,70501.31,28137.86,315,0,0,0],"itens":[{"key":"SALARIOS E ADIANTAMENTOS","label":"Salarios e Adiantamentos","values":[40524.64000000001,43876.77,42350.71,38407.229999999996,32284.039999999997,30964.870000000003,33134.28,0,0,0,0,0]},{"key":"COMISSOES","label":"Comissoes","values":[74851.29999999997,25164.969999999998,22738.070000000007,22574.37,12531.109999999999,13907.170000000004,17977.93,4814.87,0,0,0,0]},{"key":"EXTRAS","label":"Extras","values":[28628.4,10440,920,960,0,629.54,0,3360,0,0,0,0]},{"key":"PROVISIONAMENTO | 13º | FERIAS","label":"Provisionamento | 13º | Férias","values":[0,4625.98,2132.65,8147.1,7972.46,7387.93,0,2979.19,0,0,0,0]},{"key":"FGTS","label":"Fgts","values":[4261.49,4872.07,4886.47,4631.14,4138.2,3825.4,4012.68,0,0,0,0,0]},{"key":"INSS","label":"Inss","values":[5832.15,6514.09,5302.56,5191.69,4661.16,4082.75,4145.65,0,0,0,0,0]},{"key":"PREMIACOES","label":"Premiacoes","values":[0,0,0,0,0,0,0,0,0,0,0,0]},{"key":"COMPRA DE FOLGAS","label":"Compra de Folgas","values":[0,0,0,0,0,0,0,0,0,0,0,0]},{"key":"RESCICOES TRABALHISTAS","label":"Rescicoes Trabalhistas","values":[4496.8099999999995,3792.64,11812.66,9216.720000000001,9217.47,16824.13,6177.23,12468.8,0,0,0,0]},{"key":"CUSTO LOCOMOCAO","label":"Custo Locomocao","values":[1599.93,688.13,121.48,213.83,0,0,0,450,0,0,0,0]},{"key":"VALE COMBUSTIVEL","label":"Vale Combustivel","values":[1080,1340,1100,1220,1220,860,860,1100,0,0,0,0]},{"key":"VALE TRANSPORTE","label":"Vale Transporte","values":[3853,5321.2,5248.7,3576,3005,2985,2705,2965,315,0,0,0]},{"key":"VALE TRANSPORTE COM DESCONTO","label":"Vale Transporte com Desconto","values":[1654.01,1873.96,1875.94,1493.49,1203.49,1229.27,1488.54,0,0,0,0,0]}]},"fluxo":{"total":[188105.19999999992,115017.30999999994,94683.80000000005,99516.90999999999,83405.98999999996,74329.70999999999,69055.62000000005,74209.14,0,0,0,0]},"foraDoTotal":[],"nota":null},{"key":"ADMINISTRATIVO","label":"Administrativo","dre":{"total":[34663.00600000001,15270.364400000002,9804.266800000001,11089.5728,6686.4272,6458.9752,7452.588799999999,3000,0,0,0,0],"itens":[{"key":"HOSPEDAGEM","label":"Hospedagem","values":[4000,1240.15,0,0,0,0,0,3000,0,0,0,0]},{"key":"ADMINISTRATIVO","label":"Administrativo","values":[7665.751500000001,3507.5536000000006,2451.0667000000003,2772.3932,1671.6068,1614.7438000000002,1863.1471999999997,0,0,0,0,0]},{"key":"FEE HOLDING","label":"Fee Holding","values":[22997.254500000003,10522.660800000001,7353.2001,8317.1796,5014.8204,4844.2314,5589.441599999999,0,0,0,0,0]}]},"fluxo":{"total":[1500,4665.75,20,0,5526.87,7000,1750,30640.15,0,0,0,0]},"foraDoTotal":[],"nota":{"sempre":true,"texto":"A <strong>Fee Holding</strong> é lançada no DRE mas não entra no Fluxo de Caixa — por isso a discrepância de valores nesta categoria."}},{"key":"CTO","label":"CTO","dre":{"total":[31404.13,26804.89,26071.850000000002,25461.99,25461.99,25239.46,25239.56,6733.86,0,0,0,0],"itens":[{"key":"ALUGUEL E IPTU","label":"Aluguel e Iptu","values":[17754.58,18683.71,18505.600000000002,18505.600000000002,18505.600000000002,18505.6,18505.7,0,0,0,0,0]},{"key":"CONDOMINIO","label":"Condominio","values":[8566.24,8121.18,7566.25,6956.39,6956.39,6733.86,6733.86,6733.86,0,0,0,0]},{"key":"ALUGUEL PERCENTUAL DE VENDAS","label":"Aluguel Percentual de Vendas","values":[5083.31,0,0,0,0,0,0,0,0,0,0,0]}]},"fluxo":{"total":[29819.67,30959.070000000003,34364.51,28867.45,0,30102.03,41749.79,49452.96,0,0,0,0]},"foraDoTotal":[],"nota":null},{"key":"UTILITIES","label":"Utilities","dre":{"total":[30426.35,24312.9,20414.55,20383.86,21059.84,19635.01,18257.43,0,0,0,0,0],"itens":[{"key":"AGUA","label":"Agua","values":[12394.54,8114.55,3705.46,4640.04,6190.12,4146.12,3902.21,0,0,0,0,0]},{"key":"APLICATIVO DE MUSICA","label":"Aplicativo de Musica","values":[23.9,23.9,23.9,23.9,23.9,23.9,23.9,0,0,0,0,0]},{"key":"GAS","label":"Gas","values":[3914.97,5142.5,3375.04,2576.57,2821.52,2767.21,2192.51,0,0,0,0,0]},{"key":"INTERNET","label":"Internet","values":[130.87,130.87,130.65,130.87,130.87,130.87,133.55,0,0,0,0,0]},{"key":"LUZ","label":"Luz","values":[13962.07,10901.08,13179.5,13012.48,11893.43,12566.91,12005.259999999998,0,0,0,0,0]}]},"fluxo":{"total":[39109.04,30295.48,12111.51,21117.3,7940.99,12633.099999999999,18387.370000000003,21365.32,0,0,0,0]},"foraDoTotal":[],"nota":{"mes":0,"texto":"Em <strong>janeiro</strong> o Fluxo de Caixa de Utilities pagou contas de <strong>dezembro/2025</strong>. Por isso o valor do fluxo fica descolado do DRE do mês."}},{"key":"TERCEIROS","label":"Terceiros","dre":{"total":[15451,10721,11821,11721,3358.01,7200,8350,4450,0,0,0,0],"itens":[{"key":"CONTABILIDADE","label":"Contabilidade","values":[3951,3321,3321,3321,158.01,3000,3000,0,0,0,0,0]},{"key":"JURIDICO","label":"Juridico","values":[0,0,0,0,0,1000,1500,2500,0,0,0,0]},{"key":"NUTRICIONISTA","label":"Nutricionista","values":[600,600,600,600,600,600,600,0,0,0,0,0]},{"key":"MUSICO","label":"Musico","values":[10900,6800,7900,7800,2600,2600,3250,1950,0,0,0,0]}]},"fluxo":{"total":[16509,12771,8500,15042,6026.88,4200,5350,8050,0,0,0,0]},"foraDoTotal":[],"nota":null},{"key":"MARKETING","label":"Marketing","dre":{"total":[0,0,4881.08,717,477,1000,0,3973.7,0,0,0,0],"itens":[{"key":"ASSSESSORIA DE IMPRENSA","label":"Asssessoria de Imprensa","values":[0,0,0,0,0,0,0,0,0,0,0,0]},{"key":"COMERCIAL","label":"Comercial","values":[0,0,0,0,0,0,0,0,0,0,0,0]},{"key":"PROGRAMACAO VISUAL E DECORACAO","label":"Programacao Visual e Decoracao","values":[0,0,3100.08,0,477,0,0,973.7,0,0,0,0]},{"key":"PROPAGANDA E PUBLICIDADE","label":"Propaganda e Publicidade","values":[0,0,1781,717,0,1000,0,3000,0,0,0,0]},{"key":"VOUCHER","label":"Voucher","values":[0,0,0,0,0,0,0,0,0,0,0,0]},{"key":"CORTESIAS","label":"Cortesias","values":[0,0,0,0,0,0,0,0,0,0,0,0]},{"key":"SITES E DOMINIOS","label":"Sites e Dominios","values":[0,0,0,0,0,0,0,0,0,0,0,0]}]},"fluxo":{"total":[0,0,4881.08,717,477,1000,0,3973.7,0,0,0,0]},"foraDoTotal":[],"nota":null},{"key":"FINANCEIRAS","label":"Financeiras","dre":{"total":[19713.02,7861.83,6496.08,10296.48,9881.39,9775.49,4089.6,15.309999999999999,0,0,0,0],"itens":[{"key":"CESTA DE SERVICO","label":"Cesta de Servico","values":[0,0,0,0,0,0,0,0,0,0,0,0]},{"key":"JUROS (INFRACAO)","label":"Juros (Infracao)","values":[5151.25,1239.64,2288.64,4880.84,5877.749999999999,6281.47,0,15.309999999999999,0,0,0,0]},{"key":"PIX E TED","label":"Pix e Ted","values":[0,0,0,0,0,0,0,0,0,0,0,0]},{"key":"TARIFA ANTECIPACAO CARTAO DE CREDITO","label":"Tarifa Antecipacao Cartao de Credito","values":[0,0,0,0,0,0,0,0,0,0,0,0]},{"key":"MULTAS E AUTOS DE INFRACAO","label":"Multas e Autos de Infracao","values":[0,0,0,0,0,0,0,0,0,0,0,0]},{"key":"TARIFA DEBITO, CREDITO E PIX","label":"Tarifa Debito, Credito e Pix","values":[14561.77,6622.19,4207.44,5415.64,4003.64,3494.02,4089.6,0,0,0,0,0]}]},"fluxo":{"total":[5447,1349.14,2288.64,4880.84,5877.749999999999,6450.47,0,20.17,0,0,0,0]},"foraDoTotal":[],"nota":null},{"key":"TRIBUTOS","label":"Tributos × Impostos","dre":{"total":[0,0,0,0,0,0,0,0,0,0,0,0],"itens":[{"key":"TRIBUTOS DIVERSOS","label":"Tributos Diversos","values":[0,0,0,0,0,0,0,0,0,0,0,0]}]},"fluxo":{"total":[42629.41,4691.070000000001,10922.420000000002,5493.93,1658.83,1674.92,1691.7800000000002,17644.079999999998,0,0,0,0]},"foraDoTotal":[{"key":"DEDUCOES DE FATURAMENTO","label":"Deduções de faturamento (impostos sobre vendas no DRE)","dre":[58207.48,28443.47,20794.47,21578.08,14034.89,13119.32,14761.9,0,0,0,0,0],"fluxo":[0,0,0,0,0,0,0,0,0,0,0,0],"temFluxo":false}],"nota":{"sempre":true,"texto":"No DRE os impostos sobre venda ficam em <strong>Deduções de Faturamento</strong> (linha exibida no detalhamento, fora do total). A linha <strong>Tributos Diversos</strong> do DRE compara com <strong>Impostos</strong> do Fluxo de Caixa."}}]};
+var DADOS_BUZIOS = {"meta":{"arquivo":"f52565c4-DRE_E_FLUXO_DE_CAIXA_B_ZIOS_2026_4.xlsx","gerado":"2026-09-04T18:40:30.449Z","meses":["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"],"mesesComDados":[0,1,2,3,4,5,6,7,8],"temContasAPagar":true},"kpis":{"faturamento":[766575.15,350755.36,245106.67,277239.32,167160.68,161474.38,186314.72,0,0,0,0,0],"lucroLiquido":[312733.83,46776.53,25182.7,21810.44,4963.47,-14891.3,30019.11,-84559.47,-315,0,0,0],"resultadoDre":[206903.35,-52771.98,-21303.7,-34035.41,-41558.36,-59765.77,-13477.88,-189293.33,-315,0,0,0],"caixa":[16740.93,-32751.13,-31701.59,-36895.91,5940.76,58.94,354.31,47333.04,47333.04,47333.04,47333.04,47333.04]},"categorias":[{"key":"OPERACIONAIS","label":"Operacionais","dre":{"total":[29876.9,26092.55,15368,19590.62,19008.45,20364.73,22151.3,9233.89,0,0,0,0],"itens":[{"key":"CO2","label":"Co2","dre":[295,0,115,0,200,0,460,100,0,0,0,0],"fluxo":[115,0,0,115,200,0,460,100,0,0,0,0]},{"key":"MATERIAIS MANUTENCAO","label":"Materiais Manutencao","dre":[2419.51,1556.82,120.75,103.93,847.65,831.31,1111.21,762.5,0,0,0,0],"fluxo":[1887.89,1535.26,673.93,103.93,847.65,778.81,753.94,1172.27,0,0,0,0]},{"key":"LENHA E CARVAO","label":"Lenha e Carvao","dre":[1635.98,450,0,0,0,0,0,0,0,0,0,0],"fluxo":[1635.98,450,0,0,0,0,0,0,0,0,0,0]},{"key":"LOCACAO MAQUINA DE GELO","label":"Locacao Maquina de Gelo","dre":[1924.32,1900,2134.07,1928.12,1954.72,1934.96,1928.88,0,0,0,0,0],"fluxo":[0,1924.32,2104.43,1929.64,1928.12,0,3889.68,1928.88,0,0,0,0]},{"key":"LOCACAO MAQUINA DE PONTO","label":"Locacao Maquina de Ponto","dre":[241.01,251.28,256.75,256.6,257.05,257.05,251.28,251.28,0,0,0,0],"fluxo":[241.01,251.28,256.75,256.6,257.05,257.05,251.28,251.28,0,0,0,0]},{"key":"LOCACAO MAQUINA DE CARTAO","label":"Locacao Maquina de Cartao","dre":[0,0,200,200,0,0,0,0,0,0,0,0],"fluxo":[0,0,0,0,0,0,0,0,0,0,0,0]},{"key":"LOCACAO TOTEN","label":"Locacao Toten","dre":[680,680,680,680,680,521,0,0,0,0,0,0],"fluxo":[0,680,680,680,680,680,521,0,0,0,0,0]},{"key":"LOCACAO LAVA LOUCA","label":"Locacao Lava Louca","dre":[2031.99,2031.99,2031.99,2031.99,2265.54,2254.98,2141.54,0,0,0,0,0],"fluxo":[2031.99,2031.99,2031.99,2031.99,0,1127.17,4412.34,1122.55,0,0,0,0]},{"key":"LOCACAO PRESH","label":"Locacao Presh","dre":[502.2,502.2,613.98,616.03,615.28,683.9,684.5,0,0,0,0,0],"fluxo":[502.2,502.2,613.98,616.03,615.28,0,683.9,684.5,0,0,0,0]},{"key":"INSUMOS PRESH","label":"Insumos Presh","dre":[1058.8,640,299.4,619.4,328,0,0,0,0,0,0,0],"fluxo":[1058.8,640,299.4,619.4,328,0,0,0,0,0,0,0]},{"key":"DESPESAS GERAIS","label":"Despesas Gerais","dre":[330.97,1393.1,421.83,2136,0,584.7,962.76,40,0,0,0,0],"fluxo":[194.34,1529.73,421.83,2136,0,0,1547.46,40,0,0,0,0]},{"key":"CARDAPIO E COMANDAS","label":"Cardapio e Comandas","dre":[0,3316.4,2487.3,2487.3,0,0,0,0,0,0,0,0],"fluxo":[0,0,0,8291,0,0,0,0,0,0,0,0]},{"key":"LOCACAO MAQUINA DE ETIQUETAS","label":"Locacao Maquina de Etiquetas","dre":[729,729,744.45,745.11,753.74,744.45,729,744.01,0,0,0,0],"fluxo":[0,729,729,744.45,1498.85,0,1473.45,744.01,0,0,0,0]},{"key":"ETIQUETAS MAQUINA","label":"Etiquetas Maquina","dre":[306,444,0,0,0,213.79,213.21,0,0,0,0,0],"fluxo":[306,444,0,0,0,0,427,0,0,0,0,0]},{"key":"RECREACAO","label":"Recreacao","dre":[5139.16,2553.7,1620,2668.87,2276.55,2901.19,2964.5,0,0,0,0,0],"fluxo":[0,5139.16,2553.7,1620,0,2276.55,2901.19,2964.5,0,0,0,0]},{"key":"GASOLINA","label":"Gasolina","dre":[40,0,0,0,0,0,251.6,0,0,0,0,0],"fluxo":[40,0,0,0,0,0,251.6,0,0,0,0,0]},{"key":"IMPRESSORA","label":"Impressora","dre":[0,0,0,0,0,0,0,0,0,0,0,0],"fluxo":[0,0,0,0,0,0,0,0,0,0,0,0]},{"key":"SEGURANCA DO TRABALHO (PRONTO MED)","label":"Seguranca do Trabalho (Pronto Med)","dre":[519.19,558.21,394.22,250.55,250.32,394.34,0,0,0,0,0,0],"fluxo":[0,0,1077.4,394.22,0,0,500.87,394.34,0,0,0,0]},{"key":"SEGURADORA LOJA","label":"Seguradora Loja","dre":[404.6,404.6,404.6,404.6,413.08,413.99,413.34,0,0,0,0,0],"fluxo":[404.6,0,809.2,404.6,0,413.08,413.99,413.34,0,0,0,0]},{"key":"SISTEMA DE RESERVA","label":"Sistema de Reserva","dre":[329,336.9,329,346.98,336.02,337.78,329,0,0,0,0,0],"fluxo":[0,329,336.9,675.98,336.02,0,337.78,329,0,0,0,0]},{"key":"SISTEMA OPERACIONAL DE VENDAS","label":"Sistema Operacional de Vendas","dre":[2919.46,1469.13,1300,1300,1550,1550,1500,0,0,0,0,0],"fluxo":[0,0,0,0,0,0,0,0,0,0,0,0]},{"key":"SISTEMA DE COMPRAS (VMARKET)","label":"Sistema de Compras (Vmarket)","dre":[317.79,317.79,324.66,324.24,324.45,343.21,343.21,0,0,0,0,0],"fluxo":[0,317.79,317.79,324.66,324.24,0,667.66,343.21,0,0,0,0]},{"key":"SISTEMA ARQUIVEI (NOTAS)","label":"Sistema Arquivei (Notas)","dre":[227.29,0,0,0,0,0,0,0,0,0,0,0],"fluxo":[0,227.29,0,0,0,0,0,0,0,0,0,0]},{"key":"SISTEMA DE AVALIACAO","label":"Sistema de Avaliacao","dre":[390,390,390,390,409.98,0,0,0,0,0,0,0],"fluxo":[390,390,390,390,409.98,0,0,0,0,0,0,0]},{"key":"COMPRA DE EQUIPAMENTOS","label":"Compra de Equipamentos","dre":[0,0,0,0,0,908.55,0,0,0,0,0,0],"fluxo":[0,0,0,0,0,786,122.55,0,0,0,0,0]},{"key":"LAVANDERIA","label":"Lavanderia","dre":[120,0,0,0,0,0,0,0,0,0,0,0],"fluxo":[120,0,0,0,0,0,0,0,0,0,0,0]},{"key":"DEDETIZACAO","label":"Dedetizacao","dre":[0,0,0,380,388.48,387.72,380,380,0,0,0,0],"fluxo":[0,0,0,380,0,776.2,380,380,0,0,0,0]},{"key":"MANUTENCAO | CAMARA | REFRIGERACAO","label":"Manutencao | Camara | Refrigeracao","dre":[2720,2000,500,1700,4407.59,4376.86,3641.5,3957.1,0,0,0,0],"fluxo":[2720,2000,0,2200,2750,2726.62,5066.38,5840.05,0,0,0,0]},{"key":"PAPELARIA","label":"Papelaria","dre":[0,0,0,0,0,0,0,0,0,0,0,0],"fluxo":[0,0,0,0,0,0,0,0,0,0,0,0]},{"key":"CARTORIOS E TAXAS","label":"Cartorios e Taxas","dre":[0,0,0,0,0,0,0,0,0,0,0,0],"fluxo":[0,0,0,0,0,0,0,0,0,0,0,0]},{"key":"REPOSICAO DE LOUCAS E UTENSILIOS DE COZINHA","label":"Reposicao de Loucas e Utensilios de Cozinha","dre":[2471.67,2203.43,0,20.9,0,224.95,0,0,0,0,0,0],"fluxo":[2471.67,2217.33,0,20.9,0,224.95,0,0,0,0,0,0]},{"key":"INFORMATICA | SOM | VIDEO","label":"Informatica | Som | Video","dre":[0,0,0,0,750,500,500,2999,0,0,0,0],"fluxo":[0,0,0,0,750,500,500,2999,0,0,0,0]},{"key":"UNIFORMES","label":"Uniformes","dre":[2123.96,1964,0,0,0,0,3345.77,0,0,0,0,0],"fluxo":[2123.96,1964,0,0,0,0,3345.77,0,0,0,0,0]}]},"fluxo":{"total":[26753.37,39480.48,15712.57,24148.23,10925.19,10546.43,28907.84,24156.93,0,0,0,0],"semItem":[{"key":"OPERACIONAIS|NACIONAL UNIFORMES","label":"Nacional Uniformes","values":[0,15000,0,0,0,0,0,0,0,0,0,0]},{"key":"OPERACIONAIS|EVERTEC REFRIGERACAO E ASSISTE","label":"Evertec Refrigeracao e Assiste","values":[2390,490,0,0,0,0,0,0,0,0,0,0]},{"key":"OPERACIONAIS|WINTERHALTER BRASIL COMERCIO D","label":"Winterhalter Brasil Comercio D","values":[0,0,2294.79,0,0,0,0,0,0,0,0,0]},{"key":"OPERACIONAIS|NB UNIFORMES","label":"Nb Uniformes","values":[0,0,0,0,0,0,0,1000,0,0,0,0]},{"key":"OPERACIONAIS|SUFLEX TECNOLOGIA LTDA","label":"Suflex Tecnologia Ltda","values":[729,0,0,0,0,0,0,0,0,0,0,0]},{"key":"OPERACIONAIS|PRONTOMED MEDICINA E SEGURANCA","label":"Prontomed Medicina e Seguranca","values":[721.76,0,0,0,0,0,0,0,0,0,0,0]},{"key":"OPERACIONAIS|POSTERUS CONSULTING LTDA","label":"Posterus Consulting Ltda","values":[680,0,0,0,0,0,0,0,0,0,0,0]},{"key":"OPERACIONAIS|OR COMPANY IMPORTACAO E EXPORT","label":"Or Company Importacao e Export","values":[578.18,0,0,0,0,0,0,0,0,0,0,0]},{"key":"OPERACIONAIS|SEGUROS SURA S.A.","label":"Seguros Sura S.a.","values":[413.08,0,0,0,0,0,0,0,0,0,0,0]},{"key":"OPERACIONAIS|TAGME SISTEMAS PARA RESTAURANT","label":"Tagme Sistemas para Restaurant","values":[329,0,0,0,0,0,0,0,0,0,0,0]},{"key":"OPERACIONAIS|VIRTUAL MARKET SERVICOS ELETRO","label":"Virtual Market Servicos Eletro","values":[317.79,0,0,0,0,0,0,0,0,0,0,0]},{"key":"OPERACIONAIS|ARQUIVEI SERVICOS ON LINE LTDA","label":"Arquivei Servicos On Line Ltda","values":[227.29,0,0,0,0,0,0,0,0,0,0,0]},{"key":"OPERACIONAIS|ON DM -001008","label":"On Dm -001008","values":[23.9,0,0,0,0,0,0,0,0,0,0,0]}],"planilha":null},"foraDoTotal":[{"key":"MATERIAL DE LIMPEZA E DESCARTAVEIS (CMV)","label":"Material de limpeza e descartáveis (CMV)","dre":[7852.31,7506.06,2249.46,4154.68,1542.71,2196.63,4845.77,0,0,0,0,0],"fluxo":[12224.24,9319.8,2880.51,5820.98,1459.04,1546.07,4803.77,3343.04,0,0,0,0],"temFluxo":true}],"nota":{"sempre":true,"texto":"<strong>Sistema operacional de vendas</strong> entra na somatória. <strong>Material de limpeza e descartáveis</strong> fica fora do total e aparece só como referência — no Fluxo de Caixa ele é uma categoria própria."}},{"key":"PESSOAL","label":"Pessoal","dre":{"total":[84444.27,74956.79,68572.67,66372.02,57837.17,63476.87,46889.19,23322.99,315,0,0,0],"itens":[{"key":"SALARIOS E ADIANTAMENTOS","label":"Salarios e Adiantamentos","dre":[40524.64,43876.77,42350.71,38407.23,32284.04,30964.87,33134.28,0,0,0,0,0],"fluxo":[0,40524.64,43876.77,42350.71,38407.23,32284.04,30964.87,33134.28,0,0,0,0]},{"key":"EXTRAS","label":"Extras","dre":[28628.4,10440,920,960,0,629.54,0,3360,0,0,0,0],"fluxo":[28628.4,9940,1220,1010,150,629.54,0,3360,0,0,0,0]},{"key":"PROVISIONAMENTO | 13º | FERIAS","label":"Provisionamento | 13º | Férias","dre":[0,4625.98,2132.65,8147.1,7972.46,7387.93,0,2979.19,0,0,0,0],"fluxo":[0,4625.98,2132.65,8147.1,7972.46,7387.93,0,2979.19,0,0,0,0]},{"key":"FGTS","label":"Fgts","dre":[4261.49,4872.07,4886.47,4631.14,4138.2,3825.4,4012.68,0,0,0,0,0],"fluxo":[0,4261.49,4872.07,0,0,0,0,0,0,0,0,0]},{"key":"PREMIACOES","label":"Premiacoes","dre":[0,0,0,0,0,0,0,0,0,0,0,0],"fluxo":[0,0,0,0,0,0,0,0,0,0,0,0]},{"key":"COMPRA DE FOLGAS","label":"Compra de Folgas","dre":[0,0,0,0,0,0,0,0,0,0,0,0],"fluxo":[0,0,0,0,0,0,0,0,0,0,0,0]},{"key":"RESCICOES TRABALHISTAS","label":"Rescicoes Trabalhistas","dre":[4496.81,3792.64,11812.66,9216.72,9217.47,16824.13,6177.23,12468.8,0,0,0,0],"fluxo":[4300.23,5360.32,11812.66,10716.72,9217.47,16824.13,6177.23,12468.8,0,0,0,0]},{"key":"CUSTO LOCOMOCAO","label":"Custo Locomocao","dre":[1599.93,688.13,121.48,213.83,0,0,0,450,0,0,0,0],"fluxo":[0,0,0,0,0,0,0,0,0,0,0,0]},{"key":"VALE COMBUSTIVEL","label":"Vale Combustivel","dre":[1080,1340,1100,1220,1220,860,860,1100,0,0,0,0],"fluxo":[0,1340,2200,1340,860,0,1840,120,0,0,0,0]},{"key":"VALE TRANSPORTE","label":"Vale Transporte","dre":[3853,5321.2,5248.7,3576,3005,2985,2705,2965,315,0,0,0],"fluxo":[5480.2,4913.4,4206.3,2975,2885,2785,3065,315,0,0,0,0]}]},"fluxo":{"total":[120224.21,76851.49,73257.91,75630.36,70933.49,60363.93,51077.69,65248.62,0,0,0,0],"semItem":[{"key":"PESSOAL|CEF MATRIZ","label":"Cef Matriz","values":[19254.95,2397.86,2430.46,0,7017.33,0,8455.59,10650.35,0,0,0,0]},{"key":"PESSOAL|SISPAG SALARIOS","label":"Sispag Salarios","values":[25644.92,0,0,0,0,0,0,0,0,0,0,0]},{"key":"PESSOAL|CAIXA ECONOMICA FEDERAL","label":"Caixa Economica Federal","values":[0,0,0,6641.69,0,0,0,0,0,0,0,0]},{"key":"PESSOAL|RECEITA FEDERAL","label":"Receita Federal","values":[5459,0,0,0,0,0,0,0,0,0,0,0]},{"key":"PESSOAL|FABIO DE ARAUJO MEIRELLES MAGA","label":"Fabio de Araujo Meirelles Maga","values":[4011.33,0,0,0,0,0,0,0,0,0,0,0]},{"key":"PESSOAL|MAURO DANIEL GONZALEZ OTERO","label":"Mauro Daniel Gonzalez Otero","values":[3214.92,0,0,0,0,0,0,0,0,0,0,0]},{"key":"PESSOAL|CAMILA BERTA CHEROZA","label":"Camila Berta Cheroza","values":[3037.16,0,0,0,0,0,0,0,0,0,0,0]},{"key":"PESSOAL|BANCO DO BRASIL SA","label":"Banco do Brasil Sa","values":[0,2980.8,0,0,0,0,0,0,0,0,0,0]},{"key":"PESSOAL|LAVINIA CAROLAINE LIMA FARIAS","label":"Lavinia Carolaine Lima Farias","values":[2574.72,0,0,0,0,0,0,0,0,0,0,0]},{"key":"PESSOAL|ANA BEATRIZ MORETTI DE ASSIS","label":"Ana Beatriz Moretti de Assis","values":[0,0,0,0,2000,0,0,0,0,0,0,0]},{"key":"PESSOAL|CAIXA ECONOMICA FEDERAL - TRT01","label":"Caixa Economica Federal - Trt01","values":[0,0,0,0,1796,0,0,0,0,0,0,0]},{"key":"PESSOAL|RAFAEL DOS SANTOS VALE","label":"Rafael dos Santos Vale","values":[1651.03,0,0,0,0,0,0,0,0,0,0,0]},{"key":"PESSOAL|SINDICATO DOS EMPREGADOS EM HOTEIS,MEIOS DE HOSPEDA","label":"Sindicato dos Empregados em Hoteis,meios de Hospeda","values":[0,0,0,0,0,0,0,1643,0,0,0,0]},{"key":"PESSOAL|SIND DOS EMP EM HOTEIS MEIOS D","label":"Sind dos Emp em Hoteis Meios D","values":[579,507,507,0,0,0,0,0,0,0,0,0]},{"key":"PESSOAL|WALLACE ESTEVAM","label":"Wallace Estevam","values":[1543.13,0,0,0,0,0,0,0,0,0,0,0]},{"key":"PESSOAL|BANCO DO BRASIL S.A. - SETOR PUBLICO RJ","label":"Banco do Brasil S.a. - Setor Publico Rj","values":[0,0,0,1542.56,0,0,0,0,0,0,0,0]},{"key":"PESSOAL|JHONATAN RENAN VIEIRA CAMPELO","label":"Jhonatan Renan Vieira Campelo","values":[1536.87,0,0,0,0,0,0,0,0,0,0,0]},{"key":"PESSOAL|BANCO AGIBANK S.A.","label":"Banco Agibank S.a.","values":[0,0,0,906.58,0,453.29,0,0,0,0,0,0]},{"key":"PESSOAL|ELOYSA CRYSTINA MARTINS DE SOUZA","label":"Eloysa Crystina Martins de Souza","values":[1212.42,0,0,0,0,0,0,0,0,0,0,0]},{"key":"PESSOAL|SINDICATO DOS EMPREGADOS EM HOTEIS,MEIOS","label":"Sindicato dos Empregados em Hoteis,meios","values":[0,0,0,0,628,0,575,3,0,0,0,0]},{"key":"PESSOAL|ANALIA ALEJANDRA ROMERO","label":"Analia Alejandra Romero","values":[1102.42,0,0,0,0,0,0,0,0,0,0,0]},{"key":"PESSOAL|FABIO DE ARAUJO MEIRELLES MAGALHAES","label":"Fabio de Araujo Meirelles Magalhaes","values":[1102.2,0,0,0,0,0,0,0,0,0,0,0]},{"key":"PESSOAL|CLEZIANO DE ALMEIDA SILVA","label":"Cleziano de Almeida Silva","values":[716.43,0,0,0,0,0,0,0,0,0,0,0]},{"key":"PESSOAL|RANIERIS GOMES","label":"Ranieris Gomes","values":[697.73,0,0,0,0,0,0,0,0,0,0,0]},{"key":"PESSOAL|THIAGO DE OLIVEIRA PESSANHA DIAS","label":"Thiago de Oliveira Pessanha Dias","values":[606.21,0,0,0,0,0,0,0,0,0,0,0]},{"key":"PESSOAL|WALACE ESTEVAM","label":"Walace Estevam","values":[606.21,0,0,0,0,0,0,0,0,0,0,0]},{"key":"PESSOAL|MARCOS VINICIUS ARAUJO DOS SANTOS","label":"Marcos Vinicius Araujo dos Santos","values":[586.17,0,0,0,0,0,0,0,0,0,0,0]},{"key":"PESSOAL|MAURICIO FEIJO","label":"Mauricio Feijo","values":[586.17,0,0,0,0,0,0,0,0,0,0,0]},{"key":"PESSOAL|SINDICATO DOS EMPREGADOS EM HOTEIS,MEIOS DE HOSPEDAGE","label":"Sindicato dos Empregados em Hoteis,meios de Hospedage","values":[0,0,0,0,0,0,0,575,0,0,0,0]},{"key":"PESSOAL|PAULO SERGIO GONCALVES GOYANO","label":"Paulo Sergio Goncalves Goyano","values":[551.1,0,0,0,0,0,0,0,0,0,0,0]},{"key":"PESSOAL|DELFINA PAZ","label":"Delfina Paz","values":[532.89,0,0,0,0,0,0,0,0,0,0,0]},{"key":"PESSOAL|FEDERICO AMADO RUIZ","label":"Federico Amado Ruiz","values":[495.99,0,0,0,0,0,0,0,0,0,0,0]},{"key":"PESSOAL|AGUSTIN BAEZ","label":"Agustin Baez","values":[479.6,0,0,0,0,0,0,0,0,0,0,0]},{"key":"PESSOAL|LEONARDO OLIVEIRA SILVA","label":"Leonardo Oliveira Silva","values":[440.88,0,0,0,0,0,0,0,0,0,0,0]},{"key":"PESSOAL|JHONATHAN CAMPELLO","label":"Jhonathan Campello","values":[440.88,0,0,0,0,0,0,0,0,0,0,0]},{"key":"PESSOAL|KAWE GONCALVES DE OLIVEIRA","label":"Kawe Goncalves de Oliveira","values":[426.31,0,0,0,0,0,0,0,0,0,0,0]},{"key":"PESSOAL|RAIMUNDA TAVARES DE QUEIROS","label":"Raimunda Tavares de Queiros","values":[385.77,0,0,0,0,0,0,0,0,0,0,0]},{"key":"PESSOAL|RAFAEL VALE","label":"Rafael Vale","values":[385.77,0,0,0,0,0,0,0,0,0,0,0]},{"key":"PESSOAL|RAPHAELLA CUNHA CORREA","label":"Raphaella Cunha Correa","values":[352.7,0,0,0,0,0,0,0,0,0,0,0]},{"key":"PESSOAL|RIKELMY LUCAS LIMA ARAUJO","label":"Rikelmy Lucas Lima Araujo","values":[306.48,0,0,0,0,0,0,0,0,0,0,0]},{"key":"PESSOAL|CAMILLE LIMA DOCIO","label":"Camille Lima Docio","values":[302.05,0,0,0,0,0,0,0,0,0,0,0]},{"key":"PESSOAL|PRISCILA ALMEIDA","label":"Priscila Almeida","values":[297.59,0,0,0,0,0,0,0,0,0,0,0]},{"key":"PESSOAL|LUCIANE MARIA DE SOUZA","label":"Luciane Maria de Souza","values":[275.55,0,0,0,0,0,0,0,0,0,0,0]},{"key":"PESSOAL|MARIA MADALENA","label":"Maria Madalena","values":[220.44,0,0,0,0,0,0,0,0,0,0,0]},{"key":"PESSOAL|CAMILLE DOCIO","label":"Camille Docio","values":[198.39,0,0,0,0,0,0,0,0,0,0,0]}],"planilha":null},"foraDoTotal":[{"key":"INSS","label":"INSS","dre":[5832.15,6514.09,5302.56,5191.69,4661.16,4082.75,4145.65,0,0,0,0,0],"fluxo":[0,5832.15,0,0,0,0,0,4145.65,0,0,0,0],"temFluxo":true},{"key":"VALE TRANSPORTE COM DESCONTO","label":"Vale transporte com desconto","dre":[1654.01,1873.96,1875.94,1493.49,1203.49,1229.27,1488.54,0,0,0,0,0],"fluxo":[0,0,0,0,0,0,0,0,0,0,0,0],"temFluxo":false}],"nota":{"sempre":true,"texto":"Fora da somatória de Pessoal: <strong>Comissões</strong> (virou comparativo próprio), <strong>INSS</strong> e <strong>Vale transporte com desconto</strong>. Os dois lados — DRE e Fluxo de Caixa — descontam os mesmos itens."}},{"key":"COMISSOES","label":"Comissões","dre":{"total":[74851.3,25164.97,22738.07,22574.37,12531.11,13907.17,17977.93,4814.87,0,0,0,0],"itens":[{"key":"COMISSOES","label":"Comissoes","dre":[74851.3,25164.97,22738.07,22574.37,12531.11,13907.17,17977.93,4814.87,0,0,0,0],"fluxo":[67880.99,32333.67,21425.89,23886.55,12472.5,13965.78,17977.93,4814.87,0,0,0,0]}]},"fluxo":{"total":[67880.99,32333.67,21425.89,23886.55,12472.5,13965.78,17977.93,4814.87,0,0,0,0],"semItem":[],"planilha":null},"foraDoTotal":[],"nota":null},{"key":"ADMINISTRATIVO","label":"Administrativo","dre":{"total":[34663.01,15270.36,9804.27,11089.57,6686.43,6458.98,7452.59,3000,0,0,0,0],"itens":[{"key":"HOSPEDAGEM","label":"Hospedagem","dre":[4000,1240.15,0,0,0,0,0,3000,0,0,0,0],"fluxo":[1500,0,0,0,0,0,0,1240.15,0,0,0,0]},{"key":"ADMINISTRATIVO","label":"Administrativo","dre":[7665.75,3507.55,2451.07,2772.39,1671.61,1614.74,1863.15,0,0,0,0,0],"fluxo":[0,0,0,0,0,0,0,0,0,0,0,0]},{"key":"FEE HOLDING","label":"Fee Holding","dre":[22997.25,10522.66,7353.2,8317.18,5014.82,4844.23,5589.44,0,0,0,0,0],"fluxo":[0,0,0,0,0,0,0,0,0,0,0,0]}]},"fluxo":{"total":[1500,4665.75,20,0,5526.87,7000,1750,30640.15,0,0,0,0],"semItem":[{"key":"ADMINISTRATIVO|ALEXANDRE MARCOS COSTA RIBEIRO SEGUNDO","label":"Alexandre Marcos Costa Ribeiro Segundo","values":[0,0,0,0,0,0,500,24400,0,0,0,0]},{"key":"ADMINISTRATIVO|ALEXANDRE MARCOS COSTA RIBEIRO II","label":"Alexandre Marcos Costa Ribeiro Ii","values":[0,4665.75,0,0,5526.87,7000,1250,0,0,0,0,0]},{"key":"HOLDING|JORGE HELENO MENDONCA FERNANDES JUNIOR","label":"Jorge Heleno Mendonca Fernandes Junior","values":[0,0,0,0,0,0,0,5000,0,0,0,0]},{"key":"ADMINISTRATIVO|ALEXANDRE MARCOS COSTA RIBEIRO","label":"Alexandre Marcos Costa Ribeiro","values":[0,0,20,0,0,0,0,0,0,0,0,0]}],"planilha":[1500,4665.75,20,0,5526.87,7000,1750,30640.15,0,0,0,0]},"foraDoTotal":[],"nota":{"sempre":true,"texto":"A <strong>Fee Holding</strong> é lançada no DRE mas não entra no Fluxo de Caixa — por isso a discrepância de valores nesta categoria."}},{"key":"CTO","label":"CTO","dre":{"total":[31404.13,26804.89,26071.85,25461.99,25461.99,25239.46,25239.56,6733.86,0,0,0,0],"itens":[{"key":"ALUGUEL E IPTU","label":"Aluguel e Iptu","dre":[17754.58,18683.71,18505.6,18505.6,18505.6,18505.6,18505.7,0,0,0,0,0],"fluxo":[0,17754.58,1450.42,1272.31,0,0,0,1272.31,0,0,0,0]},{"key":"CONDOMINIO","label":"Condominio","dre":[8566.24,8121.18,7566.25,6956.39,6956.39,6733.86,6733.86,6733.86,0,0,0,0],"fluxo":[8566.24,8121.18,7566.25,6656.39,0,0,0,6733.86,0,0,0,0]},{"key":"ALUGUEL PERCENTUAL DE VENDAS","label":"Aluguel Percentual de Vendas","dre":[5083.31,0,0,0,0,0,0,0,0,0,0,0],"fluxo":[0,5083.31,0,0,0,0,0,0,0,0,0,0]}]},"fluxo":{"total":[29819.67,30959.07,34364.51,28867.45,0,30102.03,41749.79,49452.96,0,0,0,0],"semItem":[{"key":"CTO|PDB MALLS FUNDO DE INVESTIMENT","label":"Pdb Malls Fundo de Investiment","values":[21253.43,0,25347.84,20938.75,0,30102.03,41749.79,41446.79,0,0,0,0]}],"planilha":[29819.67,30959.07,34364.51,28867.45,0,30102.03,41749.79,49452.96,0,0,0,0]},"foraDoTotal":[],"nota":null},{"key":"UTILITIES","label":"Utilities","dre":{"total":[30426.35,24312.9,20414.55,20383.86,21059.84,19635.01,18257.43,0,0,0,0,0],"itens":[{"key":"AGUA","label":"Agua","dre":[12394.54,8114.55,3705.46,4640.04,6190.12,4146.12,3902.21,0,0,0,0,0],"fluxo":[0,12394.54,0,0,0,0,0,0,0,0,0,0]},{"key":"APLICATIVO DE MUSICA","label":"Aplicativo de Musica","dre":[23.9,23.9,23.9,23.9,23.9,23.9,23.9,0,0,0,0,0],"fluxo":[0,23.9,23.9,23.9,23.9,23.9,23.9,23.9,0,0,0,0]},{"key":"GAS","label":"Gas","dre":[3914.97,5142.5,3375.04,2576.57,2821.52,2767.21,2192.51,0,0,0,0,0],"fluxo":[0,3914.97,5142.5,3375.04,2576.57,0,5588.73,2192.51,0,0,0,0]},{"key":"INTERNET","label":"Internet","dre":[130.87,130.87,130.65,130.87,130.87,130.87,133.55,0,0,0,0,0],"fluxo":[130.87,0,261.52,130.87,130.87,0,264.42,0,0,0,0,0]},{"key":"LUZ","label":"Luz","dre":[13962.07,10901.08,13179.5,13012.48,11893.43,12566.91,12005.26,0,0,0,0,0],"fluxo":[0,13962.07,6493.09,17587.49,5209.65,12609.2,12510.32,19148.91,0,0,0,0]}]},"fluxo":{"total":[39109.04,30295.48,12111.51,21117.3,7940.99,12633.1,18387.37,21365.32,0,0,0,0],"semItem":[{"key":"UTILITIES|ASSOC CIVIL QUANTA DE GER DIST","label":"Assoc Civil Quanta de Ger Dist","values":[19416.86,0,190.5,0,0,0,0,0,0,0,0,0]},{"key":"UTILITIES|AMPLA ENERGIA E SERVICOS","label":"Ampla Energia e Servicos","values":[8750.78,0,0,0,0,0,0,0,0,0,0,0]},{"key":"UTILITIES|ENEL DISTRIBUICAO RIO","label":"Enel Distribuicao Rio","values":[8244.41,0,0,0,0,0,0,0,0,0,0,0]},{"key":"UTILITIES|SUPERGASBRAS ENERGIA LTDA","label":"Supergasbras Energia Ltda","values":[2566.12,0,0,0,0,0,0,0,0,0,0,0]}],"planilha":[39109.04,30295.48,12111.51,21117.3,7940.99,12633.1,18387.37,21365.32,0,0,0,0]},"foraDoTotal":[],"nota":{"mes":0,"texto":"Em <strong>janeiro</strong> o Fluxo de Caixa de Utilities pagou contas de <strong>dezembro/2025</strong>. Por isso o valor do fluxo fica descolado do DRE do mês."}},{"key":"TERCEIROS","label":"Terceiros","dre":{"total":[15451,10721,11821,11721,3358.01,7200,8350,4450,0,0,0,0],"itens":[{"key":"CONTABILIDADE","label":"Contabilidade","dre":[3951,3321,3321,3321,158.01,3000,3000,0,0,0,0,0],"fluxo":[3951,3321,0,6642,158.01,0,0,3000,0,0,0,0]},{"key":"JURIDICO","label":"Juridico","dre":[0,0,0,0,0,1000,1500,2500,0,0,0,0],"fluxo":[0,0,0,0,0,1000,1500,2500,0,0,0,0]},{"key":"NUTRICIONISTA","label":"Nutricionista","dre":[600,600,600,600,600,600,600,0,0,0,0,0],"fluxo":[0,600,600,600,600,600,600,600,0,0,0,0]},{"key":"MUSICO","label":"Musico","dre":[10900,6800,7900,7800,2600,2600,3250,1950,0,0,0,0],"fluxo":[8850,8850,7900,7800,2600,2600,3250,1950,0,0,0,0]}]},"fluxo":{"total":[16509,12771,8500,15042,6026.88,4200,5350,8050,0,0,0,0],"semItem":[{"key":"TERCEIROS|CONTROLTEC ASSESSORIA CONTABIL","label":"Controltec Assessoria Contabil","values":[3108,0,0,0,0,0,0,0,0,0,0,0]},{"key":"TERCEIROS|RENATA LOPES SANCHEZ BOIX","label":"Renata Lopes Sanchez Boix","values":[600,0,0,0,0,0,0,0,0,0,0,0]}],"planilha":[16509,12771,8500,15042,6026.88,4200,5350,8050,0,0,0,0]},"foraDoTotal":[],"nota":null},{"key":"MARKETING","label":"Marketing","dre":{"total":[0,0,4881.08,717,477,1000,0,3973.7,0,0,0,0],"itens":[{"key":"ASSSESSORIA DE IMPRENSA","label":"Asssessoria de Imprensa","dre":[0,0,0,0,0,0,0,0,0,0,0,0],"fluxo":[0,0,0,0,0,0,0,0,0,0,0,0]},{"key":"COMERCIAL","label":"Comercial","dre":[0,0,0,0,0,0,0,0,0,0,0,0],"fluxo":[0,0,0,0,0,0,0,0,0,0,0,0]},{"key":"PROGRAMACAO VISUAL E DECORACAO","label":"Programacao Visual e Decoracao","dre":[0,0,3100.08,0,477,0,0,973.7,0,0,0,0],"fluxo":[0,0,3100.08,0,477,0,0,973.7,0,0,0,0]},{"key":"PROPAGANDA E PUBLICIDADE","label":"Propaganda e Publicidade","dre":[0,0,1781,717,0,1000,0,3000,0,0,0,0],"fluxo":[0,0,1781,717,0,1000,0,3000,0,0,0,0]},{"key":"VOUCHER","label":"Voucher","dre":[0,0,0,0,0,0,0,0,0,0,0,0],"fluxo":[0,0,0,0,0,0,0,0,0,0,0,0]},{"key":"CORTESIAS","label":"Cortesias","dre":[0,0,0,0,0,0,0,0,0,0,0,0],"fluxo":[0,0,0,0,0,0,0,0,0,0,0,0]},{"key":"SITES E DOMINIOS","label":"Sites e Dominios","dre":[0,0,0,0,0,0,0,0,0,0,0,0],"fluxo":[0,0,0,0,0,0,0,0,0,0,0,0]}]},"fluxo":{"total":[0,0,4881.08,717,477,1000,0,3973.7,0,0,0,0],"semItem":[],"planilha":[0,0,4881.08,717,477,1000,0,3973.7,0,0,0,0]},"foraDoTotal":[],"nota":null},{"key":"FINANCEIRAS","label":"Financeiras","dre":{"total":[19713.02,7861.83,6496.08,10296.48,9881.39,9775.49,4089.6,15.31,0,0,0,0],"itens":[{"key":"CESTA DE SERVICO","label":"Cesta de Servico","dre":[0,0,0,0,0,0,0,0,0,0,0,0],"fluxo":[0,0,0,0,0,0,0,0,0,0,0,0]},{"key":"JUROS (INFRACAO)","label":"Juros (Infracao)","dre":[5151.25,1239.64,2288.64,4880.84,5877.75,6281.47,0,15.31,0,0,0,0],"fluxo":[5151.25,1239.64,2288.64,4880.84,5877.75,6281.47,0,15.31,0,0,0,0]},{"key":"PIX E TED","label":"Pix e Ted","dre":[0,0,0,0,0,0,0,0,0,0,0,0],"fluxo":[0,0,0,0,0,0,0,0,0,0,0,0]},{"key":"TARIFA ANTECIPACAO CARTAO DE CREDITO","label":"Tarifa Antecipacao Cartao de Credito","dre":[0,0,0,0,0,0,0,0,0,0,0,0],"fluxo":[0,0,0,0,0,0,0,0,0,0,0,0]},{"key":"MULTAS E AUTOS DE INFRACAO","label":"Multas e Autos de Infracao","dre":[0,0,0,0,0,0,0,0,0,0,0,0],"fluxo":[0,0,0,0,0,0,0,0,0,0,0,0]},{"key":"TARIFA DEBITO, CREDITO E PIX","label":"Tarifa Debito, Credito e Pix","dre":[14561.77,6622.19,4207.44,5415.64,4003.64,3494.02,4089.6,0,0,0,0,0],"fluxo":[0,109.5,0,0,0,0,0,0,0,0,0,0]}]},"fluxo":{"total":[5447,1349.14,2288.64,4880.84,5877.75,6450.47,0,20.17,0,0,0,0],"semItem":[{"key":"TARIFA|IOF","label":"Iof","values":[295.75,0,0,0,0,0,0,4.86,0,0,0,0]},{"key":"TARIFA|TAR PLANO ADAPT 1 05/26","label":"Tar Plano Adapt 1 05/26","values":[0,0,0,0,0,169,0,0,0,0,0,0]}],"planilha":[5447,1349.14,2288.64,4880.84,5877.75,6450.47,0,20.17,0,0,0,0]},"foraDoTotal":[],"nota":null},{"key":"IMPOSTOS","label":"Impostos","dre":{"total":[0,0,0,0,0,0,0,0,0,0,0,0],"itens":[{"key":"TRIBUTOS DIVERSOS","label":"Tributos Diversos","dre":[0,0,0,0,0,0,0,0,0,0,0,0],"fluxo":[42629.41,4691.07,10922.42,5493.93,1658.83,1674.92,1691.78,17644.08,0,0,0,0]}]},"fluxo":{"total":[42629.41,4691.07,10922.42,5493.93,1658.83,1674.92,1691.78,17644.08,0,0,0,0],"semItem":[],"planilha":[42629.41,4691.07,10922.42,5493.93,1658.83,1674.92,1691.78,17644.08,0,0,0,0]},"foraDoTotal":[{"key":"DEDUCOES DE FATURAMENTO","label":"Deduções de faturamento (impostos sobre vendas no DRE)","dre":[58207.48,28443.47,20794.47,21578.08,14034.89,13119.32,14761.9,0,0,0,0,0],"fluxo":[0,0,0,0,0,0,0,0,0,0,0,0],"temFluxo":false}],"nota":{"sempre":true,"texto":"Compara <strong>Tributos Diversos</strong> (DRE) com <strong>Impostos</strong> (Fluxo de Caixa). Os impostos sobre venda ficam em <strong>Deduções de Faturamento</strong>, exibida abaixo apenas como referência."}},{"key":"PROLABORE","label":"Pró-labore","dre":{"total":[0,0,0,0,0,0,0,0,0,0,0,0],"itens":[]},"fluxo":{"total":[4902.68,0,0,0,0,0,0,0,0,0,0,0],"semItem":[{"key":"PRO LABORE|ALEXANDRE MARCOS COSTA RIBEIRO II","label":"Alexandre Marcos Costa Ribeiro Ii","values":[4902.68,0,0,0,0,0,0,0,0,0,0,0]}],"planilha":[4902.68,0,0,0,0,0,0,0,0,0,0,0]},"foraDoTotal":[],"nota":{"sempre":true,"texto":"O <strong>Pró-labore</strong> não tem linha no DRE desta planilha: ele aparece apenas como pagamento no Fluxo de Caixa."}},{"key":"DIVIDENDOS","label":"Dividendos","dre":{"total":[44000,48430.72,0,10000,0,0,0,98000,0,0,0,0],"itens":[{"key":"DIVIDENDOS DISTRIBUIDOS","label":"Dividendos Distribuidos","dre":[44000,48430.72,0,10000,0,0,0,98000,0,0,0,0],"fluxo":[0,0,0,0,0,0,0,0,0,0,0,0]}]},"fluxo":{"total":[44000,48430.72,0,10000,0,0,0,98000,0,0,0,0],"semItem":[{"key":"DIVIDENDOS|GTX EMPREENDIMENTOS E PARTICIPACOES LTDA","label":"Gtx Empreendimentos e Participacoes Ltda","values":[6930,0,0,0,0,0,0,15750,0,0,0,0]},{"key":"DIVIDENDOS|FELIPE PIMENTEL TURON","label":"Felipe Pimentel Turon","values":[4400,6894.05,0,0,0,0,0,10000,0,0,0,0]},{"key":"DIVIDENDOS|RAFAEL DE ARAUJO MEDINA","label":"Rafael de Araujo Medina","values":[4400,6894.05,0,0,0,0,0,10000,0,0,0,0]},{"key":"DIVIDENDOS|TERRY BROSSMANN","label":"Terry Brossmann","values":[4158,6514.88,0,0,0,0,0,9450,0,0,0,0]},{"key":"DIVIDENDOS|ROBSON DOS SANTOS TINOCO","label":"Robson dos Santos Tinoco","values":[3850,6032.3,0,0,0,0,0,8750,0,0,0,0]},{"key":"DIVIDENDOS|ALEXANDRE MARCOS COSTA RIBEIRO II","label":"Alexandre Marcos Costa Ribeiro Ii","values":[6160,0,0,10000,0,0,0,0,0,0,0,0]},{"key":"DIVIDENDOS|JEAN PARTICIPACOES E INCORPORACOES LTDA","label":"Jean Participacoes e Incorporacoes Ltda","values":[0,0,0,0,0,0,0,15050,0,0,0,0]},{"key":"DIVIDENDOS|ANDRE PEREIRA LASSANCE SOARES","label":"Andre Pereira Lassance Soares","values":[3080,4825.84,0,0,0,0,0,7000,0,0,0,0]},{"key":"DIVIDENDOS|GABRIEL FRANCISCO HAURET BERRUTTI","label":"Gabriel Francisco Hauret Berrutti","values":[4400,0,0,0,0,0,0,10000,0,0,0,0]},{"key":"DIVIDENDOS|ALEXANDRE MARCOS COSTA RIBEIRO SEGUNDO","label":"Alexandre Marcos Costa Ribeiro Segundo","values":[0,0,0,0,0,0,0,12000,0,0,0,0]},{"key":"DIVIDENDOS|JEAN PARTICIPACOES E INCORPORA","label":"Jean Participacoes e Incorpora","values":[0,10375.55,0,0,0,0,0,0,0,0,0,0]},{"key":"DIVIDENDOS|GABRIEL FRANCISCO HAURET BERRU","label":"Gabriel Francisco Hauret Berru","values":[0,6894.05,0,0,0,0,0,0,0,0,0,0]},{"key":"DIVIDENDOS|JONE ELIAS DE ANDRADE","label":"Jone Elias de Andrade","values":[6622,0,0,0,0,0,0,0,0,0,0,0]}],"planilha":[44000,48430.72,0,10000,0,0,0,98000,0,0,0,0]},"foraDoTotal":[],"nota":null}]};
 
-/* =========================== estado e formatação =========================== */
-var CHAVE_LS = 'dre-fluxo-buzios:v1';
-var estado = { dados: null, periodo: 'acum', aberta: null, tabela: false, todos: false, custom: false };
+/* =========================== estado =========================== */
+var UNIDADES = [
+  { id: 'buzios', nome: 'Búzios', ano: '2026' },
+  { id: 'camboinhas', nome: 'Camboinhas', ano: '2026' }
+];
+var CHAVE_LS = 'macaw-dre-fluxo:v2:';
+var estado = {
+  unidade: 'buzios',
+  dados: { buzios: DADOS_BUZIOS, camboinhas: null },
+  origem: { buzios: 'base', camboinhas: 'vazio' },   /* base | importado | compartilhado | vazio */
+  carimbo: { buzios: 0, camboinhas: 0 },
+  periodo: 'acum', aberta: null, tabela: false, todos: false
+};
+var db = null, dbPronto = false;
 
 var brl = function (v) { return (v < 0 ? '-' : '') + 'R$ ' + Math.abs(v).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); };
 var brlCurto = function (v) {
@@ -560,17 +676,26 @@ var brlCurto = function (v) {
 var pct = function (v) { return (v * 100).toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + '%'; };
 var esc = function (s) { return String(s).replace(/[&<>"]/g, function (c) { return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]; }); };
 
+function dados() { return estado.dados[estado.unidade]; }
 function mesesSelecionados() {
-  var d = estado.dados;
+  var d = dados();
   return estado.periodo === 'acum' ? d.meta.mesesComDados.slice() : [estado.periodo];
 }
-function agrega(valores) {
+function agrega(v) {
   var ms = mesesSelecionados(), t = 0;
-  for (var i = 0; i < ms.length; i++) t += (valores && valores[ms[i]]) || 0;
+  for (var i = 0; i < ms.length; i++) t += (v && v[ms[i]]) || 0;
   return t;
 }
+function ultimo(v) {
+  var ms = mesesSelecionados();
+  return ms.length ? ((v && v[ms[ms.length - 1]]) || 0) : 0;
+}
+function mesFinal() {
+  var ms = mesesSelecionados();
+  return ms.length ? dados().meta.meses[ms[ms.length - 1]] : '';
+}
 function rotuloPeriodo() {
-  var d = estado.dados, ms = d.meta.mesesComDados;
+  var d = dados(), ms = d.meta.mesesComDados;
   if (estado.periodo !== 'acum') return d.meta.meses[estado.periodo];
   if (!ms.length) return 'sem dados';
   return 'acumulado ' + d.meta.meses[ms[0]].slice(0, 3) + '–' + d.meta.meses[ms[ms.length - 1]].slice(0, 3);
@@ -581,20 +706,23 @@ function temNota(c) {
 
 /* =========================== indicadores =========================== */
 var KPIS = [
-  { id: 'faturamento', label: 'Faturamento Bruto', base: null },
-  { id: 'cmv',         label: 'CMV',               base: 'faturamento' },
-  { id: 'cmvPerfeito', label: 'CMV Perfeito',      base: 'faturamento' },
-  { id: 'ebitda',      label: 'EBITDA',            base: 'faturamento' }
+  { id: 'faturamento',  label: 'Faturamento Bruto', modo: 'soma',   fonte: 'Receita Bruta do DRE' },
+  { id: 'lucroLiquido', label: 'Lucro Líquido',     modo: 'soma',   base: 'faturamento', fonte: 'Lucro Líquido do DRE' },
+  { id: 'resultadoDre', label: 'Resultado DRE',     modo: 'soma',   base: 'faturamento', fonte: 'Saldo Financeiro do DRE' },
+  { id: 'caixa',        label: 'Caixa',             modo: 'ultimo', fonte: 'Saldo Final do Fluxo de Caixa' }
 ];
 
 function renderKpis() {
-  var d = estado.dados, ms = d.meta.mesesComDados;
+  var d = dados(), ms = d.meta.mesesComDados;
   document.getElementById('kpis').innerHTML = KPIS.map(function (k) {
     var serie = d.kpis[k.id] || [];
-    var valor = agrega(serie), meta = '';
-    if (k.base) {
+    var valor = k.modo === 'ultimo' ? ultimo(serie) : agrega(serie);
+    var meta;
+    if (k.modo === 'ultimo') {
+      meta = 'saldo em <b>' + esc(mesFinal().toLowerCase()) + '</b>';
+    } else if (k.base) {
       var b = agrega(d.kpis[k.base]);
-      meta = b ? '<b>' + pct(valor / b) + '</b> da receita bruta' : '';
+      meta = b ? '<b>' + pct(valor / b) + '</b> da receita bruta' : k.fonte;
     } else if (estado.periodo === 'acum') {
       meta = '<b>' + brlCurto(ms.length ? valor / ms.length : 0) + '</b> por mês em média';
     } else {
@@ -615,7 +743,7 @@ function renderKpis() {
       return '<i class="' + (estado.periodo === m ? 'on' : '') + '" title="' + d.meta.meses[m] + ': ' + esc(brl(v)) + '">' +
         '<span style="position:absolute;left:0;right:0;' + pos + '"></span></i>';
     }).join('');
-    return '<article class="kpi"><div class="k-lbl">' + k.label + '</div>' +
+    return '<article class="kpi" title="' + esc(k.fonte) + '"><div class="k-lbl">' + k.label + '</div>' +
       '<div class="k-val">' + esc(brl(valor)) + '</div>' +
       '<div class="k-meta">' + meta + '</div>' +
       '<div class="spark" aria-hidden="true"><span class="zero" style="bottom:' + zero + '%"></span>' + spark + '</div></article>';
@@ -644,9 +772,8 @@ function chipDiff(dre, fluxo) {
   var rel = dre ? '<span class="pc">' + (d > 0 ? '+' : '') + pct(d / Math.abs(dre)) + '</span>' : '<span class="pc">—</span>';
   return '<div class="diff" title="Fluxo de Caixa menos DRE">' + seta + ' ' + esc(brlCurto(Math.abs(d))) + rel + '</div>';
 }
-
 function linhas() {
-  return estado.dados.categorias.map(function (c) {
+  return dados().categorias.map(function (c) {
     return { cat: c, dre: agrega(c.dre.total), fluxo: agrega(c.fluxo.total) };
   });
 }
@@ -674,26 +801,47 @@ function renderChart() {
   renderTabela(ls);
 }
 
-/* =========================== detalhamento (só DRE) =========================== */
+/* =========================== detalhamento =========================== */
 var ICONE_NOTA = '<svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="8" cy="8" r="6.5"/><path d="M8 7.2v4M8 4.8v.6" stroke-linecap="round"/></svg>';
+
+function celaDif(dre, fluxo) {
+  var d = fluxo - dre;
+  if (Math.abs(d) < 0.005) d = 0;
+  return '<td class="num">' + (d > 0 ? '+' : '') + esc(brl(d)) + '</td>';
+}
+function miniBarras(dre, fluxo, max) {
+  var wd = max > 0 ? Math.max(0, dre / max * 100) : 0;
+  var wf = max > 0 ? Math.max(0, fluxo / max * 100) : 0;
+  return '<span class="mini" aria-hidden="true">' +
+    '<span class="m-dre"><i style="width:' + wd + '%"></i></span>' +
+    '<span class="m-fx"><i style="width:' + wf + '%"></i></span></span>';
+}
 
 function detalheHtml(c) {
   var totalDre = agrega(c.dre.total), totalFluxo = agrega(c.fluxo.total);
-  var itens = c.dre.itens.map(function (it) { return { nome: it.label, valor: agrega(it.values) }; })
-    .filter(function (i) { return Math.abs(i.valor) > 0.005; })
+  var itens = c.dre.itens.map(function (it) {
+    return { nome: it.label, dre: agrega(it.dre), fluxo: agrega(it.fluxo) };
+  }).filter(function (i) { return Math.abs(i.dre) > 0.005 || Math.abs(i.fluxo) > 0.005; })
+    .sort(function (a, b) { return Math.max(b.dre, b.fluxo) - Math.max(a.dre, a.fluxo); });
+  var semItem = (c.fluxo.semItem || []).map(function (it) {
+    return { nome: it.label, valor: agrega(it.values) };
+  }).filter(function (i) { return Math.abs(i.valor) > 0.005; })
     .sort(function (a, b) { return b.valor - a.valor; });
-  var maiorItem = itens.length ? itens[0].valor : 0;
+  var totalSemItem = semItem.reduce(function (a, i) { return a + i.valor; }, 0);
+  var maior = 0;
+  itens.forEach(function (i) { maior = Math.max(maior, i.dre, i.fluxo); });
 
   var html = '<div class="det">' +
-    '<div class="det-head"><h3>Detalhamento do DRE — ' + esc(c.label) + '</h3>' +
-    '<span class="cnt">' + itens.length + ' ' + (itens.length === 1 ? 'item' : 'itens') + ' · ' + esc(rotuloPeriodo()) + '</span>' +
+    '<div class="det-head"><h3>' + esc(c.label) + ' — item a item</h3>' +
+    '<span class="cnt">' + itens.length + ' ' + (itens.length === 1 ? 'item do DRE' : 'itens do DRE') + ' · ' + esc(rotuloPeriodo()) + '</span>' +
     '<button class="btn-link fechar" data-fechar="1">fechar</button></div>';
 
+  var dif = totalFluxo - totalDre;
   html += '<div class="resumo">' +
     '<div><div class="r-lbl">Total no DRE</div><div class="r-val">' + esc(brl(totalDre)) + '</div></div>' +
-    '<div><div class="r-lbl">Total no Fluxo de Caixa</div><div class="r-val">' + esc(brl(totalFluxo)) + '</div></div>' +
-    '<div><div class="r-lbl">Diferença</div><div class="r-val">' + esc(brl(totalFluxo - totalDre)) +
-      (totalDre ? ' <span style="font-size:11.5px;color:var(--ink-3)">(' + ((totalFluxo - totalDre) > 0 ? '+' : '') + pct((totalFluxo - totalDre) / Math.abs(totalDre)) + ')</span>' : '') +
+    '<div><div class="r-lbl">Total pago no fluxo</div><div class="r-val">' + esc(brl(totalFluxo)) + '</div></div>' +
+    '<div><div class="r-lbl">Diferença</div><div class="r-val">' + esc(brl(dif)) +
+      (totalDre ? ' <span style="font-size:11.5px;color:var(--ink-3)">(' + (dif > 0 ? '+' : '') + pct(dif / Math.abs(totalDre)) + ')</span>' : '') +
       '</div></div></div>';
 
   if (temNota(c)) html += '<p class="nota">' + ICONE_NOTA + '<span>' + c.nota.texto + '</span></p>';
@@ -701,34 +849,47 @@ function detalheHtml(c) {
   var LIMITE = 12;
   var visiveis = (estado.todos || itens.length <= LIMITE + 1) ? itens : itens.slice(0, LIMITE);
   var corpo = visiveis.map(function (i) {
-    var w = maiorItem > 0 ? Math.max(1, i.valor / maiorItem * 100) : 0;
-    return '<tr><td>' + esc(i.nome) + '<span class="mini" aria-hidden="true"><i style="width:' + w + '%"></i></span></td>' +
-      '<td class="num">' + esc(brl(i.valor)) + '</td>' +
-      '<td class="num">' + (totalDre ? pct(i.valor / totalDre) : '—') + '</td></tr>';
+    var semPagamento = Math.abs(i.fluxo) < 0.005;
+    return '<tr><td>' + esc(i.nome) +
+      (semPagamento ? '<span class="marca-fora">sem pagamento no fluxo</span>' : '') +
+      miniBarras(i.dre, i.fluxo, maior) + '</td>' +
+      '<td class="num dre-v">' + (Math.abs(i.dre) < 0.005 ? '—' : esc(brl(i.dre))) + '</td>' +
+      '<td class="num fx-v">' + (semPagamento ? '—' : esc(brl(i.fluxo))) + '</td>' +
+      celaDif(i.dre, i.fluxo) + '</tr>';
   }).join('');
-  corpo += '<tr class="total"><td>Total ' + esc(c.label) + ' no DRE</td>' +
-    '<td class="num">' + esc(brl(totalDre)) + '</td><td class="num">100,0%</td></tr>';
+  corpo += '<tr class="total"><td>Total ' + esc(c.label) + '</td>' +
+    '<td class="num">' + esc(brl(totalDre)) + '</td>' +
+    '<td class="num">' + esc(brl(totalFluxo)) + '</td>' + celaDif(totalDre, totalFluxo) + '</tr>';
 
-  html += '<div class="tabela-wrap"><table><thead><tr><th>Item do DRE</th><th>Valor</th><th>% da categoria</th></tr></thead>' +
-    '<tbody>' + (itens.length ? corpo : '<tr><td colspan="3">Sem itens lançados neste período.</td></tr>') + '</tbody></table></div>';
+  html += '<div class="tabela-wrap"><table><thead><tr><th>Item</th><th>DRE</th><th>Pago no fluxo</th><th>Diferença</th></tr></thead>' +
+    '<tbody>' + (itens.length ? corpo : '<tr><td colspan="4">Sem itens do DRE neste período.</td></tr>') + '</tbody></table></div>';
   if (itens.length > LIMITE + 1) {
     html += '<button class="btn-link" data-todos="1" style="margin-top:10px">' +
       (estado.todos ? 'Mostrar apenas os 12 maiores' : 'Mostrar todos os ' + itens.length + ' itens') + '</button>';
+  }
+
+  if (semItem.length) {
+    html += '<div class="det-sub">Pagamentos sem item correspondente no DRE — ' + esc(brl(totalSemItem)) + '</div>';
+    var lista = estado.todos ? semItem : semItem.slice(0, 8);
+    html += '<div class="tabela-wrap"><table><tbody>' + lista.map(function (i) {
+      return '<tr class="fora"><td>' + esc(i.nome) + '</td><td class="num">—</td>' +
+        '<td class="num">' + esc(brl(i.valor)) + '</td><td class="num"></td></tr>';
+    }).join('') + (semItem.length > lista.length
+      ? '<tr class="fora"><td>… e mais ' + (semItem.length - lista.length) + ' lançamentos</td><td class="num">—</td><td class="num">' +
+        esc(brl(totalSemItem - lista.reduce(function (a, i) { return a + i.valor; }, 0))) + '</td><td class="num"></td></tr>'
+      : '') + '</tbody></table></div>';
+    html += '<p class="obs">São pagamentos lançados nesta categoria do Fluxo de Caixa sem <em>categoria DRE</em> no contas a pagar — por isso entram no total pago, mas não têm item do DRE para comparar. Preencher a coluna “CATEGORIA DRE” na planilha faz a linha subir para a tabela de cima.</p>';
   }
 
   var fora = (c.foraDoTotal || []).filter(function (f) { return agrega(f.dre) || agrega(f.fluxo); });
   if (fora.length) {
     html += '<div class="det-sub">Fora da somatória — exibidos apenas como referência</div>';
     html += '<div class="tabela-wrap"><table><tbody>' + fora.map(function (f) {
+      var vd = agrega(f.dre), vf = f.temFluxo ? agrega(f.fluxo) : 0;
       return '<tr class="fora"><td>' + esc(f.label) + '<span class="marca-fora">fora do total</span></td>' +
-        '<td class="num">' + esc(brl(agrega(f.dre))) + '</td><td class="num">—</td></tr>';
+        '<td class="num">' + (Math.abs(vd) < 0.005 ? '—' : esc(brl(vd))) + '</td>' +
+        '<td class="num">' + (f.temFluxo ? esc(brl(vf)) : '—') + '</td><td class="num"></td></tr>';
     }).join('') + '</tbody></table></div>';
-    var comFluxo = fora.filter(function (f) { return f.temFluxo && agrega(f.fluxo); });
-    if (comFluxo.length) {
-      html += '<p class="obs">' + comFluxo.map(function (f) {
-        return 'No Fluxo de Caixa, ' + esc(f.label) + ' aparece em categoria própria, com ' + esc(brl(agrega(f.fluxo))) + ' no período.';
-      }).join(' ') + '</p>';
-    }
   }
   html += '</div>';
   return html;
@@ -744,14 +905,14 @@ function renderTabela(ls) {
       '<td class="num">' + esc(brl(l.fluxo)) + '</td>' +
       '<td class="num">' + esc(brl(l.fluxo - l.dre)) + '</td></tr>';
   }).join('');
-  el.innerHTML = '<div class="panel" style="margin-top:16px"><div class="panel-head"><h2>Tabela das categorias — ' + esc(rotuloPeriodo()) + '</h2></div>' +
-    '<div class="tabela-wrap" style="padding:0 22px 20px"><table><thead><tr><th>Categoria</th><th>DRE</th><th>Fluxo de Caixa</th><th>Diferença</th></tr></thead><tbody>' +
+  el.innerHTML = '<div class="panel" style="margin-top:16px"><div class="panel-head"><h2>Tabela dos comparativos — ' + esc(rotuloPeriodo()) + '</h2></div>' +
+    '<div class="tabela-wrap" style="padding:0 22px 20px"><table><thead><tr><th>Comparativo</th><th>DRE</th><th>Pago no fluxo</th><th>Diferença</th></tr></thead><tbody>' +
     corpo + '</tbody></table></div></div>';
 }
 
-/* =========================== período =========================== */
+/* =========================== período e unidades =========================== */
 function renderChips() {
-  var d = estado.dados;
+  var d = dados();
   var html = '<button class="chip" data-p="acum" aria-pressed="' + (estado.periodo === 'acum') + '">Acumulado</button>';
   for (var m = 0; m < 12; m++) {
     var tem = d.meta.mesesComDados.indexOf(m) >= 0;
@@ -760,13 +921,65 @@ function renderChips() {
   }
   document.getElementById('chips').innerHTML = html;
 }
+function renderAbas() {
+  document.getElementById('abas').innerHTML = UNIDADES.map(function (u) {
+    var vazia = !estado.dados[u.id];
+    return '<button class="aba" role="tab" data-u="' + u.id + '"' +
+      (estado.unidade === u.id ? ' aria-current="page"' : '') + '>' + esc(u.nome) +
+      (vazia ? '<span class="pt">sem planilha</span>' : '') + '</button>';
+  }).join('');
+}
+function unidadeAtual() {
+  return UNIDADES.filter(function (u) { return u.id === estado.unidade; })[0];
+}
+
+function renderVazio() {
+  var u = unidadeAtual();
+  document.getElementById('vazio').innerHTML =
+    '<div class="vazio"><h2>Sem planilha de ' + esc(u.nome) + ' ainda</h2>' +
+    '<p>Importe a planilha de DRE e Fluxo de Caixa desta unidade — mesma estrutura da de Búzios, com as abas DRE, RELATÓRIO FLUXO DE CAIXA e CONTAS A PAGAR. O painel se monta sozinho a partir dela.</p>' +
+    '<button class="btn" data-importar="1">Importar planilha de ' + esc(u.nome) + '</button></div>';
+}
+
+function renderSync() {
+  var el = document.getElementById('sync');
+  var origem = estado.origem[estado.unidade];
+  var carimbo = estado.carimbo[estado.unidade];
+  var quando = carimbo ? new Date(carimbo).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '';
+  var texto;
+  if (origem === 'compartilhado') texto = 'Planilha compartilhada — todos que abrem este painel veem esta versão' + (quando ? ' (atualizada em ' + quando + ')' : '');
+  else if (origem === 'importado') texto = dbPronto
+    ? 'Planilha importada e publicada para os outros usuários' + (quando ? ' em ' + quando : '')
+    : 'Planilha importada — guardada só neste navegador' + (quando ? ' em ' + quando : '');
+  else if (origem === 'base') texto = 'Planilha original de Búzios embutida no painel';
+  else texto = '';
+  el.className = 'sync' + (origem === 'compartilhado' || (origem === 'importado' && dbPronto) ? ' viva' : '');
+  el.innerHTML = texto ? '<i class="bolha"></i><span>' + esc(texto) + '</span>' : '';
+}
 
 function render() {
-  renderChips();
-  renderKpis();
-  renderChart();
-  document.getElementById('src-nome').textContent = estado.dados.meta.arquivo || 'planilha base';
-  document.getElementById('btn-reset').hidden = !estado.custom;
+  var d = dados(), u = unidadeAtual();
+  renderAbas();
+  document.getElementById('sub-unidade').textContent = u.nome + ' · ' + u.ano + ' · competência vs. pagamento';
+  document.getElementById('src-nome').textContent = d ? (d.meta.arquivo || 'planilha base') : 'nenhuma planilha';
+  var temDados = !!d;
+  document.getElementById('painel').hidden = !temDados;
+  var chipsBox = document.getElementById('chips');
+  chipsBox.hidden = !temDados;
+  document.querySelector('.periodo .lbl').hidden = !temDados;
+  document.querySelector('.periodo .risco').hidden = !temDados;
+  document.getElementById('kpis').hidden = !temDados;
+  if (!temDados) {
+    document.getElementById('kpis').innerHTML = '';
+    document.getElementById('tabela').innerHTML = '';
+    renderVazio();
+  } else {
+    document.getElementById('vazio').innerHTML = '';
+    renderChips();
+    renderKpis();
+    renderChart();
+  }
+  renderSync();
 }
 
 /* =========================== tooltip =========================== */
@@ -774,36 +987,40 @@ var tip = document.getElementById('tip');
 function escondeTip() { tip.style.opacity = '0'; }
 document.addEventListener('mousemove', function (ev) {
   var alvo = ev.target.closest ? ev.target.closest('.cat') : null;
-  if (!alvo) { escondeTip(); return; }
-  var c = estado.dados.categorias.filter(function (x) { return x.key === alvo.dataset.cat; })[0];
+  if (!alvo || !dados()) { escondeTip(); return; }
+  var c = dados().categorias.filter(function (x) { return x.key === alvo.dataset.cat; })[0];
   if (!c) { escondeTip(); return; }
   var dre = agrega(c.dre.total), fluxo = agrega(c.fluxo.total);
   tip.innerHTML = '<div class="t-nm">' + esc(c.label) + '</div>' +
     '<div class="t-ln"><span>DRE</span><span>' + esc(brl(dre)) + '</span></div>' +
-    '<div class="t-ln"><span>Fluxo</span><span>' + esc(brl(fluxo)) + '</span></div>' +
+    '<div class="t-ln"><span>Pago</span><span>' + esc(brl(fluxo)) + '</span></div>' +
     '<div class="t-ln"><span>Diferença</span><span>' + esc(brl(fluxo - dre)) + '</span></div>' +
-    '<div class="t-ln" style="margin-top:5px;opacity:.75"><span>clique para ver os itens do DRE</span></div>';
+    '<div class="t-ln" style="margin-top:5px;opacity:.75"><span>clique para ver item a item</span></div>';
   tip.style.opacity = '1';
   var r = tip.getBoundingClientRect();
   tip.style.left = Math.min(window.innerWidth - r.width - 10, Math.max(10, ev.clientX + 14)) + 'px';
   tip.style.top = Math.max(10, ev.clientY - r.height - 12) + 'px';
 });
+window.addEventListener('scroll', escondeTip, { passive: true });
 
 /* =========================== eventos =========================== */
-window.addEventListener('scroll', escondeTip, { passive: true });
 document.addEventListener('click', function (ev) {
   escondeTip();
+  var aba = ev.target.closest('.aba');
+  if (aba) {
+    estado.unidade = aba.dataset.u;
+    estado.aberta = null; estado.todos = false; estado.periodo = 'acum';
+    location.hash = estado.unidade;
+    render(); return;
+  }
+  if (ev.target.closest('[data-importar]')) { document.getElementById('file').click(); return; }
   var chip = ev.target.closest('.chip');
   if (chip && !chip.disabled) {
     estado.periodo = chip.dataset.p === 'acum' ? 'acum' : parseInt(chip.dataset.p, 10);
     render(); return;
   }
-  if (ev.target.closest('[data-fechar]')) {
-    estado.aberta = null; estado.todos = false; renderChart(); return;
-  }
-  if (ev.target.closest('[data-todos]')) {
-    estado.todos = !estado.todos; renderChart(); return;
-  }
+  if (ev.target.closest('[data-fechar]')) { estado.aberta = null; estado.todos = false; renderChart(); return; }
+  if (ev.target.closest('[data-todos]')) { estado.todos = !estado.todos; renderChart(); return; }
   var cat = ev.target.closest('.cat');
   if (cat) {
     estado.aberta = estado.aberta === cat.dataset.cat ? null : cat.dataset.cat;
@@ -819,28 +1036,41 @@ document.getElementById('btn-tabela').addEventListener('click', function () {
   renderChart();
 });
 
-/* =========================== importação =========================== */
+/* =========================== importação e compartilhamento =========================== */
 function erro(msg) {
   document.getElementById('erro').innerHTML = msg ? '<div class="erro">' + esc(msg) + '</div>' : '';
 }
-function aplicar(dados, custom) {
-  estado.dados = dados;
-  estado.custom = !!custom;
-  if (estado.periodo !== 'acum' && dados.meta.mesesComDados.indexOf(estado.periodo) < 0) estado.periodo = 'acum';
-  estado.aberta = null;
-  erro('');
+function guardaLocal(unidade, pacote) {
+  try { localStorage.setItem(CHAVE_LS + unidade, JSON.stringify(pacote)); } catch (x) { /* cota cheia */ }
+}
+function publica(unidade, pacote) {
+  if (!db) return;
+  db.doc('unidades/' + unidade).set(pacote).catch(function () { /* segue com a cópia local */ });
+}
+function aplica(unidade, pacote, origem) {
+  estado.dados[unidade] = pacote.dados;
+  estado.origem[unidade] = origem;
+  estado.carimbo[unidade] = pacote.atualizadoEm || 0;
+  if (estado.unidade === unidade) {
+    estado.aberta = null; estado.todos = false;
+    if (estado.periodo !== 'acum' && pacote.dados.meta.mesesComDados.indexOf(estado.periodo) < 0) estado.periodo = 'acum';
+  }
   render();
 }
 function lerArquivo(file) {
+  var unidade = estado.unidade;
   var leitor = new FileReader();
   leitor.onload = function (e) {
     try {
       var wb = XLSX.read(new Uint8Array(e.target.result), { type: 'array' });
-      var dados = parseWorkbook(wb, XLSX, file.name);
-      aplicar(dados, true);
-      try { localStorage.setItem(CHAVE_LS, JSON.stringify(dados)); } catch (x) { /* cota cheia: segue só em memória */ }
+      var dadosNovos = parseWorkbook(wb, XLSX, file.name);
+      var pacote = { dados: dadosNovos, arquivo: file.name, unidade: unidade, atualizadoEm: Date.now() };
+      erro('');
+      aplica(unidade, pacote, 'importado');
+      guardaLocal(unidade, pacote);
+      publica(unidade, pacote);
     } catch (x) {
-      erro('Não foi possível ler esta planilha: ' + x.message + ' Confira se ela tem as abas DRE e RELATÓRIO FLUXO DE CAIXA.');
+      erro('Não foi possível ler esta planilha: ' + x.message + ' Confira se ela tem as abas DRE, RELATÓRIO FLUXO DE CAIXA e CONTAS A PAGAR.');
     }
   };
   leitor.onerror = function () { erro('Falha ao abrir o arquivo. Tente novamente.'); };
@@ -852,8 +1082,10 @@ document.getElementById('file').addEventListener('change', function () {
   this.value = '';
 });
 document.getElementById('btn-reset').addEventListener('click', function () {
-  try { localStorage.removeItem(CHAVE_LS); } catch (x) {}
-  aplicar(DADOS_PADRAO, false);
+  var u = estado.unidade;
+  try { localStorage.removeItem(CHAVE_LS + u); } catch (x) {}
+  if (u === 'buzios') aplica(u, { dados: DADOS_BUZIOS, atualizadoEm: 0 }, 'base');
+  else { estado.dados[u] = null; estado.origem[u] = 'vazio'; render(); }
 });
 
 var drop = document.getElementById('drop');
@@ -871,11 +1103,44 @@ var drop = document.getElementById('drop');
 
 /* =========================== início =========================== */
 (function () {
-  var salvo = null;
-  try { salvo = localStorage.getItem(CHAVE_LS); } catch (x) {}
-  if (salvo) { try { aplicar(JSON.parse(salvo), true); return; } catch (x) {} }
-  aplicar(DADOS_PADRAO, false);
+  var hash = (location.hash || '').replace('#', '');
+  if (UNIDADES.some(function (u) { return u.id === hash; })) estado.unidade = hash;
+
+  UNIDADES.forEach(function (u) {
+    var salvo = null;
+    try { salvo = localStorage.getItem(CHAVE_LS + u.id); } catch (x) {}
+    if (!salvo) return;
+    try {
+      var pacote = JSON.parse(salvo);
+      if (pacote && pacote.dados) {
+        estado.dados[u.id] = pacote.dados;
+        estado.origem[u.id] = 'importado';
+        estado.carimbo[u.id] = pacote.atualizadoEm || 0;
+      }
+    } catch (x) {}
+  });
+  render();
 })();
+
+/* A planilha importada fica no armazenamento compartilhado do painel:
+   quem abrir depois — em qualquer navegador — vê a mesma versão. */
+if (window.claude && typeof window.claude.use === 'function') {
+  window.claude.use('db').then(function (ns) {
+    if (!ns) return;
+    db = ns; dbPronto = true;
+    UNIDADES.forEach(function (u) {
+      db.doc('unidades/' + u.id).onSnapshot(function (snap) {
+        if (!snap.exists) return;
+        var pacote = snap.data();
+        if (!pacote || !pacote.dados) return;
+        if ((pacote.atualizadoEm || 0) <= estado.carimbo[u.id]) return;
+        aplica(u.id, pacote, 'compartilhado');
+        guardaLocal(u.id, pacote);
+      }, function () { /* assinatura encerrada: segue com a cópia local */ });
+    });
+    renderSync();
+  }).catch(function () {});
+}
 </script>
 
 </body>
