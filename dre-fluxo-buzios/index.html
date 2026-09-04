@@ -249,15 +249,20 @@ tr.fora td{color:var(--ink-3)}
 .sync.viva .bolha{background:var(--verde)}
 td.dre-v{color:var(--ink)}
 td.fx-v{color:var(--ink)}
-.col-barras{width:26%;min-width:150px;padding-top:10px;padding-bottom:10px}
-.col-barras .plot{padding:0;gap:2px;opacity:.72}
+.col-barras{width:52%;min-width:260px;padding-top:9px;padding-bottom:9px}
+.col-barras .plot{padding:0;gap:3px}
 .col-barras .plot::before{display:none}
-.col-barras .bar-line{height:6px}
-.col-barras .bar{border-radius:1px 3px 3px 1px;min-width:1px}
-tr:hover .col-barras .plot{opacity:1}
-tr.total .col-barras .plot{opacity:.9}
-tr.total .col-barras .bar-line{height:7px}
-@media(max-width:900px){.col-barras{display:none}}
+.col-barras .bar-line{height:11px}
+.col-barras .bar{border-radius:1px 3px 3px 1px;min-width:2px;opacity:.9}
+.col-barras .bar-val{font-size:10.5px;padding-left:7px;color:var(--ink-2)}
+.col-barras .bar-val.dentro{padding:0 7px 0 0;color:var(--ground)}
+tr:hover .col-barras .bar{opacity:1}
+tr.total .col-barras .bar-line{height:12px}
+tr.total .col-barras .bar-val{color:var(--ink)}
+th.col-barras{font-weight:500}
+th.col-barras i{display:inline-block;width:8px;height:8px;border-radius:2px;margin:0 5px 0 12px;vertical-align:baseline}
+th.col-barras i:first-child{margin-left:0}
+@media(max-width:820px){.col-barras{display:none}}
 .foot{padding:26px 0 44px;color:var(--ink-3);font-size:11.5px;line-height:1.8}
 .foot b{color:var(--ink-2);font-weight:500}
 .erro{background:var(--nota-bg);border:1px solid var(--nota-line);border-radius:10px;padding:12px 16px;
@@ -941,14 +946,23 @@ function celaDif(dre, fluxo) {
   return '<td class="num">' + (d > 0 ? '+' : '') + esc(brl(d)) + '</td>';
 }
 /* mesmas barras das categorias, na escala do maior item da tabela */
-function celaBarras(dre, fluxo, max) {
-  /* barra discreta, sem rótulo: o valor exato está na coluna ao lado */
-  function linha(v, classe) {
-    if (Math.abs(v) < 0.005) return '<div class="bar-line"></div>';
-    var w = max > 0 ? Math.min(100, v / max * 100) : 0;
-    return '<div class="bar-line"><div class="bar ' + classe + '" style="width:' + w + '%"></div></div>';
+/* Uma barra por regime, com o valor no fim dela: o número mora junto do
+   desenho, como nas categorias, e a tabela fica sem colunas repetidas. */
+function linhaBarra(v, max, classe, vazio) {
+  if (Math.abs(v) < 0.005) {
+    return '<div class="bar-line"><span class="bar-val zero" style="left:0">' + (vazio || '—') + '</span></div>';
   }
-  return '<td class="col-barras"><span class="plot">' + linha(dre, 'dre') + linha(fluxo, 'caixa') + '</span></td>';
+  var w = max > 0 ? Math.min(100, v / max * 100) : 0;
+  var dentro = w >= 58;
+  return '<div class="bar-line"><div class="bar ' + classe + '" style="width:' + w + '%"></div>' +
+    '<span class="bar-val' + (dentro ? ' dentro' : '') + '" style="left:' + w + '%">' + esc(brl(v)) + '</span></div>';
+}
+function celaBarras(dre, fluxo, max, opcoes) {
+  var o = opcoes || {};
+  var html = '';
+  if (!o.soFluxo) html += linhaBarra(dre, max, 'dre', o.vazioDre);
+  html += linhaBarra(fluxo, max, 'caixa', o.vazioFluxo);
+  return '<td class="col-barras"><span class="plot">' + html + '</span></td>';
 }
 
 function detalheHtml(c) {
@@ -992,37 +1006,32 @@ function detalheHtml(c) {
   var visiveis = (estado.todos || itens.length <= LIMITE + 1) ? itens : itens.slice(0, LIMITE);
   var corpo = visiveis.map(function (i) {
     var semPagamento = Math.abs(i.fluxo) < 0.005;
+    /* o aviso de "pago em outra categoria" vive no lugar da barra que falta,
+       com o valor junto — sem repetir a informação num selo ao lado do nome. */
     var selo = '';
-    if (semPagamento) {
-      selo = i.fora
-        ? '<span class="marca-fora">pago em ' + esc(i.fora.onde) + ': ' + esc(brl(i.fora.valor)) + '</span>'
-        : '<span class="marca-fora">sem pagamento no fluxo</span>';
-    }
     return '<tr><td>' + esc(i.nome) + selo + '</td>' +
-      celaBarras(i.dre, i.fluxo, maior) +
-      '<td class="num dre-v">' + (Math.abs(i.dre) < 0.005 ? '—' : esc(brl(i.dre))) + '</td>' +
-      '<td class="num fx-v">' + (semPagamento ? '—' : esc(brl(i.fluxo))) + '</td>' +
+      celaBarras(i.dre, i.fluxo, maior, {
+        vazioFluxo: i.fora ? 'pago em ' + esc(i.fora.onde) + ' · ' + esc(brl(i.fora.valor)) : 'sem pagamento no fluxo'
+      }) +
       celaDif(i.dre, i.fluxo) + '</tr>';
   }).join('');
   outros.forEach(function (o) {
     corpo += '<tr class="fora"><td>' + esc(o.nome) +
       '<span class="marca-fora">' + (o.dono ? 'no DRE entra em ' + esc(o.dono) : 'sem item no DRE desta categoria') + '</span></td>' +
-      celaBarras(0, o.valor, maior) +
-      '<td class="num">—</td><td class="num">' + esc(brl(o.valor)) + '</td><td class="num"></td></tr>';
+      celaBarras(0, o.valor, maior, { soFluxo: true }) + '<td class="num"></td></tr>';
   });
   if (!atribuido && semItem.length) {
     corpo += '<tr class="fora"><td>Pagamentos sem item no DRE <span class="marca-fora">' + semItem.length + ' lançamentos</span></td>' +
-      celaBarras(0, totalSemItem, maior) +
-      '<td class="num">—</td><td class="num">' + esc(brl(totalSemItem)) + '</td><td class="num"></td></tr>';
+      celaBarras(0, totalSemItem, maior, { soFluxo: true }) + '<td class="num"></td></tr>';
   }
   corpo += '<tr class="total"><td>Total ' + esc(c.label) + '</td>' +
     celaBarras(totalDre, totalFluxo, Math.max(maior, totalDre, totalFluxo)) +
-    '<td class="num">' + esc(brl(totalDre)) + '</td>' +
-    '<td class="num">' + esc(brl(totalFluxo)) + '</td>' + celaDif(totalDre, totalFluxo) + '</tr>';
+    celaDif(totalDre, totalFluxo) + '</tr>';
 
-  html += '<div class="tabela-wrap"><table><thead><tr><th>Item</th><th class="col-barras">DRE × Fluxo</th>' +
-    '<th>DRE</th><th>Pago no fluxo</th><th>Diferença</th></tr></thead>' +
-    '<tbody>' + (itens.length ? corpo : '<tr><td colspan="5">Sem itens do DRE neste período.</td></tr>') + '</tbody></table></div>';
+  html += '<div class="tabela-wrap"><table><thead><tr><th>Item</th>' +
+    '<th class="col-barras"><i class="sw-dre"></i>DRE<i class="sw-caixa"></i>pago no fluxo</th>' +
+    '<th>Diferença</th></tr></thead>' +
+    '<tbody>' + (itens.length ? corpo : '<tr><td colspan="3">Sem itens do DRE neste período.</td></tr>') + '</tbody></table></div>';
   if (itens.length > LIMITE + 1) {
     html += '<button class="btn-link" data-todos="1" style="margin-top:10px">' +
       (estado.todos ? 'Mostrar apenas os 12 maiores' : 'Mostrar todos os ' + itens.length + ' itens') + '</button>';
@@ -1035,12 +1044,12 @@ function detalheHtml(c) {
     var lista = estado.todos ? semItem : semItem.slice(0, 8);
     var maiorLista = Math.max.apply(null, lista.map(function (i) { return i.valor; }).concat([0]));
     html += '<div class="tabela-wrap"><table><tbody>' + lista.map(function (i) {
-      return '<tr class="fora"><td>' + esc(i.nome) + '</td>' + celaBarras(0, i.valor, maiorLista) +
-        '<td class="num">—</td><td class="num">' + esc(brl(i.valor)) + '</td><td class="num"></td></tr>';
+      return '<tr class="fora"><td>' + esc(i.nome) + '</td>' +
+        celaBarras(0, i.valor, maiorLista, { soFluxo: true }) + '<td class="num"></td></tr>';
     }).join('') + (semItem.length > lista.length
       ? '<tr class="fora"><td>… e mais ' + (semItem.length - lista.length) + ' lançamentos</td>' +
-        '<td class="col-barras"></td><td class="num">—</td><td class="num">' +
-        esc(brl(totalSemItem - lista.reduce(function (a, i) { return a + i.valor; }, 0))) + '</td><td class="num"></td></tr>'
+        celaBarras(0, totalSemItem - lista.reduce(function (a, i) { return a + i.valor; }, 0), maiorLista, { soFluxo: true }) +
+        '<td class="num"></td></tr>'
       : '') + '</tbody></table></div>';
     html += '<p class="obs">' + (atribuido
       ? 'Este comparativo tem um único item no DRE, então os pagamentos desta categoria do Fluxo de Caixa pertencem a ele — mesmo sem a coluna “CATEGORIA DRE” preenchida no contas a pagar. Abaixo, quem foi pago.'
@@ -1055,9 +1064,8 @@ function detalheHtml(c) {
     html += '<div class="tabela-wrap"><table><tbody>' + fora.map(function (f) {
       var vd = agrega(f.dre), vf = f.temFluxo ? agrega(f.fluxo) : 0;
       return '<tr class="fora"><td>' + esc(f.label) + '<span class="marca-fora">fora do total</span></td>' +
-        celaBarras(vd, vf, maiorFora) +
-        '<td class="num">' + (Math.abs(vd) < 0.005 ? '—' : esc(brl(vd))) + '</td>' +
-        '<td class="num">' + (f.temFluxo ? esc(brl(vf)) : '—') + '</td><td class="num"></td></tr>';
+        celaBarras(vd, vf, maiorFora, { vazioFluxo: 'sem pagamento' }) +
+        '<td class="num"></td></tr>';
     }).join('') + '</tbody></table></div>';
   }
   html += '</div>';
