@@ -56,9 +56,14 @@ A ligação vem da aba `CONTAS A PAGAR`: cada pagamento traz uma **`CATEGORIA DR
 3. **Administrativo** avisa que a **Fee Holding** existe no DRE e não no fluxo.
 4. **Utilities** avisa, quando janeiro está no período, que o fluxo de janeiro pagou
    contas de dezembro/2025.
-5. **Impostos** compara `TRIBUTOS DIVERSOS` (DRE) com `IMPOSTOS` (fluxo); as
+5. **Impostos** compara a linha de impostos do DRE — chamada `IMPOSTOS` nas versões
+   novas da planilha e `TRIBUTOS DIVERSOS` nas antigas, o painel aceita as duas — com
+   `IMPOSTOS` do fluxo. O DRE reconhece no mês da competência e o caixa paga no mês
+   seguinte, então a diferença no acumulado é justamente esse descasamento. As
    deduções de faturamento aparecem como referência.
-6. **Pró-labore** só existe no fluxo desta planilha — o painel diz isso na categoria.
+6. **Pró-labore** sai da somatória de Administrativo (onde a planilha o lança) e vira
+   comparativo próprio. Se a planilha não tiver essa linha no DRE, o painel avisa que
+   ele só existe no fluxo.
 
 Mapeamentos auxiliares: Administrativo do fluxo soma `ADMINISTRATIVO` + `HOLDING`;
 Financeiras do fluxo soma `FINANCEIRAS` + `TARIFA`.
