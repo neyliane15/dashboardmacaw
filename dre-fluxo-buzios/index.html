@@ -795,7 +795,8 @@ var estado = {
   carimbo: { buzios: 0, camboinhas: 0 },
   periodo: 'acum', aberta: null, tabela: false, todos: false
 };
-var db = null, dbPronto = false;
+var db = null, dbPronto = false, dbEstado = 'verificando';   /* verificando | ativo | indisponivel */
+var publicado = {}, falhaPublicacao = {};
 
 var brl = function (v) { return (v < 0 ? '-' : '') + 'R$ ' + Math.abs(v).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); };
 var brlCurto = function (v) {
@@ -1114,18 +1115,29 @@ function renderVazio() {
 
 function renderSync() {
   var el = document.getElementById('sync');
-  var origem = estado.origem[estado.unidade];
-  var carimbo = estado.carimbo[estado.unidade];
-  var quando = carimbo ? new Date(carimbo).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '';
-  var texto;
-  if (origem === 'compartilhado') texto = 'Planilha compartilhada — todos que abrem este painel veem esta versão' + (quando ? ' (atualizada em ' + quando + ')' : '');
-  else if (origem === 'importado') texto = dbPronto
-    ? 'Planilha importada e publicada para os outros usuários' + (quando ? ' em ' + quando : '')
-    : 'Planilha importada — guardada só neste navegador' + (quando ? ' em ' + quando : '');
-  else if (origem === 'base') texto = 'Planilha original de Búzios embutida no painel';
-  else texto = '';
-  el.className = 'sync' + (origem === 'compartilhado' || (origem === 'importado' && dbPronto) ? ' viva' : '');
-  el.innerHTML = texto ? '<i class="bolha"></i><span>' + esc(texto) + '</span>' : '';
+  var u = estado.unidade;
+  var origem = estado.origem[u];
+  var carimbo = estado.carimbo[u];
+  var quando = carimbo ? new Date(carimbo).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : '';
+  var partes = [];
+
+  if (dbEstado === 'ativo') partes.push('Armazenamento compartilhado ativo — quem abrir o painel vê esta versão');
+  else if (dbEstado === 'indisponivel') partes.push('Sem armazenamento compartilhado nesta janela: o que for importado fica só neste navegador');
+  else partes.push('Verificando o armazenamento compartilhado…');
+
+  if (origem === 'base') partes.push('planilha original de Búzios embutida no painel');
+  else if (origem === 'compartilhado') partes.push('planilha vinda do compartilhado' + (quando ? ', de ' + quando : ''));
+  else if (origem === 'importado') {
+    if (falhaPublicacao[u]) partes.push('a planilha importada NÃO foi publicada: ' + falhaPublicacao[u]);
+    else if (publicado[u]) partes.push('planilha importada e publicada' + (quando ? ' em ' + quando : ''));
+    else partes.push('planilha importada' + (quando ? ' em ' + quando : ''));
+  }
+
+  var ok = dbEstado === 'ativo' && !falhaPublicacao[u];
+  el.className = 'sync' + (ok ? ' viva' : '');
+  var botao = (dbEstado === 'ativo' && origem === 'importado' && (falhaPublicacao[u] || !publicado[u]))
+    ? ' <button class="btn-link" data-republicar="1">publicar agora</button>' : '';
+  el.innerHTML = '<i class="bolha"></i><span>' + esc(partes.join(' · ')) + '</span>' + botao;
 }
 
 function render() {
@@ -1186,6 +1198,11 @@ document.addEventListener('click', function (ev) {
     render(); avisoVersao(); return;
   }
   if (ev.target.closest('[data-importar]')) { document.getElementById('file').click(); return; }
+  if (ev.target.closest('[data-republicar]')) {
+    var uu = estado.unidade, dd = estado.dados[uu];
+    if (dd) publica(uu, { dados: dd, arquivo: dd.meta.arquivo, unidade: uu, atualizadoEm: estado.carimbo[uu] || Date.now() });
+    return;
+  }
   var chip = ev.target.closest('.chip');
   if (chip && !chip.disabled) {
     estado.periodo = chip.dataset.p === 'acum' ? 'acum' : parseInt(chip.dataset.p, 10);
@@ -1291,8 +1308,17 @@ function guardaLocal(unidade, pacote) {
   try { localStorage.setItem(CHAVE_LS + unidade, JSON.stringify(pacote)); } catch (x) { /* cota cheia */ }
 }
 function publica(unidade, pacote) {
-  if (!db) return;
-  db.doc('unidades/' + unidade).set(pacote).catch(function () { /* segue com a cópia local */ });
+  if (!db) { falhaPublicacao[unidade] = 'sem armazenamento compartilhado nesta janela'; renderSync(); return; }
+  falhaPublicacao[unidade] = null;
+  db.doc('unidades/' + unidade).set(pacote).then(function () {
+    publicado[unidade] = Date.now();
+    renderSync();
+  }).catch(function (e) {
+    var tamanho = Math.round(JSON.stringify(pacote).length / 1024);
+    falhaPublicacao[unidade] = (e && e.message ? e.message : 'falha ao publicar') +
+      ' (pacote de ' + tamanho + ' KB' + (tamanho > 250 ? ', acima do limite de 256 KB por documento' : '') + ')';
+    renderSync();
+  });
 }
 function aplica(unidade, pacote, origem) {
   estado.dados[unidade] = pacote.dados;
@@ -1381,8 +1407,8 @@ var drop = document.getElementById('drop');
    quem abrir depois — em qualquer navegador — vê a mesma versão. */
 if (window.claude && typeof window.claude.use === 'function') {
   window.claude.use('db').then(function (ns) {
-    if (!ns) return;
-    db = ns; dbPronto = true;
+    if (!ns) { dbEstado = 'indisponivel'; renderSync(); return; }
+    db = ns; dbPronto = true; dbEstado = 'ativo';
     UNIDADES.forEach(function (u) {
       db.doc('unidades/' + u.id).onSnapshot(function (snap) {
         if (!snap.exists) return;
@@ -1394,7 +1420,10 @@ if (window.claude && typeof window.claude.use === 'function') {
       }, function () { /* assinatura encerrada: segue com a cópia local */ });
     });
     renderSync();
-  }).catch(function () {});
+  }).catch(function () { dbEstado = 'indisponivel'; renderSync(); });
+} else {
+  dbEstado = 'indisponivel';
+  renderSync();
 }
 </script>
 
