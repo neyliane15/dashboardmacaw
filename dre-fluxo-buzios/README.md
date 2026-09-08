@@ -9,10 +9,18 @@ carregado por CDN; nenhum dado é enviado para servidor algum.
 
 ## O que o painel mostra
 
-- **Duas unidades em abas separadas**: Búzios (planilha embutida) e Camboinhas
-  (entra pelo botão de importar). Cada uma tem sua própria planilha, seus próprios
-  indicadores e seu próprio comparativo; o endereço guarda a aba (`#buzios`,
-  `#camboinhas`).
+- **Duas unidades em abas separadas**, Búzios e Camboinhas, cada uma com a sua
+  planilha embutida no painel e substituível pelo botão de importar. Cada aba tem
+  seus próprios indicadores e seu próprio comparativo; o endereço guarda a aba
+  (`#buzios`, `#camboinhas`).
+
+  Os nomes mudam de uma unidade para outra e o painel reconhece as variações:
+  categoria `ADMINISTRATIVO` ou `ADMINISTRATIVAS` no DRE, `IMPOSTOS` ou `IMPOSTO`
+  no fluxo, `MATERIAL DE LIMPEZA E DESCARTAVEIS (CMV)` ou `LIMPEZA E DESCARTAVEIS
+  (CMV)` como item. Um item que virou comparativo próprio (Comissões, Pró-labore)
+  sai do total da categoria onde foi pago, mesmo quando a planilha o lança em outra
+  — em Camboinhas o pró-labore está no fluxo de Terceiros, e o painel o move para o
+  comparativo certo em vez de contar duas vezes.
 - **4 indicadores** do período escolhido:
 
   | Indicador | Origem |
