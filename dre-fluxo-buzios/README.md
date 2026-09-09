@@ -9,10 +9,17 @@ carregado por CDN; nenhum dado é enviado para servidor algum.
 
 ## O que o painel mostra
 
-- **Duas unidades em abas separadas**, Búzios e Camboinhas, cada uma com a sua
-  planilha embutida no painel e substituível pelo botão de importar. Cada aba tem
-  seus próprios indicadores e seu próprio comparativo; o endereço guarda a aba
-  (`#buzios`, `#camboinhas`).
+- **Quatro unidades em abas separadas**: Búzios e Camboinhas já vêm com a planilha
+  embutida; Central e Holding entram pelo botão de importar. Cada aba tem seus
+  próprios indicadores, comparativo e DRE; o endereço guarda a aba (`#buzios`,
+  `#camboinhas`, `#central`, `#holding`).
+- **Duas visões por unidade**, escolhidas ao lado das abas:
+  - **Comparativo** — indicadores, gráfico DRE × Fluxo de Caixa e o detalhamento
+    item a item ao clicar numa categoria.
+  - **DRE detalhado** — o DRE inteiro da planilha, linha a linha e mês a mês, na
+    ordem original: itens agrupados por categoria, linhas de total em destaque,
+    percentuais sobre a receita bruta em cinza, coluna de total fixa à direita e
+    a coluna de descrição fixa à esquerda. Só aparecem os meses com movimento.
 
   Os nomes mudam de uma unidade para outra e o painel reconhece as variações:
   categoria `ADMINISTRATIVO` ou `ADMINISTRATIVAS` no DRE, `IMPOSTOS` ou `IMPOSTO`
