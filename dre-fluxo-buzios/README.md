@@ -18,8 +18,11 @@ carregado por CDN; nenhum dado é enviado para servidor algum.
     item a item ao clicar numa categoria.
   - **DRE detalhado** — o DRE inteiro da planilha, linha a linha e mês a mês, na
     ordem original: itens agrupados por categoria, linhas de total em destaque,
-    percentuais sobre a receita bruta em cinza, coluna de total fixa à direita e
-    a coluna de descrição fixa à esquerda. Só aparecem os meses com movimento.
+    percentuais sobre a receita bruta em cinza. A descrição e o total ficam fixos
+    à esquerda (nessa ordem, o total logo depois do nome) enquanto os meses rolam
+    por baixo. Só aparecem os meses com algum valor no DRE, e o **bloco de
+    fornecedor fica de fora** da tabela — o confronto de fornecedores está no
+    comparativo `CMV × Fornecedor`.
 
   Os nomes mudam de uma unidade para outra e o painel reconhece as variações:
   categoria `ADMINISTRATIVO` ou `ADMINISTRATIVAS` no DRE, `IMPOSTOS` ou `IMPOSTO`
@@ -46,7 +49,11 @@ carregado por CDN; nenhum dado é enviado para servidor algum.
   diferença em colunas, e duas barrinhas discretas sob o nome (na escala do maior
   item da tabela) com o valor em formato curto, para ler a proporção de relance; abaixo, os pagamentos daquela categoria que não têm item
   correspondente no DRE; e por fim as linhas deixadas fora da somatória.
-- Filtro de período: acumulado ou mês a mês.
+- Filtro de período: acumulado ou mês a mês. O **acumulado soma os doze meses**
+  do ano, e não só os meses com movimento no fluxo de caixa — lançamentos que a
+  planilha registra num mês sem pagamentos (provisões de SG&A, por exemplo)
+  entram na soma como qualquer outro. A única exceção é o indicador **Caixa**,
+  que é um saldo e por isso continua mostrando o do último mês com movimento.
 
 ## Como o DRE conversa com o Fluxo de Caixa
 

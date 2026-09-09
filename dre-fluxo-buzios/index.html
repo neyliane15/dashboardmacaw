@@ -229,12 +229,14 @@ table.dre th,table.dre td{padding:6px 12px;text-align:right;white-space:nowrap;b
 table.dre thead th{position:sticky;top:0;z-index:2;background:var(--surface);font-size:10px;letter-spacing:.1em;
   text-transform:uppercase;color:var(--ink-3);font-weight:500;border-bottom:1px solid var(--line-2)}
 table.dre th:first-child,table.dre td:first-child{position:sticky;left:0;z-index:1;text-align:left;white-space:normal;
-  background:var(--surface);border-right:1px solid var(--line);min-width:230px;max-width:280px}
+  background:var(--surface);width:250px;min-width:250px;max-width:250px}
 table.dre thead th:first-child{z-index:3}
 table.dre td.v{font-family:var(--mono);font-variant-numeric:tabular-nums;color:var(--ink-2)}
 table.dre td.v.zero{color:var(--line-2)}
-table.dre td.tot,table.dre thead th.tot{position:sticky;right:0;z-index:1;background:var(--surface-2);
-  border-left:1px solid var(--line-2)}
+/* descrição e total ficam fixos à esquerda: são as duas colunas que
+   precisam acompanhar a rolagem pelos meses. */
+table.dre td.tot,table.dre thead th.tot{position:sticky;left:250px;z-index:1;background:var(--surface-2);
+  border-right:1px solid var(--line-2)}
 table.dre td.tot{font-weight:500;color:var(--ink)}
 table.dre thead th.tot{z-index:3}
 table.dre tr:hover td.tot{background:var(--surface-2)}
@@ -891,28 +893,36 @@ var pct = function (v) { return (v * 100).toLocaleString('pt-BR', { minimumFract
 var esc = function (s) { return String(s).replace(/[&<>"]/g, function (c) { return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]; }); };
 
 function dados() { return estado.dados[estado.unidade]; }
+var TODOS_OS_MESES = [0,1,2,3,4,5,6,7,8,9,10,11];
+/* No acumulado soma-se o ano inteiro: qualquer lançamento em mês sem
+   movimento de operação (provisões de setembro em diante, por exemplo)
+   continua entrando na conta. */
 function mesesSelecionados() {
+  return estado.periodo === 'acum' ? TODOS_OS_MESES.slice() : [estado.periodo];
+}
+function mesesComMovimento() {
   var d = dados();
-  return estado.periodo === 'acum' ? d.meta.mesesComDados.slice() : [estado.periodo];
+  return (d && d.meta.mesesComDados) || [];
 }
 function agrega(v) {
   var ms = mesesSelecionados(), t = 0;
   for (var i = 0; i < ms.length; i++) t += (v && v[ms[i]]) || 0;
   return t;
 }
+function mesesDoSaldo() {
+  return estado.periodo === 'acum' ? mesesComMovimento() : [estado.periodo];
+}
 function ultimo(v) {
-  var ms = mesesSelecionados();
+  var ms = mesesDoSaldo();
   return ms.length ? ((v && v[ms[ms.length - 1]]) || 0) : 0;
 }
 function mesFinal() {
-  var ms = mesesSelecionados();
+  var ms = mesesDoSaldo();
   return ms.length ? dados().meta.meses[ms[ms.length - 1]] : '';
 }
 function rotuloPeriodo() {
-  var d = dados(), ms = d.meta.mesesComDados;
-  if (estado.periodo !== 'acum') return d.meta.meses[estado.periodo];
-  if (!ms.length) return 'sem dados';
-  return 'acumulado ' + d.meta.meses[ms[0]].slice(0, 3) + '–' + d.meta.meses[ms[ms.length - 1]].slice(0, 3);
+  var d = dados();
+  return estado.periodo === 'acum' ? 'acumulado do ano' : d.meta.meses[estado.periodo];
 }
 function temNota(c) {
   return !!(c.nota && (c.nota.sempre || (c.nota.mes !== undefined && mesesSelecionados().indexOf(c.nota.mes) >= 0)));
@@ -927,7 +937,7 @@ var KPIS = [
 ];
 
 function renderKpis() {
-  var d = dados(), ms = d.meta.mesesComDados;
+  var d = dados(), ms = mesesComMovimento();
   document.getElementById('kpis').innerHTML = KPIS.map(function (k) {
     var serie = d.kpis[k.id] || [];
     var valor = k.modo === 'ultimo' ? ultimo(serie) : agrega(serie);
@@ -1167,8 +1177,18 @@ function renderTabela(ls) {
 /* =========================== DRE detalhado =========================== */
 function renderDre() {
   var d = dados(), el = document.getElementById('tabela-dre');
-  var linhas = (d && d.dreCompleto) || [];
-  var ms = d ? d.meta.mesesComDados : [];
+  /* o bloco de fornecedor fica fora: a compra por tipo já é comparada
+     em CMV × Fornecedor, e aqui ele só alongava a tabela. */
+  var linhas = ((d && d.dreCompleto) || []).filter(function (l) {
+    return !(l.grupo && norm(l.grupo) === 'FORNECEDOR');
+  });
+  /* mostra todo mês em que exista lançamento no DRE, não só os de operação */
+  var ms = [];
+  for (var m = 0; m < 12; m++) {
+    for (var i = 0; i < linhas.length; i++) {
+      if (Math.abs(linhas[i].values[m] || 0) > 0.005) { ms.push(m); break; }
+    }
+  }
   document.getElementById('dre-titulo').textContent = 'DRE detalhado — ' + unidadeAtual().nome;
 
   if (!linhas.length) {
@@ -1179,11 +1199,12 @@ function renderDre() {
     return;
   }
   document.getElementById('dre-sub').textContent = linhas.length + ' linhas · valores em R$ · ' +
-    (ms.length ? d.meta.meses[ms[0]] + ' a ' + d.meta.meses[ms[ms.length - 1]] : 'sem meses com dados');
+    (ms.length ? d.meta.meses[ms[0]] + ' a ' + d.meta.meses[ms[ms.length - 1]] : 'sem meses com dados') +
+    ' · sem o bloco de fornecedor';
 
-  var cabecalho = '<thead><tr><th>Linha do DRE</th>' +
+  var cabecalho = '<thead><tr><th>Linha do DRE</th><th class="tot">Total</th>' +
     ms.map(function (m) { return '<th>' + esc(d.meta.meses[m].slice(0, 3)) + '</th>'; }).join('') +
-    '<th class="tot">Total</th></tr></thead>';
+    '</tr></thead>';
 
   var grupoAtual = null, corpo = '';
   linhas.forEach(function (l) {
@@ -1206,7 +1227,7 @@ function renderDre() {
       : '<td class="v tot">' + total.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '</td>';
 
     corpo += '<tr class="' + (l.pct ? 'pct' : (l.item ? 'item' : 'linha')) + '">' +
-      '<td>' + esc(l.label) + '</td>' + celulas + totalCel + '</tr>';
+      '<td>' + esc(l.label) + '</td>' + totalCel + celulas + '</tr>';
   });
 
   el.innerHTML = cabecalho + '<tbody>' + corpo + '</tbody>';
