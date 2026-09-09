@@ -18,11 +18,11 @@ carregado por CDN; nenhum dado é enviado para servidor algum.
     item a item ao clicar numa categoria.
   - **DRE detalhado** — o DRE inteiro da planilha, linha a linha e mês a mês, na
     ordem original: itens agrupados por categoria, linhas de total em destaque,
-    percentuais sobre a receita bruta em cinza. A descrição e o total ficam fixos
-    à esquerda (nessa ordem, o total logo depois do nome) enquanto os meses rolam
-    por baixo. Só aparecem os meses com algum valor no DRE, e o **bloco de
-    fornecedor fica de fora** da tabela — o confronto de fornecedores está no
-    comparativo `CMV × Fornecedor`.
+    percentuais sobre a receita bruta em cinza. A tabela traz **o ano inteiro, de
+    janeiro a dezembro**, mesmo nos meses ainda sem lançamento, e o **total fecha
+    a linha**, depois de dezembro. A descrição fica fixa à esquerda e o total à
+    direita, com os meses rolando entre as duas. O **bloco de fornecedor fica de
+    fora** da tabela — esse confronto está no comparativo `CMV × Fornecedor`.
 
   Os nomes mudam de uma unidade para outra e o painel reconhece as variações:
   categoria `ADMINISTRATIVO` ou `ADMINISTRATIVAS` no DRE, `IMPOSTOS` ou `IMPOSTO`

@@ -223,24 +223,33 @@ button{font:inherit;color:inherit}
 .dre-topo{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;padding:18px 22px 12px}
 .dre-topo h2{font-size:16px}
 .dre-topo .cnt{font-size:11.5px;color:var(--ink-3)}
-.dre-wrap{overflow-x:auto;padding:0 22px 22px}
+/* o recuo lateral vem das próprias células: com padding no invólucro, as
+   colunas fixas parariam 22px antes da borda e os meses apareceriam nessa
+   fresta ao rolar. */
+.dre-wrap{overflow-x:auto;padding:0 0 22px}
 table.dre{border-collapse:separate;border-spacing:0;width:100%;font-size:12px}
 table.dre th,table.dre td{padding:6px 12px;text-align:right;white-space:nowrap;border-bottom:1px solid var(--line)}
 table.dre thead th{position:sticky;top:0;z-index:2;background:var(--surface);font-size:10px;letter-spacing:.1em;
   text-transform:uppercase;color:var(--ink-3);font-weight:500;border-bottom:1px solid var(--line-2)}
 table.dre th:first-child,table.dre td:first-child{position:sticky;left:0;z-index:1;text-align:left;white-space:normal;
-  background:var(--surface);width:250px;min-width:250px;max-width:250px}
+  background:var(--surface);padding-left:22px;width:272px;min-width:272px;max-width:272px}
 table.dre thead th:first-child{z-index:3}
 table.dre td.v{font-family:var(--mono);font-variant-numeric:tabular-nums;color:var(--ink-2)}
+/* meses com a mesma largura: os que ainda não têm lançamento não podem
+   encolher e desalinhar o resto do ano. */
+table.dre thead th:not(:first-child):not(.tot),table.dre td.v:not(.tot){min-width:96px}
 table.dre td.v.zero{color:var(--line-2)}
-/* descrição e total ficam fixos à esquerda: são as duas colunas que
-   precisam acompanhar a rolagem pelos meses. */
-table.dre td.tot,table.dre thead th.tot{position:sticky;left:250px;z-index:1;background:var(--surface-2);
-  border-right:1px solid var(--line-2)}
+/* o total fecha a linha, depois de dezembro, e fica fixo à direita para
+   acompanhar a rolagem pelos meses. */
+table.dre td.tot,table.dre thead th.tot{position:sticky;right:0;z-index:1;background:var(--surface-2);
+  padding-right:22px;border-left:1px solid var(--line-2)}
 table.dre td.tot{font-weight:500;color:var(--ink)}
-table.dre thead th.tot{z-index:3}
+table.dre thead th.tot{z-index:3;background:var(--surface-2)}
 table.dre tr:hover td.tot{background:var(--surface-2)}
-table.dre tr.item td:first-child{padding-left:26px;color:var(--ink-2)}
+/* a faixa de categoria atravessa a linha inteira, então precisa de um pedaço
+   opaco sob o total fixo para os números não aparecerem por baixo dela. */
+.dre-grupo td.tot{background:var(--surface);border-bottom:none}
+table.dre tr.item td:first-child{padding-left:36px;color:var(--ink-2)}
 table.dre tr.linha td{font-weight:500;color:var(--ink);border-top:1px solid var(--line-2)}
 table.dre tr.linha td.v{color:var(--ink)}
 table.dre tr.pct td{font-size:11px;color:var(--ink-3);border-top:none}
@@ -248,7 +257,7 @@ table.dre tr.pct td.v{color:var(--ink-3)}
 table.dre tr:hover td{background:var(--surface-2)}
 table.dre tr:hover td:first-child{background:var(--surface-2)}
 .dre-grupo td{position:static;padding-top:14px;border-bottom:none;background:var(--surface);min-width:0;max-width:none}
-.dre-grupo td span{position:sticky;left:12px;display:inline-block;font-size:10px;letter-spacing:.12em;
+.dre-grupo td span{position:sticky;left:22px;display:inline-block;font-size:10px;letter-spacing:.12em;
   text-transform:uppercase;color:var(--ink-3);font-weight:600}
 
 /* ---------- tabelas ---------- */
@@ -1182,13 +1191,9 @@ function renderDre() {
   var linhas = ((d && d.dreCompleto) || []).filter(function (l) {
     return !(l.grupo && norm(l.grupo) === 'FORNECEDOR');
   });
-  /* mostra todo mês em que exista lançamento no DRE, não só os de operação */
-  var ms = [];
-  for (var m = 0; m < 12; m++) {
-    for (var i = 0; i < linhas.length; i++) {
-      if (Math.abs(linhas[i].values[m] || 0) > 0.005) { ms.push(m); break; }
-    }
-  }
+  /* a tabela mostra o ano inteiro, de janeiro a dezembro, mesmo nos meses
+     ainda sem lançamento — quem lê acompanha a linha do ano completa. */
+  var ms = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
   document.getElementById('dre-titulo').textContent = 'DRE detalhado — ' + unidadeAtual().nome;
 
   if (!linhas.length) {
@@ -1199,18 +1204,18 @@ function renderDre() {
     return;
   }
   document.getElementById('dre-sub').textContent = linhas.length + ' linhas · valores em R$ · ' +
-    (ms.length ? d.meta.meses[ms[0]] + ' a ' + d.meta.meses[ms[ms.length - 1]] : 'sem meses com dados') +
-    ' · sem o bloco de fornecedor';
+    d.meta.meses[0] + ' a ' + d.meta.meses[11] + ' · sem o bloco de fornecedor';
 
-  var cabecalho = '<thead><tr><th>Linha do DRE</th><th class="tot">Total</th>' +
+  var cabecalho = '<thead><tr><th>Linha do DRE</th>' +
     ms.map(function (m) { return '<th>' + esc(d.meta.meses[m].slice(0, 3)) + '</th>'; }).join('') +
-    '</tr></thead>';
+    '<th class="tot">Total</th></tr></thead>';
 
   var grupoAtual = null, corpo = '';
   linhas.forEach(function (l) {
     if (l.item && l.grupo !== grupoAtual) {
       grupoAtual = l.grupo;
-      corpo += '<tr class="dre-grupo"><td colspan="' + (ms.length + 2) + '"><span>' + esc(l.grupo) + '</span></td></tr>';
+      corpo += '<tr class="dre-grupo"><td colspan="' + (ms.length + 1) + '"><span>' + esc(l.grupo) + '</span></td>' +
+        '<td class="tot"></td></tr>';
     }
     if (!l.item) grupoAtual = null;
 
@@ -1227,7 +1232,7 @@ function renderDre() {
       : '<td class="v tot">' + total.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '</td>';
 
     corpo += '<tr class="' + (l.pct ? 'pct' : (l.item ? 'item' : 'linha')) + '">' +
-      '<td>' + esc(l.label) + '</td>' + totalCel + celulas + '</tr>';
+      '<td>' + esc(l.label) + '</td>' + celulas + totalCel + '</tr>';
   });
 
   el.innerHTML = cabecalho + '<tbody>' + corpo + '</tbody>';
