@@ -46,14 +46,20 @@ carregado por CDN; nenhum dado é enviado para servidor algum.
   | Indicador | Origem |
   | --- | --- |
   | Faturamento Bruto | linha `RECEITA BRUTA` do DRE |
+  | Receita Bruta | linha `RECEITAS` do Fluxo de Caixa — o dinheiro que entrou |
   | Lucro Líquido | linha `LUCRO LIQUIDO` do DRE |
-  | Resultado DRE | linha `SALDO FINANCEIRO` do DRE |
-  | Caixa | linha `SALDO FINAL` do Fluxo de Caixa — é um saldo, então mostra o do último mês do período, não a soma |
+  | Resultado DRE | linha `SALDO FINANCEIRO` do DRE, o saldo final da demonstração |
 
-- **Um gráfico comparativo de barras** com 13 comparativos: CMV × Fornecedor,
-  Operacionais, Pessoal, Comissões, Administrativo, CTO, Utilities, Terceiros,
-  Marketing, Financeiras, Impostos, Pró-labore e Dividendos — cada um com a barra do
-  DRE, a do Fluxo de Caixa e a diferença.
+- **Um gráfico comparativo de barras** com 14 comparativos: Faturado × Receita,
+  CMV × Fornecedor, Operacionais, Pessoal, Comissões, Administrativo, CTO,
+  Utilities, Terceiros, Marketing, Financeiras, Impostos, Pró-labore e
+  Dividendos — cada um com a barra do DRE, a do Fluxo de Caixa e a diferença.
+
+  **Faturado × Receita** é o único que não passa pelo contas a pagar: de um lado
+  a `RECEITA BRUTA` do DRE, chamada ali de **Faturado**; do outro a linha
+  `RECEITAS` do relatório de fluxo, chamada de **Receita** — o que foi
+  reconhecido contra o que efetivamente entrou. Abaixo dele, como referência,
+  a composição do faturamento (crédito, débito, dinheiro, PIX, serviços).
 - **Clicando na categoria**, abre logo abaixo dela a comparação **item a item**:
   cada descrição do DRE com o valor reconhecido, o valor efetivamente pago e a
   diferença em colunas, e duas barrinhas discretas sob o nome (na escala do maior
@@ -66,9 +72,7 @@ carregado por CDN; nenhum dado é enviado para servidor algum.
   nenhum dos seus meses tiver movimento. O **acumulado soma os doze meses**
   do ano, e não só os meses com movimento no fluxo de caixa — lançamentos que a
   planilha registra num mês sem pagamentos (provisões de SG&A, por exemplo)
-  entram na soma como qualquer outro. A única exceção é o indicador **Caixa**,
-  que é um saldo e por isso mostra o do último mês com movimento do período —
-  no acumulado, o do ano; no trimestre, o do último mês dele.
+  entram na soma como qualquer outro.
 
 - O painel é **sempre claro**. O off white do manual faz parte da identidade,
   então a página não muda de cor com o tema de quem abre.
