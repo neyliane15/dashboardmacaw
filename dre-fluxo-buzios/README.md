@@ -101,9 +101,11 @@ carregado por CDN; nenhum dado é enviado para servidor algum.
   `INVESTIMENTO` do Fluxo de Caixa, com os pagamentos vindos do contas a pagar.
   Não altera nenhum outro comparativo.
 
-  **Impostos** compara **`DEDUÇÕES DE FATURAMENTO`** do DRE — é ali que as lojas
-  reconhecem o imposto sobre venda — com a categoria de imposto do Fluxo de
-  Caixa. As linhas `IMPOSTOS` e `TRIBUTOS DIVERSOS`, abaixo do EBITDA, ficam no
+  **Impostos** compara a linha logo abaixo da Receita Bruta no DRE — onde as
+  lojas reconhecem o imposto sobre venda — com a categoria de imposto do Fluxo
+  de Caixa. O nome dessa linha muda de planilha para planilha: em Búzios é
+  `DEDUÇÕES DE FATURAMENTO`, em Camboinhas passou a ser `IMPOSTO`; vale a
+  primeira que existir, nessa ordem. As linhas `IMPOSTOS` e `TRIBUTOS DIVERSOS`, abaixo do EBITDA, ficam no
   fim como referência: em Camboinhas estão zeradas e em Búzios trazem só uma
   parte. A composição do valor pago sai por **descrição do pagamento** (Receita
   Federal, DARF, Simples Nacional…), tenha ele `CATEGORIA DRE` preenchida ou
