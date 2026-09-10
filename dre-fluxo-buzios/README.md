@@ -107,6 +107,12 @@ carregado por CDN; nenhum dado é enviado para servidor algum.
 - O painel é **sempre claro**. O off white do manual faz parte da identidade,
   então a página não muda de cor com o tema de quem abre.
 
+- A planilha embutida **tem data**, e essa data é o carimbo da unidade: uma
+  cópia guardada no navegador só entra no lugar dela se for mais nova. Sem isso,
+  uma importação antiga sobrevivia a cada atualização do painel e continuava
+  mostrando números velhos, mesmo com o arquivo novo publicado. Uma importação
+  feita depois da montagem continua valendo normalmente.
+
 ## Como o DRE conversa com o Fluxo de Caixa
 
 A ligação vem da aba `CONTAS A PAGAR`: cada pagamento traz uma **`CATEGORIA DRE`**

@@ -1041,10 +1041,15 @@ var estado = {
   dados: {}, origem: {}, carimbo: {},
   periodo: 'acum', aberta: null, tabela: false, blocosFora: {}, itensAbertos: {}
 };
+/* A planilha embutida tem data: é a data em que este painel foi montado. Ela
+   vira o carimbo da unidade, então uma cópia guardada no navegador só entra no
+   lugar dela se for mais nova — sem isso, uma importação antiga sobrevivia a
+   cada atualização do painel e mostrava números velhos. */
 UNIDADES.forEach(function (u) {
-  estado.dados[u.id] = BASE[u.id] || null;
-  estado.origem[u.id] = BASE[u.id] ? 'base' : 'vazio';
-  estado.carimbo[u.id] = 0;
+  var base = BASE[u.id] || null;
+  estado.dados[u.id] = base;
+  estado.origem[u.id] = base ? 'base' : 'vazio';
+  estado.carimbo[u.id] = (base && base.meta && Date.parse(base.meta.gerado)) || 0;
 });
 var db = null, dbPronto = false, dbEstado = 'verificando';   /* verificando | ativo | indisponivel */
 var publicado = {}, falhaPublicacao = {};
@@ -1916,7 +1921,7 @@ document.getElementById('btn-reset').addEventListener('click', function () {
   var u = estado.unidade;
   try { localStorage.removeItem(CHAVE_LS + u); } catch (x) {}
   var base = BASE[u] || null;
-  if (base) aplica(u, { dados: base, atualizadoEm: 0 }, 'base');
+  if (base) aplica(u, { dados: base, atualizadoEm: (base.meta && Date.parse(base.meta.gerado)) || 0 }, 'base');
   else { estado.dados[u] = null; estado.origem[u] = 'vazio'; render(); }
 });
 
@@ -1945,12 +1950,16 @@ var drop = document.getElementById('drop');
     if (!salvo) return;
     try {
       var pacote = JSON.parse(salvo);
-      if (pacote && pacote.dados) {
-        estado.dados[u.id] = pacote.dados;
-        estado.origem[u.id] = 'importado';
-        estado.carimbo[u.id] = pacote.atualizadoEm || 0;
-        guardados.push({ unidade: u.id, pacote: pacote });
+      if (!pacote || !pacote.dados) return;
+      /* cópia mais velha que a planilha embutida: foi superada, sai da frente */
+      if ((pacote.atualizadoEm || 0) <= estado.carimbo[u.id]) {
+        try { localStorage.removeItem(CHAVE_LS + u.id); } catch (x) {}
+        return;
       }
+      estado.dados[u.id] = pacote.dados;
+      estado.origem[u.id] = 'importado';
+      estado.carimbo[u.id] = pacote.atualizadoEm;
+      guardados.push({ unidade: u.id, pacote: pacote });
     } catch (x) {}
   });
   render();
