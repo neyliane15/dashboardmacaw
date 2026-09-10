@@ -73,11 +73,11 @@ carregado por CDN; nenhum dado é enviado para servidor algum.
   | Lucro Líquido | linha `LUCRO LIQUIDO` do DRE |
   | Resultado DRE | linha `SALDO FINANCEIRO` do DRE, o saldo final da demonstração |
 
-- **Um gráfico comparativo de barras** com 16 comparativos: Faturado × Receita,
+- **Um gráfico comparativo de barras** com 17 comparativos: Faturado × Receita,
   CMV × Fornecedor, Operacionais, Pessoal, Comissões, Administrativo, CTO,
   Utilities, Terceiros, Marketing, Financeiras, Impostos, Pró-labore,
-  Dividendos, Aporte × Reembolso e Investimentos — cada um com a barra do DRE e
-  a do Fluxo de Caixa. À direita, no
+  Dividendos, Aporte × Reembolso, Investimentos e Couvert × Músico — cada um com
+  a barra do DRE e a do Fluxo de Caixa. À direita, no
   lugar da diferença em reais, cada barra mostra **o peso dela sobre a base do
   seu regime**: o valor do DRE sobre o **faturamento bruto** (a receita bruta do
   DRE) e o do fluxo sobre a **receita bruta** (a linha `RECEITAS` do relatório
@@ -94,6 +94,11 @@ carregado por CDN; nenhum dado é enviado para servidor algum.
   as categorias pequenas (Aporte, Marketing, Pró-labore) virariam um risco de
   poucos pixels. As demais dividem a escala entre si, e os valores nas barras
   são sempre os reais.
+
+  **Couvert × Músico** é o único com os **dois lados no DRE**: o couvert
+  cobrado, item do bloco de descontos, contra o músico, item de Terceiros. Não
+  há lado de caixa. Nenhum dos dois sai da categoria de origem — o músico
+  continua somando em Terceiros e o couvert no bloco onde a planilha o lança.
 
   **Investimentos** é uma linha de **demonstração**: o investimento sai do bloco
   de *cashflow* do DRE — que não entra em nenhum total da demonstração e nem
