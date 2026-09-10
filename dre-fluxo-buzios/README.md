@@ -74,19 +74,15 @@ carregado por CDN; nenhum dado é enviado para servidor algum.
   reconhecido contra o que efetivamente entrou. Abaixo dele, como referência,
   a composição do faturamento (crédito, débito, dinheiro, PIX, serviços).
 
-  **Aporte × Reembolso** compara a linha `APORTE` do DRE com os reembolsos do
-  fluxo, e é o único que também lê o **texto** do contas a pagar: a palavra
-  “reembolso” vale em `OBSERVACAO`, em `DESCRICAO` ou em `CATEGORIA DRE`, então
-  tanto faz onde a planilha escrever *Reembolso* ou *Reembolso Alexandre*.
-  O total soma **a categoria de fluxo `REEMBOLSO` mais** os lançamentos assim
-  marcados que foram lançados em outra categoria
-  — em Búzios, três, em Marketing, Pessoal e Pró-labore. Quem já está na
-  categoria não é somado duas vezes. Quando a planilha não traz a marcação
-  (Camboinhas, Central), sobra só a categoria de fluxo, como nos demais
-  comparativos. Havendo marcados de fora, o total passa da linha `Reembolso` do
-  relatório de fluxo, e esses valores continuam contados também nas suas
-  categorias de origem, para que elas sigam fechando com a planilha — a nota do
-  comparativo diz isso na tela.
+  **Aporte × Reembolso** é o único comparativo que se identifica pelo **texto**
+  do contas a pagar, e não por categoria: de um lado a linha `APORTE` do DRE, do
+  outro os lançamentos marcados como **“Reembolso Alexandre”** na coluna
+  `OBSERVACAO` — só eles. A categoria de fluxo `REEMBOLSO` tem outros pagamentos
+  (troco de compra de funcionário, empréstimo, gasolina) que ficam de fora, então
+  este total é menor que a linha `Reembolso` do relatório de fluxo, de propósito.
+  A marcação vale em `OBSERVACAO`, `DESCRICAO` ou `CATEGORIA DRE`, tanto faz onde
+  a planilha a escreva, e a composição agrupa os pagamentos por descrição.
+  Unidade sem essa marcação não tem valor no lado do caixa.
 - **Clicando na categoria**, abre logo abaixo dela a comparação **item a item**:
   cada descrição do DRE com o valor reconhecido, o valor efetivamente pago e a
   diferença em colunas, e duas barrinhas discretas sob o nome (na escala do maior
