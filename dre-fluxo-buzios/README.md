@@ -53,7 +53,12 @@ carregado por CDN; nenhum dado é enviado para servidor algum.
 - **Um gráfico comparativo de barras** com 14 comparativos: Faturado × Receita,
   CMV × Fornecedor, Operacionais, Pessoal, Comissões, Administrativo, CTO,
   Utilities, Terceiros, Marketing, Financeiras, Impostos, Pró-labore e
-  Dividendos — cada um com a barra do DRE, a do Fluxo de Caixa e a diferença.
+  Dividendos — cada um com a barra do DRE e a do Fluxo de Caixa. À direita, no
+  lugar da diferença em reais, cada barra mostra **o peso dela sobre a base do
+  seu regime**: o valor do DRE sobre o **faturamento bruto** (a receita bruta do
+  DRE) e o do fluxo sobre a **receita bruta** (a linha `RECEITAS` do relatório
+  de fluxo). A diferença em reais continua na dica do gráfico, na tabela dos
+  comparativos e no detalhamento.
 
   **Faturado × Receita** é o único que não passa pelo contas a pagar: de um lado
   a `RECEITA BRUTA` do DRE, chamada ali de **Faturado**; do outro a linha

@@ -124,7 +124,7 @@ button{font:inherit;color:inherit}
 
 /* ---------- gráfico de barras ---------- */
 .chart{padding:4px 22px 18px}
-.row-grid{display:grid;grid-template-columns:216px 1fr 108px;gap:16px;align-items:center}
+.row-grid{display:grid;grid-template-columns:216px 1fr 96px;gap:16px;align-items:center}
 @media(max-width:900px){.row-grid{grid-template-columns:176px 1fr}.row-grid .diff{display:none}}
 @media(max-width:560px){.row-grid{grid-template-columns:118px 1fr;gap:10px}}
 .axis{padding:14px 0 4px;color:var(--ink-3);font-size:10.5px}
@@ -157,8 +157,13 @@ button{font:inherit;color:inherit}
   font-family:var(--mono);font-size:11px;font-variant-numeric:tabular-nums;color:var(--ink-2)}
 .bar-val.dentro{color:var(--ground);padding:0 8px 0 0;transform:translate(-100%,-50%)}
 .bar-val.zero{color:var(--ink-3)}
-.diff{text-align:right;font-family:var(--mono);font-size:11.5px;font-variant-numeric:tabular-nums;color:var(--ink-2);line-height:1.3}
-.diff .pc{display:block;color:var(--ink-3);font-size:10.5px}
+.diff{display:flex;flex-direction:column;gap:3px;padding:3px 0;font-family:var(--mono);font-size:11.5px;
+  font-variant-numeric:tabular-nums}
+.diff .l{height:15px;display:flex;align-items:center;justify-content:flex-end}
+.diff .l.dre{color:var(--dre)}
+.diff .l.caixa{color:var(--caixa)}
+.diff-head{text-align:right;font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);line-height:1.5}
+.diff-head span{display:block}
 
 /* ---------- detalhamento ---------- */
 .det{border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--surface-2);
@@ -1101,13 +1106,25 @@ function barra(valor, max, classe) {
   return '<div class="bar-line"><div class="bar ' + classe + '" style="width:' + w + '%"></div>' +
     '<span class="bar-val' + (dentro ? ' dentro' : '') + '" style="left:' + w + '%">' + esc(brlCurto(valor)) + '</span></div>';
 }
+/* Cada barra tem, à sua direita, o peso dela sobre a base do seu regime: o
+   valor do DRE sobre o faturamento bruto, o do fluxo sobre a receita do caixa.
+   A diferença em reais continua na dica do gráfico e no detalhamento. */
 function chipDiff(dre, fluxo) {
-  var d = fluxo - dre;
-  if (Math.abs(d) < 0.005) d = 0;
-  var seta = d === 0 ? '=' : (d > 0 ? '▲' : '▼');
-  var rel = dre ? '<span class="pc">' + (d > 0 ? '+' : '') + pct(d / Math.abs(dre)) + '</span>' : '<span class="pc">—</span>';
-  return '<div class="diff" title="Fluxo de Caixa menos DRE">' + seta + ' ' + esc(brlCurto(Math.abs(d))) + rel + '</div>';
+  var bd = baseDre(), bf = baseFluxo();
+  function linha(v, base, classe, titulo) {
+    var texto = base ? pct(v / Math.abs(base)) : '—';
+    return '<span class="l ' + classe + '" title="' + esc(titulo) + '">' + esc(texto) + '</span>';
+  }
+  return '<div class="diff">' +
+    linha(dre, bd, 'dre', 'DRE ' + brl(dre) + ' sobre o faturamento bruto ' + brl(bd)) +
+    linha(fluxo, bf, 'caixa', 'Fluxo ' + brl(fluxo) + ' sobre a receita bruta ' + brl(bf)) +
+    '</div>';
 }
+/* As duas bases do período: o faturamento bruto do DRE mede o lado da
+   competência; a receita do fluxo mede o lado do caixa. */
+function baseDre() { var d = dados(); return agrega(d.kpis.faturamento); }
+function baseFluxo() { var d = dados(); return agrega(d.kpis.receitaFluxo); }
+
 function linhas() {
   return dados().categorias.map(function (c) {
     return { cat: c, dre: agrega(c.dre.total), fluxo: agrega(c.fluxo.total) };
@@ -1122,7 +1139,8 @@ function renderChart() {
     return '<span style="left:' + (f * 100) + '%">' + esc(f === 0 ? '0' : brlCurto(max * f)) + '</span>';
   }).join('');
 
-  var html = '<div class="axis row-grid"><div></div><div class="ticks">' + ticks + '</div><div></div></div>';
+  var html = '<div class="axis row-grid"><div></div><div class="ticks">' + ticks + '</div>' +
+    '<div class="diff-head"><span>% do faturado</span><span>% da receita</span></div></div>';
   html += ls.map(function (l) {
     var c = l.cat, aberta = estado.aberta === c.key;
     return '<button class="cat row-grid" data-cat="' + c.key + '" aria-expanded="' + aberta + '">' +
@@ -1273,14 +1291,18 @@ function detalheHtml(c) {
 function renderTabela(ls) {
   var el = document.getElementById('tabela');
   if (!estado.tabela) { el.innerHTML = ''; return; }
+  var bd = baseDre(), bf = baseFluxo();
   var corpo = ls.map(function (l) {
     return '<tr><td>' + esc(l.cat.label) + '</td>' +
       '<td class="num">' + esc(brl(l.dre)) + '</td>' +
+      '<td class="num">' + esc(bd ? pct(l.dre / Math.abs(bd)) : '—') + '</td>' +
       '<td class="num">' + esc(brl(l.fluxo)) + '</td>' +
+      '<td class="num">' + esc(bf ? pct(l.fluxo / Math.abs(bf)) : '—') + '</td>' +
       '<td class="num">' + esc(brl(l.fluxo - l.dre)) + '</td></tr>';
   }).join('');
   el.innerHTML = '<div class="panel" style="margin-top:16px"><div class="panel-head"><h2>Tabela dos comparativos — ' + esc(rotuloPeriodo()) + '</h2></div>' +
-    '<div class="tabela-wrap" style="padding:0 22px 20px"><table><thead><tr><th>Comparativo</th><th>DRE</th><th>Pago no fluxo</th><th>Diferença</th></tr></thead><tbody>' +
+    '<div class="tabela-wrap" style="padding:0 22px 20px"><table><thead><tr><th>Comparativo</th><th>DRE</th><th>% do faturado</th>' +
+    '<th>Pago no fluxo</th><th>% da receita</th><th>Diferença</th></tr></thead><tbody>' +
     corpo + '</tbody></table></div></div>';
 }
 
@@ -1581,6 +1603,8 @@ document.addEventListener('mousemove', function (ev) {
     '<div class="t-ln"><span>' + esc(rotuloDre(c)) + '</span><span>' + esc(brl(dre)) + '</span></div>' +
     '<div class="t-ln"><span>' + esc(c.rotulos ? c.rotulos.fluxo : 'Pago') + '</span><span>' + esc(brl(fluxo)) + '</span></div>' +
     '<div class="t-ln"><span>Diferença</span><span>' + esc(brl(fluxo - dre)) + '</span></div>' +
+    '<div class="t-ln"><span>% do faturado</span><span>' + esc(baseDre() ? pct(dre / Math.abs(baseDre())) : '—') + '</span></div>' +
+    '<div class="t-ln"><span>% da receita</span><span>' + esc(baseFluxo() ? pct(fluxo / Math.abs(baseFluxo())) : '—') + '</span></div>' +
     '<div class="t-ln" style="margin-top:5px;opacity:.75"><span>clique para ver item a item</span></div>';
   tip.style.opacity = '1';
   var r = tip.getBoundingClientRect();
