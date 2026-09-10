@@ -27,7 +27,12 @@ carregado por CDN; nenhum dado é enviado para servidor algum.
     própria**, na faixa terrosa da marca: uma faixa colorida com o nome, e o
     tom claro na coluna dos itens. A fila **Blocos**, logo abaixo do título,
     liga e desliga cada um — as linhas de total do DRE continuam à vista, para
-    a demonstração não perder o fio.
+    a demonstração não perder o fio. A faixa de cada categoria tem **seta**: ela
+    dobra e abre a categoria, e vale o mesmo que o botão na fila. Cada item
+    também tem seta e **abre em lançamentos**, um por descrição do contas a
+    pagar, pelo mês de competência. Quando a planilha lança direto no DRE —
+    provisões e rateios —, uma linha *“restante lançado direto no DRE”* fecha a
+    diferença, de modo que a abertura sempre soma o valor do item.
 
   Os nomes mudam de uma unidade para outra e o painel reconhece as variações:
   categoria `ADMINISTRATIVO` ou `ADMINISTRATIVAS` no DRE, `IMPOSTOS` ou `IMPOSTO`
@@ -72,7 +77,21 @@ carregado por CDN; nenhum dado é enviado para servidor algum.
 
 A ligação vem da aba `CONTAS A PAGAR`: cada pagamento traz uma **`CATEGORIA DRE`**
 (a descrição do item, igual à coluna `APLICACOES` do DRE) e uma **`CATEGORIA FLUXO`**
-(onde ele entra no fluxo de caixa). O painel usa isso para:
+(onde ele entra no fluxo de caixa).
+
+Os dois regimes têm **cada um o seu mês**, e o painel respeita essa separação:
+
+| Lado | Mês que vale | De onde vem |
+| --- | --- | --- |
+| DRE (competência) | `MES COMPETENCIA` | a própria aba `DRE`, mês a mês |
+| Fluxo de Caixa (pago) | `MES PAGAMENTO` | soma do `CONTAS A PAGAR` |
+
+Um pagamento **sem `MES PAGAMENTO`** não entra no caixa de mês nenhum — nem no
+relatório da própria planilha. Em vez de somá-lo num mês arbitrário, o painel
+avisa, na visão de DRE detalhado, quais são esses lançamentos, para serem
+corrigidos na origem.
+
+O painel usa a mesma aba para:
 
 1. somar, por item do DRE, quanto foi pago no período;
 2. fechar o total de cada categoria do fluxo (confere com a aba
