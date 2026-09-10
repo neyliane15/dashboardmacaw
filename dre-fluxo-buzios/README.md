@@ -75,9 +75,11 @@ carregado por CDN; nenhum dado é enviado para servidor algum.
   a composição do faturamento (crédito, débito, dinheiro, PIX, serviços).
 
   **Aporte × Reembolso** compara a linha `APORTE` do DRE com os reembolsos do
-  fluxo, e é o único que também lê a coluna **`OBSERVACAO`** do contas a pagar.
-  O total soma **a categoria de fluxo `REEMBOLSO` mais** os lançamentos
-  marcados como reembolso na `OBSERVACAO` que foram lançados em outra categoria
+  fluxo, e é o único que também lê o **texto** do contas a pagar: a palavra
+  “reembolso” vale em `OBSERVACAO`, em `DESCRICAO` ou em `CATEGORIA DRE`, então
+  tanto faz onde a planilha escrever *Reembolso* ou *Reembolso Alexandre*.
+  O total soma **a categoria de fluxo `REEMBOLSO` mais** os lançamentos assim
+  marcados que foram lançados em outra categoria
   — em Búzios, três, em Marketing, Pessoal e Pró-labore. Quem já está na
   categoria não é somado duas vezes. Quando a planilha não traz a marcação
   (Camboinhas, Central), sobra só a categoria de fluxo, como nos demais
@@ -91,7 +93,9 @@ carregado por CDN; nenhum dado é enviado para servidor algum.
   item da tabela) com o valor em formato curto, para ler a proporção de relance; abaixo, os pagamentos daquela categoria que não têm item
   correspondente no DRE; e por fim as linhas deixadas fora da somatória. O
   detalhamento é **completo**: todos os itens do DRE e todos os lançamentos do
-  fluxo aparecem, sem “ver mais” nem corte nas listas maiores.
+  fluxo aparecem, sem “ver mais” nem corte nas listas maiores. O item que dá
+  nome ao comparativo (Aporte, Pró-labore, Comissões…) fica na tabela **mesmo
+  zerado no DRE**, para o lado da competência não sumir.
 - Filtro de período: **acumulado, trimestre ou mês**. Os trimestres são civis
   (1º = janeiro a março, e assim por diante) e ficam desabilitados enquanto
   nenhum dos seus meses tiver movimento. O **acumulado soma os doze meses**
