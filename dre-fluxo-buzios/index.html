@@ -132,9 +132,12 @@ button{font:inherit;color:inherit}
   padding:5px 12px;border-radius:999px;border:1px solid var(--line-2);background:transparent;
   font-size:12.5px;cursor:pointer;color:var(--ink-2);transition:all .13s ease;
 }
-.chip:hover:not(:disabled){border-color:var(--verde);color:var(--verde)}
+/* sem o :not, passar o mouse no período escolhido pintava o texto da mesma
+   cor do fundo e o rótulo sumia. */
+.chip:hover:not(:disabled):not([aria-pressed="true"]){border-color:var(--verde);color:var(--verde)}
 .chip[aria-pressed="true"]{background:var(--verde);border-color:var(--verde);color:var(--ground);font-weight:500}
 .chip:disabled{opacity:.3;cursor:not-allowed}
+.chip-sep{width:1px;align-self:stretch;margin:2px 6px;background:var(--line-2)}
 
 /* ---------- indicadores ---------- */
 .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:16px 0 26px}
@@ -890,7 +893,7 @@ var estado = {
   antiga: {},
   visao: 'comparativo',
   dados: {}, origem: {}, carimbo: {},
-  periodo: 'acum', aberta: null, tabela: false, todos: false
+  periodo: 'acum', aberta: null, tabela: false
 };
 UNIDADES.forEach(function (u) {
   estado.dados[u.id] = BASE[u.id] || null;
@@ -915,8 +918,23 @@ var TODOS_OS_MESES = [0,1,2,3,4,5,6,7,8,9,10,11];
 /* No acumulado soma-se o ano inteiro: qualquer lançamento em mês sem
    movimento de operação (provisões de setembro em diante, por exemplo)
    continua entrando na conta. */
+var TRIMESTRES = [
+  { id: 't0', curto: '1º tri', longo: '1º trimestre', meses: [0, 1, 2] },
+  { id: 't1', curto: '2º tri', longo: '2º trimestre', meses: [3, 4, 5] },
+  { id: 't2', curto: '3º tri', longo: '3º trimestre', meses: [6, 7, 8] },
+  { id: 't3', curto: '4º tri', longo: '4º trimestre', meses: [9, 10, 11] }
+];
+function trimestreAtual() {
+  for (var i = 0; i < TRIMESTRES.length; i++) {
+    if (TRIMESTRES[i].id === estado.periodo) return TRIMESTRES[i];
+  }
+  return null;
+}
+function ehMes() { return typeof estado.periodo === 'number'; }
 function mesesSelecionados() {
-  return estado.periodo === 'acum' ? TODOS_OS_MESES.slice() : [estado.periodo];
+  if (estado.periodo === 'acum') return TODOS_OS_MESES.slice();
+  var t = trimestreAtual();
+  return t ? t.meses.slice() : [estado.periodo];
 }
 function mesesComMovimento() {
   var d = dados();
@@ -927,8 +945,13 @@ function agrega(v) {
   for (var i = 0; i < ms.length; i++) t += (v && v[ms[i]]) || 0;
   return t;
 }
+/* o Caixa é um saldo, não uma soma: no acumulado e no trimestre ele mostra o
+   do último mês do período que teve movimento. */
 function mesesDoSaldo() {
-  return estado.periodo === 'acum' ? mesesComMovimento() : [estado.periodo];
+  if (ehMes()) return [estado.periodo];
+  var mov = mesesComMovimento();
+  var dentro = mesesSelecionados().filter(function (m) { return mov.indexOf(m) >= 0; });
+  return dentro.length ? dentro : (estado.periodo === 'acum' ? [] : mesesSelecionados());
 }
 function ultimo(v) {
   var ms = mesesDoSaldo();
@@ -940,7 +963,13 @@ function mesFinal() {
 }
 function rotuloPeriodo() {
   var d = dados();
-  return estado.periodo === 'acum' ? 'acumulado do ano' : d.meta.meses[estado.periodo];
+  if (estado.periodo === 'acum') return 'acumulado do ano';
+  var t = trimestreAtual();
+  if (t) {
+    return t.longo + ' (' + d.meta.meses[t.meses[0]].toLowerCase() + ' a ' +
+      d.meta.meses[t.meses[2]].toLowerCase() + ')';
+  }
+  return d.meta.meses[estado.periodo];
 }
 function temNota(c) {
   return !!(c.nota && (c.nota.sempre || (c.nota.mes !== undefined && mesesSelecionados().indexOf(c.nota.mes) >= 0)));
@@ -956,6 +985,8 @@ var KPIS = [
 
 function renderKpis() {
   var d = dados(), ms = mesesComMovimento();
+  /* no acumulado nenhum mês é destacado; no trimestre, os três dele */
+  var destaque = estado.periodo === 'acum' ? [] : mesesSelecionados();
   document.getElementById('kpis').innerHTML = KPIS.map(function (k) {
     var serie = d.kpis[k.id] || [];
     var valor = k.modo === 'ultimo' ? ultimo(serie) : agrega(serie);
@@ -965,8 +996,9 @@ function renderKpis() {
     } else if (k.base) {
       var b = agrega(d.kpis[k.base]);
       meta = b ? '<b>' + pct(valor / b) + '</b> da receita bruta' : k.fonte;
-    } else if (estado.periodo === 'acum') {
-      meta = '<b>' + brlCurto(ms.length ? valor / ms.length : 0) + '</b> por mês em média';
+    } else if (!ehMes()) {
+      var sel = mesesSelecionados().filter(function (m) { return ms.indexOf(m) >= 0; });
+      meta = '<b>' + brlCurto(sel.length ? valor / sel.length : 0) + '</b> por mês em média';
     } else {
       var ant = estado.periodo - 1;
       if (ant >= 0 && serie[ant]) {
@@ -982,7 +1014,7 @@ function renderKpis() {
     var spark = ms.map(function (m, i) {
       var v = vals[i], h = Math.max(1.5, Math.abs(v) / faixa * 100);
       var pos = v >= 0 ? 'bottom:' + zero + '%;height:' + h + '%' : 'top:' + (100 - zero) + '%;height:' + h + '%';
-      return '<i class="' + (estado.periodo === m ? 'on' : '') + '" title="' + d.meta.meses[m] + ': ' + esc(brl(v)) + '">' +
+      return '<i class="' + (destaque.indexOf(m) >= 0 ? 'on' : '') + '" title="' + d.meta.meses[m] + ': ' + esc(brl(v)) + '">' +
         '<span style="position:absolute;left:0;right:0;' + pos + '"></span></i>';
     }).join('');
     return '<article class="kpi" title="' + esc(k.fonte) + '"><div class="k-lbl">' + k.label + '</div>' +
@@ -1103,9 +1135,9 @@ function detalheHtml(c) {
 
   if (temNota(c)) html += '<p class="nota">' + ICONE_NOTA + '<span>' + c.nota.texto + '</span></p>';
 
-  var LIMITE = 12;
-  var visiveis = (estado.todos || itens.length <= LIMITE + 1) ? itens : itens.slice(0, LIMITE);
-  var corpo = visiveis.map(function (i) {
+  /* o detalhamento mostra tudo: nenhum item do DRE nem lançamento do fluxo
+     fica escondido atrás de um “ver mais”. */
+  var corpo = itens.map(function (i) {
     var semPagamento = Math.abs(i.fluxo) < 0.005;
     var selo = '';
     if (semPagamento) {
@@ -1136,25 +1168,20 @@ function detalheHtml(c) {
 
   html += '<div class="tabela-wrap"><table><thead><tr><th>Item</th><th>DRE</th><th>Pago no fluxo</th><th>Diferença</th></tr></thead>' +
     '<tbody>' + (itens.length ? corpo : '<tr><td colspan="4">Sem itens do DRE neste período.</td></tr>') + '</tbody></table></div>';
-  if (itens.length > LIMITE + 1) {
-    html += '<button class="btn-link" data-todos="1" style="margin-top:10px">' +
-      (estado.todos ? 'Mostrar apenas os 12 maiores' : 'Mostrar todos os ' + itens.length + ' itens') + '</button>';
-  }
 
   if (semItem.length) {
     html += '<div class="det-sub">' + (atribuido
       ? 'Composição do valor pago — ' + esc(brl(totalSemItem))
       : 'Pagamentos sem item correspondente no DRE — ' + esc(brl(totalSemItem))) + '</div>';
-    var lista = estado.todos ? semItem : semItem.slice(0, 8);
-    var maiorLista = Math.max.apply(null, lista.map(function (i) { return i.valor; }).concat([0]));
-    html += '<div class="tabela-wrap"><table><tbody>' + lista.map(function (i) {
+    var maiorLista = Math.max.apply(null, semItem.map(function (i) { return i.valor; }).concat([0]));
+    html += '<div class="tabela-wrap"><table><tbody>' + semItem.map(function (i) {
       return '<tr class="fora"><td>' + esc(i.nome) + miniBarras(0, i.valor, maiorLista, { soFluxo: true }) + '</td>' +
         '<td class="num">—</td><td class="num">' + esc(brl(i.valor)) + '</td><td class="num"></td></tr>';
-    }).join('') + (semItem.length > lista.length
-      ? '<tr class="fora"><td>… e mais ' + (semItem.length - lista.length) + ' lançamentos</td>' +
-        '<td class="num">—</td><td class="num">' +
-        esc(brl(totalSemItem - lista.reduce(function (a, i) { return a + i.valor; }, 0))) + '</td><td class="num"></td></tr>'
-      : '') + '</tbody></table></div>';
+    }).join('') +
+      '<tr class="total"><td>Total ' + semItem.length + ' ' +
+      (semItem.length === 1 ? 'lançamento' : 'lançamentos') + '</td>' +
+      '<td class="num">—</td><td class="num">' + esc(brl(totalSemItem)) + '</td><td class="num"></td></tr>' +
+      '</tbody></table></div>';
     html += '<p class="obs">' + (atribuido
       ? 'Este comparativo tem um único item no DRE, então os pagamentos desta categoria do Fluxo de Caixa pertencem a ele — mesmo sem a coluna “CATEGORIA DRE” preenchida no contas a pagar. Abaixo, quem foi pago.'
       : 'São pagamentos lançados nesta categoria do Fluxo de Caixa sem <em>categoria DRE</em> no contas a pagar — por isso entram no total pago, mas não têm item do DRE para comparar. Preencher a coluna “CATEGORIA DRE” na planilha faz a linha subir para a tabela de cima.') + '</p>';
@@ -1250,9 +1277,17 @@ function renderDre() {
 /* =========================== período e unidades =========================== */
 function renderChips() {
   var d = dados();
+  var comDados = d.meta.mesesComDados;
   var html = '<button class="chip" data-p="acum" aria-pressed="' + (estado.periodo === 'acum') + '">Acumulado</button>';
+  html += '<span class="chip-sep" aria-hidden="true"></span>';
+  TRIMESTRES.forEach(function (t) {
+    var tem = t.meses.some(function (m) { return comDados.indexOf(m) >= 0; });
+    html += '<button class="chip" data-p="' + t.id + '" aria-pressed="' + (estado.periodo === t.id) + '"' +
+      (tem ? '' : ' disabled') + ' title="' + esc(t.longo) + '">' + t.curto + '</button>';
+  });
+  html += '<span class="chip-sep" aria-hidden="true"></span>';
   for (var m = 0; m < 12; m++) {
-    var tem = d.meta.mesesComDados.indexOf(m) >= 0;
+    var tem = comDados.indexOf(m) >= 0;
     html += '<button class="chip" data-p="' + m + '" aria-pressed="' + (estado.periodo === m) + '"' + (tem ? '' : ' disabled') + '>' +
       d.meta.meses[m].slice(0, 3) + '</button>';
   }
@@ -1371,13 +1406,13 @@ document.addEventListener('click', function (ev) {
   var visao = ev.target.closest('[data-v]');
   if (visao) {
     estado.visao = visao.dataset.v;
-    estado.aberta = null; estado.todos = false;
+    estado.aberta = null;
     render(); return;
   }
   var aba = ev.target.closest('.aba');
   if (aba) {
     estado.unidade = aba.dataset.u;
-    estado.aberta = null; estado.todos = false; estado.periodo = 'acum';
+    estado.aberta = null; estado.periodo = 'acum';
     location.hash = estado.unidade;
     render(); avisoVersao(); return;
   }
@@ -1389,15 +1424,14 @@ document.addEventListener('click', function (ev) {
   }
   var chip = ev.target.closest('.chip');
   if (chip && !chip.disabled) {
-    estado.periodo = chip.dataset.p === 'acum' ? 'acum' : parseInt(chip.dataset.p, 10);
+    var p = chip.dataset.p;
+    estado.periodo = (p === 'acum' || /^t[0-3]$/.test(p)) ? p : parseInt(p, 10);
     render(); return;
   }
-  if (ev.target.closest('[data-fechar]')) { estado.aberta = null; estado.todos = false; renderChart(); return; }
-  if (ev.target.closest('[data-todos]')) { estado.todos = !estado.todos; renderChart(); return; }
+  if (ev.target.closest('[data-fechar]')) { estado.aberta = null; renderChart(); return; }
   var cat = ev.target.closest('.cat');
   if (cat) {
     estado.aberta = estado.aberta === cat.dataset.cat ? null : cat.dataset.cat;
-    estado.todos = false;
     renderChart();
     var novo = document.querySelector('.cat[data-cat="' + estado.aberta + '"]');
     if (novo) novo.focus({ preventScroll: true });
@@ -1509,8 +1543,10 @@ function aplica(unidade, pacote, origem) {
   estado.origem[unidade] = origem;
   estado.carimbo[unidade] = pacote.atualizadoEm || 0;
   if (estado.unidade === unidade) {
-    estado.aberta = null; estado.todos = false;
-    if (estado.periodo !== 'acum' && pacote.dados.meta.mesesComDados.indexOf(estado.periodo) < 0) estado.periodo = 'acum';
+    estado.aberta = null;
+    var comDados = pacote.dados.meta.mesesComDados || [];
+    var alvo = estado.periodo === 'acum' ? [] : mesesSelecionados();
+    if (alvo.length && !alvo.some(function (m) { return comDados.indexOf(m) >= 0; })) estado.periodo = 'acum';
   }
   render();
   confereVersao(unidade, pacote, origem);

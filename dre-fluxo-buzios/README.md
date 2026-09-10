@@ -48,12 +48,17 @@ carregado por CDN; nenhum dado é enviado para servidor algum.
   cada descrição do DRE com o valor reconhecido, o valor efetivamente pago e a
   diferença em colunas, e duas barrinhas discretas sob o nome (na escala do maior
   item da tabela) com o valor em formato curto, para ler a proporção de relance; abaixo, os pagamentos daquela categoria que não têm item
-  correspondente no DRE; e por fim as linhas deixadas fora da somatória.
-- Filtro de período: acumulado ou mês a mês. O **acumulado soma os doze meses**
+  correspondente no DRE; e por fim as linhas deixadas fora da somatória. O
+  detalhamento é **completo**: todos os itens do DRE e todos os lançamentos do
+  fluxo aparecem, sem “ver mais” nem corte nas listas maiores.
+- Filtro de período: **acumulado, trimestre ou mês**. Os trimestres são civis
+  (1º = janeiro a março, e assim por diante) e ficam desabilitados enquanto
+  nenhum dos seus meses tiver movimento. O **acumulado soma os doze meses**
   do ano, e não só os meses com movimento no fluxo de caixa — lançamentos que a
   planilha registra num mês sem pagamentos (provisões de SG&A, por exemplo)
   entram na soma como qualquer outro. A única exceção é o indicador **Caixa**,
-  que é um saldo e por isso continua mostrando o do último mês com movimento.
+  que é um saldo e por isso mostra o do último mês com movimento do período —
+  no acumulado, o do ano; no trimestre, o do último mês dele.
 
 ## Como o DRE conversa com o Fluxo de Caixa
 
