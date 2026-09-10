@@ -57,10 +57,11 @@ carregado por CDN; nenhum dado é enviado para servidor algum.
   | Lucro Líquido | linha `LUCRO LIQUIDO` do DRE |
   | Resultado DRE | linha `SALDO FINANCEIRO` do DRE, o saldo final da demonstração |
 
-- **Um gráfico comparativo de barras** com 14 comparativos: Faturado × Receita,
+- **Um gráfico comparativo de barras** com 15 comparativos: Faturado × Receita,
   CMV × Fornecedor, Operacionais, Pessoal, Comissões, Administrativo, CTO,
-  Utilities, Terceiros, Marketing, Financeiras, Impostos, Pró-labore e
-  Dividendos — cada um com a barra do DRE e a do Fluxo de Caixa. À direita, no
+  Utilities, Terceiros, Marketing, Financeiras, Impostos, Pró-labore,
+  Dividendos e Aporte × Reembolso — cada um com a barra do DRE e a do Fluxo de
+  Caixa. À direita, no
   lugar da diferença em reais, cada barra mostra **o peso dela sobre a base do
   seu regime**: o valor do DRE sobre o **faturamento bruto** (a receita bruta do
   DRE) e o do fluxo sobre a **receita bruta** (a linha `RECEITAS` do relatório
@@ -72,6 +73,17 @@ carregado por CDN; nenhum dado é enviado para servidor algum.
   `RECEITAS` do relatório de fluxo, chamada de **Receita** — o que foi
   reconhecido contra o que efetivamente entrou. Abaixo dele, como referência,
   a composição do faturamento (crédito, débito, dinheiro, PIX, serviços).
+
+  **Aporte × Reembolso** compara a linha `APORTE` do DRE com os reembolsos do
+  fluxo, e é o único que pode ler a coluna **`OBSERVACAO`** do contas a pagar:
+  quando a planilha marca “reembolso” ali, é essa marcação que define o total —
+  ela pega também os reembolsos lançados em outras categorias do fluxo e deixa
+  de fora o que está em `REEMBOLSO` sem a marcação. É o caso de Búzios. Quando
+  a planilha não traz a marcação (Camboinhas, Central), vale a categoria de
+  fluxo `REEMBOLSO`, como nos demais comparativos. Nesse modo o total não
+  coincide com a linha `Reembolso` do relatório de fluxo, de propósito, e os
+  valores continuam contados nas suas categorias de origem — a nota do
+  comparativo diz isso na tela.
 - **Clicando na categoria**, abre logo abaixo dela a comparação **item a item**:
   cada descrição do DRE com o valor reconhecido, o valor efetivamente pago e a
   diferença em colunas, e duas barrinhas discretas sob o nome (na escala do maior
