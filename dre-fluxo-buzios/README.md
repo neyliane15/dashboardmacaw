@@ -23,6 +23,11 @@ carregado por CDN; nenhum dado é enviado para servidor algum.
     a linha**, depois de dezembro. A descrição fica fixa à esquerda e o total à
     direita, com os meses rolando entre as duas. O **bloco de fornecedor fica de
     fora** da tabela — esse confronto está no comparativo `CMV × Fornecedor`.
+    Cada bloco (receitas, descontos e cada categoria de despesa) tem **cor
+    própria**, na faixa terrosa da marca: uma faixa colorida com o nome, e o
+    tom claro na coluna dos itens. A fila **Blocos**, logo abaixo do título,
+    liga e desliga cada um — as linhas de total do DRE continuam à vista, para
+    a demonstração não perder o fio.
 
   Os nomes mudam de uma unidade para outra e o painel reconhece as variações:
   categoria `ADMINISTRATIVO` ou `ADMINISTRATIVAS` no DRE, `IMPOSTOS` ou `IMPOSTO`
@@ -59,6 +64,9 @@ carregado por CDN; nenhum dado é enviado para servidor algum.
   entram na soma como qualquer outro. A única exceção é o indicador **Caixa**,
   que é um saldo e por isso mostra o do último mês com movimento do período —
   no acumulado, o do ano; no trimestre, o do último mês dele.
+
+- O painel é **sempre claro**. O off white do manual faz parte da identidade,
+  então a página não muda de cor com o tema de quem abre.
 
 ## Como o DRE conversa com o Fluxo de Caixa
 

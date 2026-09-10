@@ -11,7 +11,7 @@
 /* Identidade Macaw — manual de marca:
    OFF WHITE #F2E3D6 · VERDE CLARO #CCC48F · VERDE #7A731C · MARROM #69593B */
 :root{
-  color-scheme: light;
+  color-scheme: light only;
   --ground:#F2E3D6;
   --surface:#FCF7F1;
   --surface-2:#F7EDE2;
@@ -34,52 +34,9 @@
   --sans:"Poppins",system-ui,-apple-system,"Segoe UI",sans-serif;
   --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
 }
-@media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){
-    color-scheme: dark;
-    --ground:#16160F;
-    --surface:#1E1D14;
-    --surface-2:#25241A;
-    --line:#37341F;
-    --line-2:#4E4930;
-    --ink:#F2E3D6;
-    --ink-2:#C4BBA4;
-    --ink-3:#918972;
-    --verde:#CCC48F;
-    --verde-claro:#CCC48F;
-    --marrom:#A98C5C;
-    --dre:#A89D3D;
-    --caixa:#8A6A46;
-    --nota-bg:#2B2A16;
-    --nota-line:#6E6733;
-    --nota-ink:#DCD3A0;
-    --spark:#CCC48F;
-    --focus:#CCC48F;
-    --shadow:0 1px 2px rgba(0,0,0,.45), 0 12px 30px -20px rgba(0,0,0,.9);
-  }
-}
-:root[data-theme="dark"]{
-  color-scheme: dark;
-  --ground:#16160F;
-  --surface:#1E1D14;
-  --surface-2:#25241A;
-  --line:#37341F;
-  --line-2:#4E4930;
-  --ink:#F2E3D6;
-  --ink-2:#C4BBA4;
-  --ink-3:#918972;
-  --verde:#CCC48F;
-  --verde-claro:#CCC48F;
-  --marrom:#A98C5C;
-  --dre:#A89D3D;
-  --caixa:#8A6A46;
-  --nota-bg:#2B2A16;
-  --nota-line:#6E6733;
-  --nota-ink:#DCD3A0;
-  --spark:#CCC48F;
-  --focus:#CCC48F;
-  --shadow:0 1px 2px rgba(0,0,0,.45), 0 12px 30px -20px rgba(0,0,0,.9);
-}
+/* O painel é sempre claro, como o manual da marca: o fundo off white é parte
+   da identidade e a apresentação não deve mudar de cor com o tema de quem
+   abre. Por isso não há bloco de tema escuro. */
 
 *{box-sizing:border-box}
 [hidden]{display:none!important}
@@ -226,6 +183,18 @@ button{font:inherit;color:inherit}
 .dre-topo{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;padding:18px 22px 12px}
 .dre-topo h2{font-size:16px}
 .dre-topo .cnt{font-size:11.5px;color:var(--ink-3)}
+/* cada bloco do DRE — receitas, descontos e cada categoria de despesa — tem
+   sua cor, e a fila abaixo do título liga e desliga o bloco na tabela. */
+.blocos{display:flex;gap:6px;flex-wrap:wrap;align-items:center;padding:0 22px 15px}
+.blocos .lbl{font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3);margin-right:5px}
+.bloco{display:inline-flex;align-items:center;gap:7px;padding:4px 12px 4px 10px;border-radius:999px;
+  border:1px solid var(--line-2);background:transparent;font-size:12px;color:var(--ink-2);
+  cursor:pointer;transition:all .13s ease}
+.bloco i{width:9px;height:9px;border-radius:50%;background:var(--g);flex:none}
+.bloco[aria-pressed="true"]{background:var(--gb);border-color:var(--g);color:var(--g);font-weight:500}
+.bloco[aria-pressed="false"]{opacity:.45}
+.bloco[aria-pressed="false"] i{background:var(--line-2)}
+.bloco:hover{border-color:var(--g)}
 /* o recuo lateral vem das próprias células: com padding no invólucro, as
    colunas fixas parariam 22px antes da borda e os meses apareceriam nessa
    fresta ao rolar. */
@@ -251,7 +220,7 @@ table.dre thead th.tot{z-index:3;background:var(--surface-2)}
 table.dre tr:hover td.tot{background:var(--surface-2)}
 /* a faixa de categoria atravessa a linha inteira, então precisa de um pedaço
    opaco sob o total fixo para os números não aparecerem por baixo dela. */
-.dre-grupo td.tot{background:var(--surface);border-bottom:none}
+.dre-grupo td.tot{background:var(--gb);border-bottom:none}
 table.dre tr.item td:first-child{padding-left:36px;color:var(--ink-2)}
 table.dre tr.linha td{font-weight:500;color:var(--ink);border-top:1px solid var(--line-2)}
 table.dre tr.linha td.v{color:var(--ink)}
@@ -259,9 +228,15 @@ table.dre tr.pct td{font-size:11px;color:var(--ink-3);border-top:none}
 table.dre tr.pct td.v{color:var(--ink-3)}
 table.dre tr:hover td{background:var(--surface-2)}
 table.dre tr:hover td:first-child{background:var(--surface-2)}
-.dre-grupo td{position:static;padding-top:14px;border-bottom:none;background:var(--surface);min-width:0;max-width:none}
-.dre-grupo td span{position:sticky;left:22px;display:inline-block;font-size:10px;letter-spacing:.12em;
-  text-transform:uppercase;color:var(--ink-3);font-weight:600}
+.dre-grupo td{position:static;padding-top:15px;border-bottom:none;background:var(--gb);min-width:0;max-width:none;
+  box-shadow:inset 0 -2px 0 var(--g)}
+.dre-grupo td span{position:sticky;left:22px;display:inline-flex;align-items:center;gap:7px;font-size:10px;
+  letter-spacing:.12em;text-transform:uppercase;color:var(--g);font-weight:600}
+.dre-grupo td span::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--g)}
+/* na coluna fixa, cada item carrega a cor do seu bloco: um fio à esquerda e o
+   fundo no tom claro, para a leitura vertical não se perder na rolagem. */
+table.dre tr.item td:first-child{box-shadow:inset 3px 0 0 var(--g);background:var(--gb)}
+table.dre tr.item:hover td:first-child{background:var(--gb);filter:brightness(.97)}
 
 /* ---------- tabelas ---------- */
 .tabela-wrap{overflow-x:auto}
@@ -353,6 +328,7 @@ tr.total .mini .l i{opacity:.95}
       <h2 id="dre-titulo">DRE detalhado</h2>
       <span class="cnt" id="dre-sub"></span>
     </div>
+    <div class="blocos" id="dre-blocos"></div>
     <div class="dre-wrap"><table class="dre" id="tabela-dre"></table></div>
   </section>
 
@@ -893,7 +869,7 @@ var estado = {
   antiga: {},
   visao: 'comparativo',
   dados: {}, origem: {}, carimbo: {},
-  periodo: 'acum', aberta: null, tabela: false
+  periodo: 'acum', aberta: null, tabela: false, blocosFora: {}
 };
 UNIDADES.forEach(function (u) {
   estado.dados[u.id] = BASE[u.id] || null;
@@ -1239,21 +1215,35 @@ function renderDre() {
       'Importe a planilha de novo para o detalhamento aparecer.</td></tr></tbody>';
     return;
   }
+  /* blocos na ordem em que aparecem na planilha, para a fila de seleção */
+  var blocos = [];
+  linhas.forEach(function (l) {
+    if (l.item && l.grupo && blocos.indexOf(l.grupo) < 0) blocos.push(l.grupo);
+  });
+  renderBlocos(blocos);
+
+  var escondidos = blocos.filter(function (g) { return !blocoVisivel(g); }).length;
   document.getElementById('dre-sub').textContent = linhas.length + ' linhas · valores em R$ · ' +
-    d.meta.meses[0] + ' a ' + d.meta.meses[11] + ' · sem o bloco de fornecedor';
+    d.meta.meses[0] + ' a ' + d.meta.meses[11] + ' · sem o bloco de fornecedor' +
+    (escondidos ? ' · ' + escondidos + (escondidos === 1 ? ' bloco oculto' : ' blocos ocultos') : '');
 
   var cabecalho = '<thead><tr><th>Linha do DRE</th>' +
     ms.map(function (m) { return '<th>' + esc(d.meta.meses[m].slice(0, 3)) + '</th>'; }).join('') +
     '<th class="tot">Total</th></tr></thead>';
 
-  var grupoAtual = null, corpo = '';
+  var grupoAtual = null, corpo = '', cor = null;
   linhas.forEach(function (l) {
+    /* bloco desligado na fila: os itens somem, mas as linhas de total do DRE
+       continuam, senão a demonstração perde o fio. */
+    if (l.item && l.grupo && !blocoVisivel(l.grupo)) return;
     if (l.item && l.grupo !== grupoAtual) {
       grupoAtual = l.grupo;
-      corpo += '<tr class="dre-grupo"><td colspan="' + (ms.length + 1) + '"><span>' + esc(l.grupo) + '</span></td>' +
+      cor = corBloco(l.grupo);
+      corpo += '<tr class="dre-grupo" style="--g:' + cor.g + ';--gb:' + cor.gb + '">' +
+        '<td colspan="' + (ms.length + 1) + '"><span>' + esc(l.grupo) + '</span></td>' +
         '<td class="tot"></td></tr>';
     }
-    if (!l.item) grupoAtual = null;
+    if (!l.item) { grupoAtual = null; cor = null; }
 
     var total = 0;
     var celulas = ms.map(function (m) {
@@ -1267,11 +1257,63 @@ function renderDre() {
     var totalCel = l.pct ? '<td class="v tot">—</td>'
       : '<td class="v tot">' + total.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '</td>';
 
-    corpo += '<tr class="' + (l.pct ? 'pct' : (l.item ? 'item' : 'linha')) + '">' +
+    corpo += '<tr class="' + (l.pct ? 'pct' : (l.item ? 'item' : 'linha')) + '"' +
+      (l.item && cor ? ' style="--g:' + cor.g + ';--gb:' + cor.gb + '"' : '') + '>' +
       '<td>' + esc(l.label) + '</td>' + celulas + totalCel + '</tr>';
   });
 
   el.innerHTML = cabecalho + '<tbody>' + corpo + '</tbody>';
+}
+
+/* =========================== blocos do DRE =========================== */
+/* Uma cor por bloco, na faixa terrosa da marca, com uma ou outra nota fria só
+   para os blocos vizinhos não se confundirem. */
+var CORES_BLOCO = [
+  { g: '#6E7B2E', gb: '#EDEFDC' },  /* verde folha   */
+  { g: '#8A6A2B', gb: '#F3EAD8' },  /* ocre          */
+  { g: '#7A731C', gb: '#EFEDD9' },  /* verde da marca*/
+  { g: '#9C5F35', gb: '#F6E7DC' },  /* terracota     */
+  { g: '#69593B', gb: '#EFE9DF' },  /* marrom        */
+  { g: '#4F6B58', gb: '#E5EDE8' },  /* verde musgo   */
+  { g: '#56707A', gb: '#E5EDEF' },  /* petróleo      */
+  { g: '#7C4F63', gb: '#F2E5EA' },  /* vinho         */
+  { g: '#A0722C', gb: '#F6EBD9' },  /* âmbar         */
+  { g: '#4A5A7A', gb: '#E6EAF2' },  /* ardósia       */
+  { g: '#5F6B4A', gb: '#EAEDE3' }   /* oliva         */
+];
+/* o mesmo bloco fica com a mesma cor em qualquer unidade, mesmo quando a
+   planilha escreve o nome de outro jeito (Administrativo / Administrativas) */
+var ORDEM_BLOCO = ['RECEITAS', 'DESCONTOS', 'OPERACIONAIS', 'PESSOAL', 'ADMINISTRATIVO',
+  'CTO', 'UTILITIES', 'TERCEIROS', 'MARKETING', 'FINANCEIRAS', 'CASHFLOW'];
+function chaveBloco(nome) {
+  var n = norm(nome);
+  if (n === 'ADMINISTRATIVAS') return 'ADMINISTRATIVO';
+  if (n === 'FINANCEIRAS' || n === 'FINANCEIRA') return 'FINANCEIRAS';
+  return n;
+}
+function corBloco(nome) {
+  var i = ORDEM_BLOCO.indexOf(chaveBloco(nome));
+  if (i < 0) {
+    /* bloco que não estava previsto entra depois dos conhecidos, sem repetir */
+    i = ORDEM_BLOCO.length + (blocosExtras.indexOf(chaveBloco(nome)) >= 0
+      ? blocosExtras.indexOf(chaveBloco(nome))
+      : blocosExtras.push(chaveBloco(nome)) - 1);
+  }
+  return CORES_BLOCO[i % CORES_BLOCO.length];
+}
+var blocosExtras = [];
+function blocoVisivel(nome) { return !estado.blocosFora[chaveBloco(nome)]; }
+
+function renderBlocos(blocos) {
+  var el = document.getElementById('dre-blocos');
+  if (!blocos.length) { el.innerHTML = ''; return; }
+  var todos = blocos.every(blocoVisivel);
+  el.innerHTML = '<span class="lbl">Blocos</span>' + blocos.map(function (g) {
+    var c = corBloco(g);
+    return '<button class="bloco" data-bloco="' + esc(chaveBloco(g)) + '" style="--g:' + c.g + ';--gb:' + c.gb + '"' +
+      ' aria-pressed="' + blocoVisivel(g) + '"><i></i>' + esc(titulo(g)) + '</button>';
+  }).join('') + (todos ? '' :
+    '<button class="btn-link" data-bloco-todos="1" style="margin-left:6px">mostrar todos</button>');
 }
 
 /* =========================== período e unidades =========================== */
@@ -1428,6 +1470,13 @@ document.addEventListener('click', function (ev) {
     estado.periodo = (p === 'acum' || /^t[0-3]$/.test(p)) ? p : parseInt(p, 10);
     render(); return;
   }
+  var bloco = ev.target.closest('[data-bloco]');
+  if (bloco) {
+    var k = bloco.dataset.bloco;
+    if (estado.blocosFora[k]) delete estado.blocosFora[k]; else estado.blocosFora[k] = true;
+    renderDre(); return;
+  }
+  if (ev.target.closest('[data-bloco-todos]')) { estado.blocosFora = {}; renderDre(); return; }
   if (ev.target.closest('[data-fechar]')) { estado.aberta = null; renderChart(); return; }
   var cat = ev.target.closest('.cat');
   if (cat) {
