@@ -72,7 +72,12 @@ carregado por CDN; nenhum dado é enviado para servidor algum.
   a `RECEITA BRUTA` do DRE, chamada ali de **Faturado**; do outro a linha
   `RECEITAS` do relatório de fluxo, chamada de **Receita** — o que foi
   reconhecido contra o que efetivamente entrou. Abaixo dele, como referência,
-  a composição do faturamento (crédito, débito, dinheiro, PIX, serviços).
+  a composição do faturamento (crédito, débito, dinheiro, PIX, serviços). Como
+  a receita vale umas três vezes a maior despesa, essa linha desenha em
+  **escala própria** — e diz isso na tela: se ela ditasse a escala do gráfico,
+  as categorias pequenas (Aporte, Marketing, Pró-labore) virariam um risco de
+  poucos pixels. As demais dividem a escala entre si, e os valores nas barras
+  são sempre os reais.
 
   **Aporte × Reembolso** é o único comparativo que se identifica pelo **texto**
   do contas a pagar, e não por categoria: de um lado a linha `APORTE` do DRE, do
