@@ -22,7 +22,14 @@ carregado por CDN; nenhum dado é enviado para servidor algum.
     janeiro a dezembro**, mesmo nos meses ainda sem lançamento, e o **total fecha
     a linha**, depois de dezembro. A descrição fica fixa à esquerda e o total à
     direita, com os meses rolando entre as duas. O **bloco de fornecedor fica de
-    fora** da tabela — esse confronto está no comparativo `CMV × Fornecedor`.
+    fora** da tabela — esse confronto está no comparativo `CMV × Fornecedor` —
+    e a tabela **termina antes do bloco de cashflow**: dali para baixo é
+    movimento de caixa, não resultado. Fios verticais separam os meses, e as
+    linhas que não pertencem a bloco nenhum — a espinha do DRE — são coloridas
+    pelo papel: **marcos** (Receita Bruta, Receita Líquida, Lucro Bruto, EBITDA,
+    Lucro Líquido) com a linha inteira em verde, **receita**, **custo**
+    (deduções, estoques, compras, CMV) em ocre e **despesa/resultado** (totais
+    por categoria, SG&A, impostos) em marrom.
     Cada bloco (receitas, descontos e cada categoria de despesa) tem **cor
     própria**, na faixa terrosa da marca: uma faixa colorida com o nome, e o
     tom claro na coluna dos itens. A fila **Blocos**, logo abaixo do título,

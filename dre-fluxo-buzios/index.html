@@ -229,6 +229,17 @@ table.dre tr:hover td.tot{background:var(--surface-2)}
 table.dre tr.item td:first-child{padding-left:36px;color:var(--ink-2)}
 table.dre tr.linha td{font-weight:500;color:var(--ink);border-top:1px solid var(--line-2)}
 table.dre tr.linha td.v{color:var(--ink)}
+/* cada papel com a sua cor: o fio à esquerda, o tom claro na coluna do nome e
+   o rótulo na cor cheia. Os marcos do DRE ganham a linha inteira. */
+table.dre tr.linha[data-papel] td:first-child{box-shadow:inset 4px 0 0 var(--g);background:var(--gb);color:var(--g)}
+table.dre tr.linha[data-papel] td{border-top:1px solid var(--g)}
+table.dre tr.linha.marco td{background:var(--gb);font-weight:600;border-top-width:2px}
+table.dre tr.linha.marco td:first-child{letter-spacing:.01em}
+table.dre tr.linha.marco td.v{color:var(--ink)}
+table.dre tr.linha.marco td.tot{background:var(--gb)}
+table.dre tr:hover td.tot{background:var(--surface-2)}
+/* fios verticais entre os meses: a tabela é larga e o olho precisa de trilho */
+table.dre td.v:not(.tot),table.dre thead th:not(:first-child):not(.tot){border-left:1px solid var(--line)}
 table.dre tr.pct td{font-size:11px;color:var(--ink-3);border-top:none}
 table.dre tr.pct td.v{color:var(--ink-3)}
 table.dre tr:hover td{background:var(--surface-2)}
@@ -1314,6 +1325,13 @@ function renderDre() {
   var linhas = ((d && d.dreCompleto) || []).filter(function (l) {
     return !(l.grupo && norm(l.grupo) === 'FORNECEDOR');
   });
+  /* a tabela é a demonstração de resultado: do bloco de cashflow para baixo é
+     movimento de caixa, e isso já está no comparativo. */
+  var corte = -1;
+  for (var ci = 0; ci < linhas.length; ci++) {
+    if (linhas[ci].grupo && norm(linhas[ci].grupo) === 'CASHFLOW') { corte = ci; break; }
+  }
+  if (corte >= 0) linhas = linhas.slice(0, corte);
   /* a tabela mostra o ano inteiro, de janeiro a dezembro, mesmo nos meses
      ainda sem lançamento — quem lê acompanha a linha do ano completa. */
   var ms = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
@@ -1336,7 +1354,7 @@ function renderDre() {
 
   var escondidos = blocos.filter(function (g) { return !blocoVisivel(g); }).length;
   document.getElementById('dre-sub').textContent = linhas.length + ' linhas · valores em R$ · ' +
-    d.meta.meses[0] + ' a ' + d.meta.meses[11] + ' · sem o bloco de fornecedor' +
+    d.meta.meses[0] + ' a ' + d.meta.meses[11] + ' · sem os blocos de fornecedor e de cashflow' +
     (escondidos ? ' · ' + escondidos + (escondidos === 1 ? ' bloco oculto' : ' blocos ocultos') : '');
 
   var cabecalho = '<thead><tr><th>Linha do DRE</th>' +
@@ -1382,7 +1400,9 @@ function renderDre() {
     var totalCel = l.pct ? '<td class="v tot">—</td>'
       : '<td class="v tot">' + total.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '</td>';
 
-    var estilo = l.item && cor ? ' style="--g:' + cor.g + ';--gb:' + cor.gb + '"' : '';
+    var papel = (!l.item && !l.pct) ? papelDaLinha(l.label) : null;
+    var estilo = l.item && cor ? ' style="--g:' + cor.g + ';--gb:' + cor.gb + '"'
+      : (papel ? ' style="--g:' + papel.g + ';--gb:' + papel.gb + '" data-papel="' + papel.classe + '"' : '');
     var rotulo = esc(l.label);
     var chaveItem = l.item ? (l.grupo || '') + '|' + (l.key || l.label) : '';
     var aberto = !!estado.itensAbertos[chaveItem];
@@ -1392,7 +1412,8 @@ function renderDre() {
           ' aria-label="' + (aberto ? 'recolher' : 'abrir') + ' os lançamentos de ' + esc(l.label) + '">&#9654;</button>'
         : '<span class="seta vazia">&#9654;</span>') + rotulo;
     }
-    corpo += '<tr class="' + (l.pct ? 'pct' : (l.item ? 'item' : 'linha')) + '"' + estilo + '>' +
+    corpo += '<tr class="' + (l.pct ? 'pct' : (l.item ? 'item' : 'linha')) +
+      (papel ? ' ' + papel.classe : '') + '"' + estilo + '>' +
       '<td>' + rotulo + '</td>' + celulas + totalCel + '</tr>';
 
     if (l.item && aberto && l.subs) {
@@ -1451,6 +1472,22 @@ function corBloco(nome) {
 }
 var blocosExtras = [];
 function blocoVisivel(nome) { return !estado.blocosFora[chaveBloco(nome)]; }
+
+/* As linhas que não pertencem a bloco nenhum são a espinha do DRE. Elas se
+   dividem em quatro papéis, cada um com a sua cor, para a leitura vertical
+   distinguir receita de custo, de despesa e de resultado. */
+var PAPEIS = [
+  { classe: 'marco',     g: '#5E6B22', gb: '#E9EDD3',
+    testa: /^(RECEITA BRUTA|RECEITA LIQUIDA|LUCRO BRUTO|EBITDA|LUCRO LIQUIDO|RESULTADO|SALDO FINANCEIRO)$/ },
+  { classe: 'receita',   g: '#6E7B2E', gb: '#EDEFDC', testa: /RECEITA|RECEITAS/ },
+  { classe: 'custo',     g: '#8A6A2B', gb: '#F3EAD8', testa: /CMV|ESTOQUE|COMPRAS|DEDUCOES/ },
+  { classe: 'resultado', g: '#69593B', gb: '#EFE9DF', testa: /TOTAL|SG&A|IMPOSTOS|JUROS|DESPESAS|DIVIDENDOS|CASH FLOW/ }
+];
+function papelDaLinha(label) {
+  var n = norm(label);
+  for (var i = 0; i < PAPEIS.length; i++) if (PAPEIS[i].testa.test(n)) return PAPEIS[i];
+  return null;
+}
 
 /* Um lançamento com categoria de fluxo mas sem MES PAGAMENTO não entra em
    caixa nenhum — nem no relatório da própria planilha. Em vez de somar num mês
