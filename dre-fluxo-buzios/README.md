@@ -101,12 +101,13 @@ carregado por CDN; nenhum dado é enviado para servidor algum.
   `INVESTIMENTO` do Fluxo de Caixa, com os pagamentos vindos do contas a pagar.
   Não altera nenhum outro comparativo.
 
-  **Impostos** compara a linha de imposto do DRE (`IMPOSTOS`, `IMPOSTO`,
-  `TRIBUTOS DIVERSOS` ou `TRIBUTOS`, o nome que a planilha usar) com a categoria
-  de imposto do Fluxo de Caixa. Quando a planilha não lança imposto no DRE — é o
-  caso de Camboinhas, cuja linha `TRIBUTOS DIVERSOS` está zerada —, o lado da
-  competência fica em zero e o detalhamento mostra os pagamentos que formam o
-  lado do caixa, dizendo por que não há item para comparar.
+  **Impostos** compara **`DEDUÇÕES DE FATURAMENTO`** do DRE — é ali que as lojas
+  reconhecem o imposto sobre venda — com a categoria de imposto do Fluxo de
+  Caixa. As linhas `IMPOSTOS` e `TRIBUTOS DIVERSOS`, abaixo do EBITDA, ficam no
+  fim como referência: em Camboinhas estão zeradas e em Búzios trazem só uma
+  parte. A composição do valor pago sai por **descrição do pagamento** (Receita
+  Federal, DARF, Simples Nacional…), tenha ele `CATEGORIA DRE` preenchida ou
+  não — nesta categoria o pagamento é do item, sempre.
 
   **Aporte × Reembolso** é o único comparativo que se identifica pelo **texto**
   do contas a pagar, e não por categoria: de um lado a linha `APORTE` do DRE, do
