@@ -13,9 +13,7 @@ carregado por CDN; nenhum dado é enviado para servidor algum.
   planilha embutida; Holding entra pelo botão de importar. Cada aba tem seus
   próprios indicadores, comparativo e DRE; o endereço guarda a aba (`#buzios`,
   `#camboinhas`, `#central`, `#holding`).
-- **Duas visões por unidade**, escolhidas ao lado das abas:
-  - **Comparativo** — indicadores, gráfico DRE × Fluxo de Caixa e o detalhamento
-    item a item ao clicar numa categoria.
+- **Duas visões por unidade**, escolhidas ao lado das abas (nesta ordem):
   - **DRE detalhado** — o DRE inteiro da planilha, linha a linha e mês a mês, na
     ordem original: itens agrupados por categoria, linhas de total em destaque,
     percentuais sobre a receita bruta em cinza. A tabela traz **o ano inteiro, de
@@ -30,6 +28,8 @@ carregado por CDN; nenhum dado é enviado para servidor algum.
     Lucro Líquido) com a linha inteira em verde, **receita**, **custo**
     (deduções, estoques, compras, CMV) em ocre e **despesa/resultado** (totais
     por categoria, SG&A, impostos) em marrom.
+  - **Comparativo** — indicadores, gráfico DRE × Fluxo de Caixa e o detalhamento
+    item a item ao clicar numa categoria.
     Cada bloco (receitas, descontos e cada categoria de despesa) tem **cor
     própria**, na faixa terrosa da marca: uma faixa colorida com o nome, e o
     tom claro na coluna dos itens. A fila **Blocos**, logo abaixo do título,
@@ -75,14 +75,15 @@ carregado por CDN; nenhum dado é enviado para servidor algum.
   a composição do faturamento (crédito, débito, dinheiro, PIX, serviços).
 
   **Aporte × Reembolso** compara a linha `APORTE` do DRE com os reembolsos do
-  fluxo, e é o único que pode ler a coluna **`OBSERVACAO`** do contas a pagar:
-  quando a planilha marca “reembolso” ali, é essa marcação que define o total —
-  ela pega também os reembolsos lançados em outras categorias do fluxo e deixa
-  de fora o que está em `REEMBOLSO` sem a marcação. É o caso de Búzios. Quando
-  a planilha não traz a marcação (Camboinhas, Central), vale a categoria de
-  fluxo `REEMBOLSO`, como nos demais comparativos. Nesse modo o total não
-  coincide com a linha `Reembolso` do relatório de fluxo, de propósito, e os
-  valores continuam contados nas suas categorias de origem — a nota do
+  fluxo, e é o único que também lê a coluna **`OBSERVACAO`** do contas a pagar.
+  O total soma **a categoria de fluxo `REEMBOLSO` mais** os lançamentos
+  marcados como reembolso na `OBSERVACAO` que foram lançados em outra categoria
+  — em Búzios, três, em Marketing, Pessoal e Pró-labore. Quem já está na
+  categoria não é somado duas vezes. Quando a planilha não traz a marcação
+  (Camboinhas, Central), sobra só a categoria de fluxo, como nos demais
+  comparativos. Havendo marcados de fora, o total passa da linha `Reembolso` do
+  relatório de fluxo, e esses valores continuam contados também nas suas
+  categorias de origem, para que elas sigam fechando com a planilha — a nota do
   comparativo diz isso na tela.
 - **Clicando na categoria**, abre logo abaixo dela a comparação **item a item**:
   cada descrição do DRE com o valor reconhecido, o valor efetivamente pago e a
