@@ -13,6 +13,19 @@ carregado por CDN; nenhum dado é enviado para servidor algum.
   planilha embutida; Holding entra pelo botão de importar. Cada aba tem seus
   próprios indicadores, comparativo e DRE; o endereço guarda a aba (`#buzios`,
   `#camboinhas`, `#central`, `#holding`).
+- **Uma aba à parte, `Central × Lojas`**, com o relatório de transferências: o
+  que cada loja mandou para a central contra o que a central comprou para ela,
+  mês a mês, em 2026 e 2025. Não é DRE nem fluxo de caixa, então essa aba não
+  tem período, indicadores de competência nem botão de importar — vem da
+  planilha `Central x Lojas`, embutida no painel.
+
+  Os totais mensais vêm das abas de resumo (`2026`, `Resumo`, `2025`), que é o
+  que a Macaw lê como fechamento; as transferências uma a uma vêm das abas de
+  detalhe (`Camboinhas`, `Búzios`). **As duas fontes nem sempre batem** — em
+  2026 há quatro meses de Camboinhas em que a lista soma mais que o relatório.
+  Nesses meses o painel mostra o total do relatório, marca o mês com um sinal e
+  diz a diferença ao abrir, em vez de escolher uma das fontes em silêncio.
+
 - **Duas visões por unidade**, escolhidas ao lado das abas (nesta ordem):
   - **DRE detalhado** — o DRE inteiro da planilha, linha a linha e mês a mês, na
     ordem original: itens agrupados por categoria, linhas de total em destaque,
