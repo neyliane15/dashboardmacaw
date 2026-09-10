@@ -19,12 +19,15 @@ carregado por CDN; nenhum dado é enviado para servidor algum.
   tem período, indicadores de competência nem botão de importar — vem da
   planilha `Central x Lojas`, embutida no painel.
 
-  Os totais mensais vêm das abas de resumo (`2026`, `Resumo`, `2025`), que é o
-  que a Macaw lê como fechamento; as transferências uma a uma vêm das abas de
-  detalhe (`Camboinhas`, `Búzios`). **As duas fontes nem sempre batem** — em
-  2026 há quatro meses de Camboinhas em que a lista soma mais que o relatório.
-  Nesses meses o painel mostra o total do relatório, marca o mês com um sinal e
-  diz a diferença ao abrir, em vez de escolher uma das fontes em silêncio.
+  Os totais mensais vêm das abas de resumo `2026` e `2025`, que é o que a Macaw
+  lê como fechamento — a aba `Resumo` é o fechamento de 2025 pela tabela de
+  preço antiga e fica de fora, porque a aba `2025` refaz o ano inteiro com o
+  preço novo. As transferências uma a uma vêm das abas de detalhe (`Camboinhas`,
+  `Búzios`). **As duas fontes nem sempre batem** — em 2026 há quatro meses de
+  Camboinhas em que a lista soma mais que o relatório, e em 2025 um de Búzios em
+  que soma menos. Nesses meses o painel mostra o total do relatório, marca o mês
+  com um sinal e diz a diferença ao abrir, em vez de escolher uma das fontes em
+  silêncio.
 
 - **Duas visões por unidade**, escolhidas ao lado das abas (nesta ordem):
   - **DRE detalhado** — o DRE inteiro da planilha, linha a linha e mês a mês, na
@@ -70,11 +73,11 @@ carregado por CDN; nenhum dado é enviado para servidor algum.
   | Lucro Líquido | linha `LUCRO LIQUIDO` do DRE |
   | Resultado DRE | linha `SALDO FINANCEIRO` do DRE, o saldo final da demonstração |
 
-- **Um gráfico comparativo de barras** com 15 comparativos: Faturado × Receita,
+- **Um gráfico comparativo de barras** com 16 comparativos: Faturado × Receita,
   CMV × Fornecedor, Operacionais, Pessoal, Comissões, Administrativo, CTO,
   Utilities, Terceiros, Marketing, Financeiras, Impostos, Pró-labore,
-  Dividendos e Aporte × Reembolso — cada um com a barra do DRE e a do Fluxo de
-  Caixa. À direita, no
+  Dividendos, Aporte × Reembolso e Investimentos — cada um com a barra do DRE e
+  a do Fluxo de Caixa. À direita, no
   lugar da diferença em reais, cada barra mostra **o peso dela sobre a base do
   seu regime**: o valor do DRE sobre o **faturamento bruto** (a receita bruta do
   DRE) e o do fluxo sobre a **receita bruta** (a linha `RECEITAS` do relatório
@@ -91,6 +94,19 @@ carregado por CDN; nenhum dado é enviado para servidor algum.
   as categorias pequenas (Aporte, Marketing, Pró-labore) virariam um risco de
   poucos pixels. As demais dividem a escala entre si, e os valores nas barras
   são sempre os reais.
+
+  **Investimentos** é uma linha de **demonstração**: o investimento sai do bloco
+  de *cashflow* do DRE — que não entra em nenhum total da demonstração e nem
+  aparece na tabela detalhada — e ganha linha própria, contra a categoria
+  `INVESTIMENTO` do Fluxo de Caixa, com os pagamentos vindos do contas a pagar.
+  Não altera nenhum outro comparativo.
+
+  **Impostos** compara a linha de imposto do DRE (`IMPOSTOS`, `IMPOSTO`,
+  `TRIBUTOS DIVERSOS` ou `TRIBUTOS`, o nome que a planilha usar) com a categoria
+  de imposto do Fluxo de Caixa. Quando a planilha não lança imposto no DRE — é o
+  caso de Camboinhas, cuja linha `TRIBUTOS DIVERSOS` está zerada —, o lado da
+  competência fica em zero e o detalhamento mostra os pagamentos que formam o
+  lado do caixa, dizendo por que não há item para comparar.
 
   **Aporte × Reembolso** é o único comparativo que se identifica pelo **texto**
   do contas a pagar, e não por categoria: de um lado a linha `APORTE` do DRE, do
