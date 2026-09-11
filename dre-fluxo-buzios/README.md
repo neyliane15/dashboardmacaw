@@ -98,6 +98,10 @@ carregado por CDN; nenhum dado é enviado para servidor algum.
   cobrado, item do bloco de descontos, contra o músico, item de Terceiros. Não
   há lado de caixa. Nenhum dos dois sai da categoria de origem — o músico
   continua somando em Terceiros e o couvert no bloco onde a planilha o lança.
+  A diferença aqui é **invertida**: nos outros comparativos ela mede o quanto o
+  caixa pagou a mais que o DRE reconheceu, mas aqui os dois lados são receita
+  contra custo, e o que interessa é quanto o couvert deixou de cobrir o músico
+  — por isso ela aparece negativa (couvert − músico).
 
   **Investimentos** é uma linha de **demonstração, não um comparativo**: mostra
   o que o DRE traz de investimento, tirado do bloco de *cashflow* — que não
