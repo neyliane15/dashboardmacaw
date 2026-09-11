@@ -163,9 +163,7 @@ Os dois regimes têm **cada um o seu mês**, e o painel respeita essa separaçã
 | Fluxo de Caixa (pago) | `MES PAGAMENTO` | soma do `CONTAS A PAGAR` |
 
 Um pagamento **sem `MES PAGAMENTO`** não entra no caixa de mês nenhum — nem no
-relatório da própria planilha. Em vez de somá-lo num mês arbitrário, o painel
-avisa, na visão de DRE detalhado, quais são esses lançamentos, para serem
-corrigidos na origem.
+relatório da própria planilha. O painel simplesmente não o soma, como a planilha.
 
 O painel usa a mesma aba para:
 

@@ -331,8 +331,6 @@ td.fx-v{color:var(--ink)}
 tr:hover .mini .l i{opacity:1}
 tr.total .mini .l i{opacity:.95}
 @media(max-width:640px){.mini{display:none}}
-.foot{padding:26px 0 44px;color:var(--ink-3);font-size:11.5px;line-height:1.8}
-.foot b{color:var(--ink-2);font-weight:500}
 .erro{background:var(--nota-bg);border:1px solid var(--nota-line);border-radius:10px;padding:12px 16px;
   margin:16px 0;font-size:13px;color:var(--nota-ink)}
 .drop{position:fixed;inset:0;z-index:90;background:color-mix(in srgb,var(--ground) 85%,transparent);
@@ -401,7 +399,6 @@ tr.total .mini .l i{opacity:.95}
       <span class="cnt" id="dre-sub"></span>
     </div>
     <div class="blocos" id="dre-blocos"></div>
-    <div id="dre-pendentes"></div>
     <div class="dre-wrap"><table class="dre" id="tabela-dre"></table></div>
   </section>
 
@@ -424,11 +421,6 @@ tr.total .mini .l i{opacity:.95}
 
   <div id="tabela"></div>
 
-  <div class="foot">
-    <b>Fontes na planilha:</b> aba <b>DRE</b> (indicadores, categorias e itens) · aba <b>RELATÓRIO FLUXO DE CAIXA</b> (saldos do mês) · aba <b>CONTAS A PAGAR</b>, onde cada pagamento traz sua <b>categoria DRE</b> e sua <b>categoria fluxo</b> — é essa ligação que permite comparar item a item o que foi reconhecido no DRE e o que foi efetivamente pago.<br>
-    <b>Ajustes aplicados:</b> Operacionais soma o Sistema operacional de vendas e deixa Material de limpeza e descartáveis fora do total · Pessoal exclui Comissões (comparativo próprio), INSS e Vale transporte com desconto, nos dois regimes · Administrativo do fluxo inclui a linha Holding · Financeiras do fluxo soma Financeiras + Tarifa · Tributos Diversos (DRE) compara com Impostos (Fluxo).<br>
-    Ao importar uma planilha nova, a leitura é refeita pelos nomes das abas e das colunas — a posição das linhas pode mudar sem quebrar o painel. Cada unidade tem sua própria aba e sua própria planilha.
-  </div>
 </div>
 
 <div id="tip" role="status" aria-live="polite"></div>
@@ -1593,7 +1585,6 @@ function renderDre() {
     if (l.item && l.grupo && blocos.indexOf(l.grupo) < 0) blocos.push(l.grupo);
   });
   renderBlocos(blocos);
-  renderPendentes(d);
 
   var escondidos = blocos.filter(function (g) { return !blocoVisivel(g); }).length;
   document.getElementById('dre-sub').textContent = linhas.length + ' linhas · valores em R$ · ' +
@@ -1730,27 +1721,6 @@ function papelDaLinha(label) {
   var n = norm(label);
   for (var i = 0; i < PAPEIS.length; i++) if (PAPEIS[i].testa.test(n)) return PAPEIS[i];
   return null;
-}
-
-/* Um lançamento com categoria de fluxo mas sem MES PAGAMENTO não entra em
-   caixa nenhum — nem no relatório da própria planilha. Em vez de somar num mês
-   arbitrário, o painel mostra a pendência para ser corrigida na origem. */
-function renderPendentes(d) {
-  var el = document.getElementById('dre-pendentes');
-  var lista = (d.meta && d.meta.semMesPagamento) || [];
-  if (!lista.length) { el.innerHTML = ''; return; }
-  var soma = lista.reduce(function (a, i) { return a + i.valor; }, 0);
-  el.innerHTML = '<div class="aviso-pend">' + ICONE_NOTA +
-    '<b>' + lista.length + (lista.length === 1 ? ' pagamento sem mês de pagamento' : ' pagamentos sem mês de pagamento') +
-    ' — ' + esc(brl(soma)) + '.</b> ' +
-    'No contas a pagar ' + (lista.length === 1 ? 'ele tem' : 'eles têm') + ' categoria de fluxo, mas a coluna ' +
-    '“MÊS PAGAMENTO” está vazia, então ' + (lista.length === 1 ? 'fica' : 'ficam') +
-    ' fora do Fluxo de Caixa de todos os meses — aqui e no relatório da própria planilha. ' +
-    lista.map(function (i) {
-      return esc(i.label) + ' (' + esc(i.categoria) +
-        (i.competencia >= 0 ? ', competência em ' + esc(d.meta.meses[i.competencia].toLowerCase()) : '') +
-        '): ' + esc(brl(i.valor));
-    }).join(' · ') + '</div>';
 }
 
 function renderBlocos(blocos) {
