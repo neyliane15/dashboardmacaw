@@ -9,8 +9,8 @@ carregado por CDN; nenhum dado é enviado para servidor algum.
 
 ## O que o painel mostra
 
-- **Quatro unidades em abas separadas**: Búzios, Camboinhas e Central já vêm com a
-  planilha embutida; Holding entra pelo botão de importar. Cada aba tem seus
+- **Quatro unidades em abas separadas** — Búzios, Camboinhas, Central e Holding
+  —, todas com a planilha embutida no painel. Cada aba tem seus
   próprios indicadores, comparativo e DRE; o endereço guarda a aba (`#buzios`,
   `#camboinhas`, `#central`, `#holding`).
 - **Uma aba à parte, `Central × Lojas`**, com o relatório de transferências: o
