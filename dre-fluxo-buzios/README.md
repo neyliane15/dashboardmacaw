@@ -100,11 +100,11 @@ carregado por CDN; nenhum dado é enviado para servidor algum.
   há lado de caixa. Nenhum dos dois sai da categoria de origem — o músico
   continua somando em Terceiros e o couvert no bloco onde a planilha o lança.
 
-  **Investimentos** é uma linha de **demonstração**: o investimento sai do bloco
-  de *cashflow* do DRE — que não entra em nenhum total da demonstração e nem
-  aparece na tabela detalhada — e ganha linha própria, contra a categoria
-  `INVESTIMENTO` do Fluxo de Caixa, com os pagamentos vindos do contas a pagar.
-  Não altera nenhum outro comparativo.
+  **Investimentos** é uma linha de **demonstração, não um comparativo**: mostra
+  o que o DRE traz de investimento, tirado do bloco de *cashflow* — que não
+  entra em nenhum total da demonstração nem aparece na tabela detalhada. Uma
+  barra só, sem lado de caixa e sem diferença; ao abrir, os lançamentos do
+  contas a pagar que formam esse valor. Não altera nenhum outro comparativo.
 
   **Impostos** compara a linha logo abaixo da Receita Bruta no DRE — onde as
   lojas reconhecem o imposto sobre venda — com a categoria de imposto do Fluxo
