@@ -64,14 +64,13 @@ carregado por CDN; nenhum dado é enviado para servidor algum.
   sai do total da categoria onde foi pago, mesmo quando a planilha o lança em outra
   — em Camboinhas o pró-labore está no fluxo de Terceiros, e o painel o move para o
   comparativo certo em vez de contar duas vezes.
-- **4 indicadores** do período escolhido:
+- **3 indicadores** do período escolhido:
 
   | Indicador | Origem |
   | --- | --- |
   | Faturamento Bruto | linha `RECEITA BRUTA` do DRE |
   | Receita Bruta | linha `RECEITAS` do Fluxo de Caixa — o dinheiro que entrou |
   | Lucro Líquido | linha `LUCRO LIQUIDO` do DRE |
-  | Resultado DRE | linha `SALDO FINANCEIRO` do DRE, o saldo final da demonstração |
 
 - **Um gráfico comparativo de barras** com 17 comparativos: Faturado × Receita,
   CMV × Fornecedor, Operacionais, Pessoal, Comissões, Administrativo, CTO,

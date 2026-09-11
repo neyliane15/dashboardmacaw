@@ -97,7 +97,8 @@ button{font:inherit;color:inherit}
 .chip-sep{width:1px;align-self:stretch;margin:2px 6px;background:var(--line-2)}
 
 /* ---------- indicadores ---------- */
-.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:16px 0 26px}
+/* a grade acompanha quantos indicadores existirem, sem número fixo de colunas */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin:16px 0 26px}
 @media(max-width:900px){.kpis{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:520px){.kpis{grid-template-columns:1fr}}
 .kpi{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 17px 13px;
@@ -1245,8 +1246,7 @@ function temNota(c) {
 var KPIS = [
   { id: 'faturamento',  label: 'Faturamento Bruto', fonte: 'Receita Bruta do DRE' },
   { id: 'receitaFluxo', label: 'Receita Bruta',     fonte: 'Receitas do Fluxo de Caixa' },
-  { id: 'lucroLiquido', label: 'Lucro Líquido',     base: 'faturamento', fonte: 'Lucro Líquido do DRE' },
-  { id: 'resultadoDre', label: 'Resultado DRE',     base: 'faturamento', fonte: 'Saldo Final do DRE' }
+  { id: 'lucroLiquido', label: 'Lucro Líquido',     base: 'faturamento', fonte: 'Lucro Líquido do DRE' }
 ];
 
 function renderKpis() {
