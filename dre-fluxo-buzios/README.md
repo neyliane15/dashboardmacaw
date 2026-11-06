@@ -275,3 +275,12 @@ A leitura procura as abas e as colunas **pelo nome**, não pela posição:
 
 Linhas podem ser inseridas ou removidas na planilha sem quebrar o painel; o que não
 pode mudar são os nomes das abas, dos cabeçalhos de coluna e dos meses.
+
+## Regerar o dado embutido
+
+O painel abre com a planilha de cada unidade já embutida, para não depender de
+importação nem do armazenamento do navegador. Quando chega uma planilha nova, os
+scripts em [`build/`](build/README.md) regeram esse dado e o injetam no
+`index.html` — o parser usado é o próprio que está dentro do painel, lido entre
+os marcadores, então o dado embutido e o importado pela página saem da mesma
+leitura.
