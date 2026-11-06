@@ -1,0 +1,6 @@
+{
+  "name": "dre-fluxo-build",
+  "private": true,
+  "description": "Ferramentas de geração dos dados embutidos no painel DRE × Fluxo de Caixa",
+  "dependencies": { "xlsx": "0.18.5" }
+}
